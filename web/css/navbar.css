@@ -64,6 +64,9 @@ ul.dropdown-menu li.checkbox span  { margin-left: 20px; }
 .navbar-default .navbar-nav  .active  a:hover {
   background-color: #e7e7e7;
   color: #333;
+  cursor: pointer;
 }
 
-
+.navbar-default .navbar-nav  .dropdown  a:hover {
+  cursor: pointer;
+}

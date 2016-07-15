@@ -126,15 +126,17 @@ preferences.setDefault("emacs-keybinding", false);
       	"Background ...": function() {
       	  menuBroadcast("help", {file:"background.html"});
 	      },
-      }/*,
+      },
       "Tutorial":  {
           type: "active",
           action: function() {
-            console.log("click on tutorial");
-            methods.playURL.call($("body"), {url:"/tutorial/tutorial.swinb"});
+            var win = window.open("http://ds.ing.unife.it/~gcota/", '_blank');
+            win.focus();
+            //console.log("click on tutorial");
+            //methods.playURL.call($("body"), {url:"/tutorial/tutorial.swinb"});
           }
 
-        }*/
+        }
 
     }
   }; // defaults;
