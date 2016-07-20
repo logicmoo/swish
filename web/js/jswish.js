@@ -130,7 +130,7 @@ preferences.setDefault("emacs-keybinding", false);
       "Tutorial":  {
           type: "active",
           action: function() {
-            var win = window.open("http://ds.ing.unife.it/~gcota/", '_blank');
+            var win = window.open("http://ds.ing.unife.it/~gcota/plptutorial/", '_blank');
             win.focus();
             //console.log("click on tutorial");
             //methods.playURL.call($("body"), {url:"/tutorial/tutorial.swinb"});
