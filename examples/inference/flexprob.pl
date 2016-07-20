@@ -20,7 +20,7 @@ draw_red(R, G):-
   red(Prob).
 
 :- end_lpad.
-/**
+/** <examples>
 ?- prob(draw_red(3,1),P).
 % expected result 0.75
 */
