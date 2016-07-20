@@ -47,6 +47,7 @@
 :- use_module(lib/markdown).
 :- use_module(lib/template_hint, []).
 :- use_module(lib/tutorial).
+:- use_module(library(aleph)).
 
 
 		 /*******************************

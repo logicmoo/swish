@@ -1,0 +1,24 @@
+<div class="notebook">
+
+<div class="nb-cell markdown">
+# Welcome to aleph on SWISH
+
+This notebook gives an overview of example programs for inductive logic programming.
+
+  - Abduce ([abduce.pl](example/aleph/abduce.pl)) Induce how to formally define the grandparent relation. 
+  - Animals ([animals.pl](example/aleph/animals.pl)) Simple illustration of interactive construction of tree-based models within Aleph
+  - Gcws ([gcws.pl](example/aleph/gcws.pl)) Simple illustration of the technique of generalised closed-world specialisation within Aleph
+  - Good clauses ([good.pl](example/aleph/good.pl)) Simple illustration of the use of recording good clauses found during the search using the Michalski's trains problem.
+  - Automatic extraction modes ([modes.pl](example/aleph/modes.pl)) Simple illustration of the automatic extraction of modes in Aleph using Michalski's trains problem.
+  - Positive-only learning ([posonly.pl](example/aleph/posonly.pl)) Simple illustration of positive-only learning within Aleph
+  - Recursive predicates ([recursion.pl](example/aleph/recursion.pl)) Simple illustration of the learning of recursive predicates in Aleph
+  - User-defined refinement operators ([refine.pl](example/aleph/refine.pl)) Simple illustration of the use of user-defined refinement operators in Aleph using Michalski's trains problem.
+  - Michalski's trains problem ([train.pl](example/aleph/train.pl)) Simple illustration of the use of Aleph on Michalski's trains problem
+  - Weather forecast ([weather.pl](example/aleph/weather.pl)) 
+  - Wedge ([wedge.pl](example/aleph/wedge.pl)) Simple illustration of constructing tree-based models within Aleph
+
+All examples are included in the standalone version of =aleph= at https://github.com/friguzzi/aleph 
+The stanalone version of =aleph= can be installed as a SWI-Prolog pack http://www.swi-prolog.org/pack/list
+</div>
+
+</div>
