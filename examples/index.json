@@ -3,7 +3,7 @@
 [
 { "file":"inference/inference_examples.swinb", "title":"cplint inference example programs"},
 { "file":"learning/learning_examples.swinb", "title":"cplint learning example programs"},
-{"file":"aleph/aleph_examples.swinb","title":"aleph learning example programs"},
+//{"file":"aleph/aleph_examples.swinb","title":"aleph learning example programs"},
 { "file":"learning/exauc.pl", "title":"AUC calculator"},
 //{ "file":"/tutorial/tutorial.swinb", "title":"Tutorial"},
 { "file":"examples.swinb",	  "title":"Prolog Example programs" },
