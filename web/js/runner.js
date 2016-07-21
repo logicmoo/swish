@@ -421,12 +421,13 @@ define([ "jquery", "config", "preferences",
 
     /**
      * Add pengine output as `<span class="output">`
-     * @param {String} data HTML that is inserted in the span.
+     * @param {String} data HTML that is inserted into the span.
      */
     outputHTML: function(data) {
       var span = $.el.span({class:"output"});
-      $(span).html(data);
       addAnswer(this, span);
+      span.innerHTML = data;
+      runScripts(span);
     },
 
     /**
@@ -880,6 +881,41 @@ define([ "jquery", "config", "preferences",
     return table;
   }
 
+		 /*******************************
+		 *	 SCRIPTS IN NODES	*
+		 *******************************/
+
+  function runScripts(elem) {
+    var scripts = [];
+    elem = $(elem);
+
+    elem.find("script").each(function() {
+      var type = this.getAttribute('type')||"text/javascript";
+      if ( type == "text/javascript" )
+	scripts.push(this.textContent);
+    });
+
+    if ( scripts.length > 0 ) {
+      var script = "(function(node){" + scripts.join("\n") + "})";
+      var node = new Node({
+        node: elem[0]
+      });
+
+      try {
+	eval(script)(node);
+      } catch(e) {
+	alert(e);
+      }
+    }
+  }
+
+  function Node(options) {
+    this.my_node = options.node;
+  }
+
+  Node.prototype.node = function() {
+    return $(this.my_node);
+  }
 
 
 		 /*******************************
@@ -990,13 +1026,17 @@ console.log(data);
   function handleOutput() {
     var elem = this.pengine.options.runner;
 
-    this.data = this.data.replace(new RegExp("'[-0-9a-f]{36}':", 'g'), "")
-    if ( this.location ) {
-      this.data = this.data.replace(/pengine:\/\/[-0-9a-f]*\//, "");
-      $(".swish-event-receiver").trigger("source-error", this);
-    }
+    if ( typeof(this.data) == 'string' ) {
+      this.data = this.data.replace(new RegExp("'[-0-9a-f]{36}':", 'g'), "")
+      if ( this.location ) {
+	this.data = this.data.replace(/pengine:\/\/[-0-9a-f]*\//, "");
+	$(".swish-event-receiver").trigger("source-error", this);
+      }
 
-    elem.prologRunner('outputHTML', this.data);
+      elem.prologRunner('outputHTML', this.data);
+    } else {
+      console.log(this.data);
+    }
     RS(elem).prologRunners('scrollToBottom');
   }
 
