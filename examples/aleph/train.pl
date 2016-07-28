@@ -10,7 +10,7 @@
 %       b. read_all(train).
 %       c. induce
 /** <examples>
-?- induce.
+?- induce(Program).
 */
 
 :- use_module(library(aleph)).

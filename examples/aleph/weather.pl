@@ -1,5 +1,5 @@
 /** <examples>
-?- induce.
+?- induce(Program).
 */
 
 :-use_module(library(aleph)).
