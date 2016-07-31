@@ -9,7 +9,7 @@
  parent/2.
 */
 /** <examples>
-?- induce.
+?- induce(Program).
 */
 
 :- use_module(library(aleph)).

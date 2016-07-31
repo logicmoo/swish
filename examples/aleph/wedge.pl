@@ -30,7 +30,7 @@
 % adding more examples rectifies this: see wedge.f
 
 /** <examples>
-?- induce.
+?- induce(Program).
 */
 :-use_module(library(aleph)).
 :- aleph.

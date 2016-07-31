@@ -3,7 +3,7 @@
 % To run do the following:
 %       a. induce.
 /** <examples>
-?- induce.
+?- induce(Program).
 */
 :- use_module(library(aleph)).
 :- aleph.

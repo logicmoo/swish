@@ -6,7 +6,7 @@
 %       c. sat(1).
 %       d. reduce.
 /** <examples>
-?- induce.
+?- induce(Program).
 */
 :- use_module(library(aleph)).
 :- aleph.

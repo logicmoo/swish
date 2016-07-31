@@ -10,7 +10,7 @@
 %       c. induce.
 
 /** <examples>
-?- induce.
+?- induce(Program).
 */
 
 :-use_module(library(aleph)).
@@ -158,8 +158,8 @@ has_gills(shark).
 has_gills(eel).
 
 nhas_gills(X) :- animal(X), not(has_gills(X)).
-dynamic false/0.
-%false:-class(X,Y),class(X,Z),Y\=Z.
+dynamic aleph_false/0.
+aleph_false:-class(X,Y),class(X,Z),Y\=Z.
 
 :-end_bg.
 :-begin_in_pos.
