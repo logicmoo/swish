@@ -11,7 +11,7 @@
 
 define([ "jquery", "config", "preferences",
 	 "cm/lib/codemirror", "form", "prolog", "links",
-	 "answer", "laconic", "sparkline"
+	 "answer", "laconic", "sparkline", "download"
        ],
        function($, config, preferences, CodeMirror, form, prolog, links) {
 
@@ -429,6 +429,15 @@ define([ "jquery", "config", "preferences",
       span.innerHTML = data;
       runScripts(span);
     },
+
+    /**
+     * Handle object output
+     */
+     downloadButton: function(obj) {
+       var button = $.el.button({class:"download"});
+       addAnswer(this, button);
+       $(button).downloader(obj);
+     },
 
     /**
      * Add an error message to the output.  The error is
@@ -1034,6 +1043,8 @@ console.log(data);
       }
 
       elem.prologRunner('outputHTML', this.data);
+    } else if ( typeof(this.data) == 'object' ) {
+      elem.prologRunner(this.data.action, this.data);
     } else {
       console.log(this.data);
     }
