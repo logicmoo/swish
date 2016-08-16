@@ -6,7 +6,8 @@
 This notebook gives an overview of example programs for inference:
 
 Examples divided by features:
-  - Dirichlet process: [dirichlet_process.pl](example/inference/dirichlet_process.pl)
+  - Dirichlet process: [dirichlet_process.pl](example/inference/dirichlet_process.pl), [dp_chinese.pl](example/inference/dp_chinese.pl),
+  [dp_mix.pl](example/inference/dp_mix.pl)
   - continuous random variables: 
   [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), [kalman_filter.pl](example/inference/kalman_filter.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
@@ -18,7 +19,9 @@ Examples divided by features:
   [indian_gpadc.pl](example/inference/indian_gpadc.pl),
   [nballs.pl](example/inference/nballs.pl),
   [nballsdc.pl](example/inference/nballsdc.pl),
-  [dirichlet_process.pl](example/inference/dirichlet_process.pl)
+  [dirichlet_process.pl](example/inference/dirichlet_process.pl),
+  [dp_chinese.pl](example/inference/dp_chinese.pl),
+  [dp_mix.pl](example/inference/dp_mix.pl)
   - stochastic logic programs: [slp_pcfg.pl](example/inference/slp_pcfg.pl), [slp_pdcg.pl](example/inference/slp_pdcg.pl) 
   - likelihood weighting: 
   [kalman_filter.pl](example/inference/kalman_filter.pl),
@@ -39,6 +42,8 @@ Examples divided by features:
   [widgetmsw.pl](example/inference/widgetmsw.pl)
   - argument sampling: 
   [dirichlet_process.pl](example/inference/dirichlet_process.pl),
+  [dp_chinese.pl](example/inference/dp_chinese.pl),
+  [dp_mix.pl](example/inference/dp_mix.pl),
   [markov_chain.pl](example/inference/markov_chain.pl),
   [plcg.pl](example/inference/plcg.pl),
   [hmmpos.pl](example/inference/hmmpos.pl), [hmmpos2.pl](example/inference/hmmpos2.pl),
@@ -54,7 +59,9 @@ Examples divided by features:
   - flexible probabilities:
   [flexprob.pl](example/inference/flexprob.pl),
   [persons.pl](example/inference/persons.pl),
-  [dirichlet_process.pl](example/inference/dirichlet_process.pl)
+  [dirichlet_process.pl](example/inference/dirichlet_process.pl),
+  [dp_chinese.pl](example/inference/dp_chinese.pl),
+  [dp_mix.pl](example/inference/dp_mix.pl)
   - computation of expectations: [arithm.pl](example/inference/arithm.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   - infinite number of explanations:
@@ -83,7 +90,9 @@ Examples divided by features:
   [seven_scientists.pl](example/inference/seven_scientists.pl), 
   [widget.pl](example/inference/widget.pl),
   [widgetmsw.pl](example/inference/widgetmsw.pl),
-  [dirichlet_process.pl](example/inference/dirichlet_process.pl)
+  [dirichlet_process.pl](example/inference/dirichlet_process.pl),
+  [dp_chinese.pl](example/inference/dp_chinese.pl),
+  [dp_mix.pl](example/inference/dp_mix.pl)
   - Monte Carlo unconditional inference: [coinmc.pl](example/inference/coinmc.pl), 
   [pcfglr.pl](example/inference/pcfglr.pl), 
   [markov_chain.pl](example/inference/markov_chain.pl),
@@ -93,7 +102,9 @@ Examples divided by features:
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   [gpl.pl](example/inference/gpl.pl), [rmc.pl](example/inference/rmc.pl),
   [hmmpos.pl](example/inference/hmmpos.pl), [hmmpos2.pl](example/inference/hmmpos2.pl),
-  [dirichlet_process.pl](example/inference/dirichlet_process.pl)
+  [dirichlet_process.pl](example/inference/dirichlet_process.pl),
+  [dp_chinese.pl](example/inference/dp_chinese.pl),
+  [dp_mix.pl](example/inference/dp_mix.pl)
   - conditional inference: [threesideddice.pl](example/inference/threesideddice.pl),
   [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), [kalman_filter.pl](example/inference/kalman_filter.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
@@ -117,7 +128,9 @@ Examples divided by features:
   [hmmpos.pl](example/inference/hmmpos.pl), 
   [hmmpos2.pl](example/inference/hmmpos2.pl),
   [truel.pl](example/inference/truel.pl),
-  [dirichlet_process.pl](example/inference/dirichlet_process.pl)
+  [dirichlet_process.pl](example/inference/dirichlet_process.pl),
+  [dp_chinese.pl](example/inference/dp_chinese.pl),
+  [dp_mix.pl](example/inference/dp_mix.pl)
   - PRISM syntax: [coinmsw.pl](example/inference/coinmsw.pl),
   [widgetmsw.pl](example/inference/widgetmsw.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl)
@@ -154,7 +167,9 @@ Examples divided by features:
   [nballs.pl](example/inference/nballs.pl),
   [nballsdc.pl](example/inference/nballsdc.pl),
   [truel.pl](example/inference/truel.pl),
-  [dirichlet_process.pl](example/inference/dirichlet_process.pl)
+  [dirichlet_process.pl](example/inference/dirichlet_process.pl),
+  [dp_chinese.pl](example/inference/dp_chinese.pl),
+  [dp_mix.pl](example/inference/dp_mix.pl)
   - .cpl format: [coin.cpl](example/inference/coin.cpl), [dice.cpl](example/inference/dice.cpl), [epidemic.cpl](example/inference/epidemic.cpl), [earthquake.cpl](example/inference/earthquake.cpl),
   [sneezing.cpl](example/inference/sneezing.cpl), [eruption.cpl](example/inference/eruption.cpl), [mendel.cpl](example/inference/mendel.cpl), [bloodtype.cpl](example/inference/bloodtype.cpl),
   [path.cpl](example/inference/path.cpl), [alarm.cpl](example/inference/alarm.cpl), [hmm.cpl](example/inference/hmm.cpl), [pcfg.cpl](example/inference/pcfg.cpl), 
@@ -485,5 +500,8 @@ is done.
   ([truel.pl](example/inference/truel.pl)).
   See https://en.wikipedia.org/wiki/Truel
   - Dirichlet process (DP) ([dirichlet_process.pl](example/inference/dirichlet_process.pl)) with a stick breaking process, see https://en.wikipedia.org/wiki/Dirichlet_process
+  - Dirichlet process (DP) ([dp_chinese.pl](example/inference/dp_chinese.pl)) with a Chinese Restaurant Process, see https://en.wikipedia.org/wiki/Dirichlet_process
+  - Mixture model from a Dirichlet process, ([dp_mix.pl](example/inference/dp_mix.pl)) see http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=nonparametrics/dp-mixture-model
+  https://en.wikipedia.org/wiki/Dirichlet_process
 </div>
 </div>
