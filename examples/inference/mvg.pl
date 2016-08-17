@@ -36,5 +36,5 @@ gv3(L):-
 /** <examples>
 ?- chart(G).
 ?- obs(L).
-?-
+?- gv3(L).
 */
