@@ -15,6 +15,7 @@ mvg1(_,G):gaussian(G,[M1,M2],[[1,0.6],[0.6,2]]):-
 mean(_,M):gaussian(M,0,1).
 
 mvg2(_,G):gaussian(G,[0,0],[[1,0.6],[0.6,2]]).
+mvg3(G):gaussian(G,[0,0,0],[[2,-1,0],[-1,2,-1],[0,-1,2]]).
 :- end_lpad.
 
 chart(Chart):-
@@ -28,6 +29,12 @@ val([X,Y]-_,X-Y).
 
 obs(L):-
   mc_lw_sample_arg(mvg1(1,G),mvg1(1,[1,1]),2,G,L).
+
+gv3(L):-
+  mc_sample_arg_first(mvg3(G),10,G,L).
+
 /** <examples>
 ?- chart(G).
+?- obs(L).
+?-
 */
