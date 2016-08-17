@@ -30,13 +30,18 @@ cov([XH|XT],N,Ker,[KH|KY],[KHND|KYND]):-
   length(XT,LX),
   N1 is N-LX-1,
   list0(N1,KH0),
-  maplist(call(Ker,XH),XT,KH1),
+  cov_row(XT,XH,Ker,KH1),
   call(Ker,XH,XH,KXH),
 %  kernel(XH,XH,KXH),
   append([KH0,[KXH],KH1],KH),
   append([KH0,[0],KH1],KHND),
   cov(XT,N,Ker,KY,KYND).
 
+cov_row([],_,_,[]).
+
+cov_row([H|T],XH,Ker,[KH|KT]):-
+  call(Ker,H,XH,KH),
+  cov_row(T,XH,Ker,KT).
 
 sq_exp_p(X,XP,K):-
   sigma(Sigma),
@@ -77,27 +82,26 @@ draw_fun(Kernel,C):-
  % legend:_{show: false},
   axis:_{ x:_{ tick:_{fit:false}}}}.
 
-draw_fun_post(Kernel,LSR):-
+draw_fun_post(Kernel,C):-
 %  X=[-1.50,-1.00,-0.75,-0.40,-0.25,0.00],
 %  X=[-4.5,-4,-3.5,-3,-2.5,-2,-1.5,-1.00,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4,4.5],
   numlist(0,10,X),
   XT=[2,4,6,8,9],
   YT=[1,-0.4,-0.8,0.25,0.6],
-  mc_lw_sample_arg(gp(X,Kernel,Y),gp(XT,Kernel,YT),10,Y,L),
+  mc_lw_sample_arg(gp(X,Kernel,Y),gp(XT,Kernel,YT),100,Y,L),
   keysort(L,LS),
-  reverse(LS,LSR).
-  /*
-  numlist(1,5,LD),
-  maplist(name_s,L,LD,L1),
-  C = c3{data:_{x:x, columns:[[x|X]|L1] },
+  reverse(LS,[Y1-_,Y2-_,Y3-_,Y4-_,Y5-_|_]),
+  C = c3{data:_{xs:_{y:xt,f1:x,f2:x,f3:x,f4:x,f5:x}, 
+  columns:[[y|YT],[xt|XT],[x|X],[f1|Y1],[f2|Y2],[f3|Y3],[f4|Y4],
+    [f5|Y5]],
+    types:_{f1: spline,f2:spline,f3:spline,f4:spline,
+    f5:spline,y:scatter}},
  % legend:_{show: false},
   axis:_{ x:_{ tick:_{fit:false}}}}.
-*/
+
 name_s(V-_,N,[ND|V]):-
   atomic_concat(f,N,ND).
 
 /** <examples>
-?- draw_fun(sq_exp,C).
-?- draw_fun(min,C).
-?- draw_fun(lin,nC).
+?- draw_fun_post(sq_exp_p,C).
 */
