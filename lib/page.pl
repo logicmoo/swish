@@ -318,18 +318,18 @@ swish_navbar(Options) -->
 	a([href('/help/help-cplint.html#download-query-results-through-an-api'),target('_blank')],
 	['API']),', ',
 	a([href('/example/inference/truel.pl')],
-	['truel example']),', ',
+	['truel example'])
 %	a([href('/help/help-cplint.html#cont'),target('_blank')],
 %	['continuous random variables']),' and ',
 %	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
 %	['likelihood weighting']),': ',
-	a([href('/example/inference/gaussian_mixture.pl')],
-	['Gaussian mixture']),', ',
-	a([href('/example/inference/kalman_filter.pl')],
-	['Kalman filter']),', ',
-	a([href('/example/inference/seven_scientists.pl')],['Bayesian estimation']),', ',
-	a([href('/example/inference/indian_gpa.pl')],['Indian GPA problem'])
-        ])])
+%	a([href('/example/inference/gaussian_mixture.pl')],
+%	['Gaussian mixture']),', ',
+%	a([href('/example/inference/kalman_filter.pl')],
+%	['Kalman filter']),', ',
+%	a([href('/example/inference/seven_scientists.pl')],['Bayesian estimation']),', ',
+%	a([href('/example/inference/indian_gpa.pl')],['Indian GPA problem'])
+       ])])
         ),
 
 	html(nav([ class([navbar, 'navbar-default']),
