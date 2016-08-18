@@ -75,27 +75,36 @@ l(L):uniform(L,[1,2,3]).
 
 sigma(Sigma):uniform(Sigma,-2,2).
 
+sq_exp(X,XP,K):-
+  K is exp(-((X-XP)^2)/2).
+
+min(X,XP,K):-
+  K is min(X,XP).
+
+
+lin(X,X,K):-!,
+  K is (X*X)+1.
+
+lin(X,XP,K):-
+  K is (X*XP).
+
+ou(X,XP,K):-
+  K is exp(-abs(X-XP)).
+
 :- end_lpad.
 
 %kernel(X,X,K):-!,
 %  K is 1.27^2+0.3^2.
 
-sq_exp(X,XP,K):-
-  K is exp(-((X-XP)^2)/2).
-  %K is (1.27^2)*exp(-((X-XP)^2)/2).
+ %K is (1.27^2)*exp(-((X-XP)^2)/2).
 
-min(X,XP,K):-
-  K is min(X,XP).
-
-lin(X,XP,K):-
-  K is (X*XP+5)^2.
-
-ou(X,XP,K):-
-  K is exp(-abs(X-XP)).
 draw_fun(Kernel,C):-
+  X=[-3,-2,-1,0,1,2,3],
+  draw_fun(X,Kernel,C).
+  
+draw_fun(X,Kernel,C):-
 %  X=[-1.50,-1.00,-0.75,-0.40,-0.25,0.00],
 %  X=[-4.5,-4,-3.5,-3,-2.5,-2,-1.5,-1.00,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4,4.5],
-  X=[-3,-2,-1,0,1,2,3],
   mc_sample_arg_first(gp(X,Kernel,Y),5,Y,L),
   numlist(1,5,LD),
   maplist(name_s,L,LD,L1),
@@ -171,6 +180,10 @@ name_s(V-_,N,[ND|V]):-
 
 /** <examples>
 ?- draw_fun(sq_exp_p,C).
+?- draw_fun(sq_exp,C).
+?- draw_fun(ou,C).
+?- draw_fun(lin,C).
+?- draw_fun([1,2,3,4,5,6],min,C).
 ?- draw_fun_post(sq_exp_p,C).
 ?- draw_fun_postp(sq_exp_p,C).
 ?- draw_fun_poste(sq_exp_p,C).
