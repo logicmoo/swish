@@ -96,11 +96,10 @@ draw_fun(Kernel,C):-
 %  X=[-1.50,-1.00,-0.75,-0.40,-0.25,0.00],
 %  X=[-4.5,-4,-3.5,-3,-2.5,-2,-1.5,-1.00,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4,4.5],
   X=[-3,-2,-1,0,1,2,3],
-  compute_cov(X,Kernel,K),
-  mc_sample_arg_first(gp(K,Y),5,Y,L),
+  mc_sample_arg_first(gp(X,Kernel,Y),5,Y,L),
   numlist(1,5,LD),
   maplist(name_s,L,LD,L1),
-  C = c3{data:_{x:x, columns:[[x|X]|L1] },
+  C = c3{data:_{x:x, columns:[[x|X]|L1] ,type:spline},
  % legend:_{show: false},
   axis:_{ x:_{ tick:_{fit:false}}}}.
 
@@ -149,6 +148,19 @@ draw_fun_poste(Kernel,C):-
  % legend:_{show: false},
   axis:_{ x:_{ tick:_{fit:false}}}}.
 
+draw_fun_postee(Kernel,C):-
+%  X=[-1.50,-1.00,-0.75,-0.40,-0.25,0.00],
+%  X=[-4.5,-4,-3.5,-3,-2.5,-2,-1.5,-1.00,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4,4.5],
+  numlist(0,10,X),
+  XT=[2.5,6.5,8.5],
+  YT=[1,-0.8,0.6],
+  mc_lw_expectation(gp(X,Kernel,Y),gp(XT,Kernel,YT),5,Y,YE),
+  C = c3{data:_{xs:_{y:xt,f:x}, 
+  columns:[[y|YT],[xt|XT],[x|X],[f|YE]],
+    types:_{f: spline,y:scatter}},
+ % legend:_{show: false},
+  axis:_{ x:_{ tick:_{fit:false}}}}.
+
 compute_e([],_,_,_,[]).
 compute_e([X|T],Kernel,XT,YT,[YE|TYE]):-
   mc_lw_expectation(gp_predict([X],Kernel,XT,YT,[Y]),gp(XT,Kernel,YT),5,Y,YE),
@@ -158,6 +170,7 @@ name_s(V-_,N,[ND|V]):-
   atomic_concat(f,N,ND).
 
 /** <examples>
+?- draw_fun(sq_exp_p,C).
 ?- draw_fun_post(sq_exp_p,C).
 ?- draw_fun_postp(sq_exp_p,C).
 ?- draw_fun_poste(sq_exp_p,C).
