@@ -10,6 +10,28 @@
 
 % http://arxiv.org/pdf/1505.02965v2.pdf
 
+
+gp_predict(XP,Kernel,XT,YT,YP):-
+  compute_cov(XT,Kernel,C),
+  matrix_inversion(C,C_1),
+  transpose([YT],YST),
+  matrix_multiply(C_1,YST,C_1T),
+  gp_predict_single(XP,Kernel,XT,C_1T,YP).
+
+gp_predict_single([],_,_,_,[]).
+
+gp_predict_single([XH|XT],Kernel,X,C_1T,[YH|YT]):-
+  compute_k(X,XH,Kernel,K),
+  matrix_multiply([K],C_1T,[[YH]]),
+  gp_predict_single(XT,Kernel,X,C_1T,YT).
+
+compute_k([],_,_,[]).
+
+compute_k([XH|XT],X,Ker,[HK|TK]):-
+  call(Ker,XH,X,HK),
+  compute_k(XT,X,Ker,TK).
+  
+
 gp(X,Kernel,Y):-
   compute_cov(X,Kernel,C),
   gp(C,Y).
@@ -99,9 +121,27 @@ draw_fun_post(Kernel,C):-
  % legend:_{show: false},
   axis:_{ x:_{ tick:_{fit:false}}}}.
 
+draw_fun_postp(Kernel,C):-
+%  X=[-1.50,-1.00,-0.75,-0.40,-0.25,0.00],
+%  X=[-4.5,-4,-3.5,-3,-2.5,-2,-1.5,-1.00,-0.5,0,0.5,1,1.5,2,2.5,3,3.5,4,4.5],
+  numlist(0,10,X),
+  XT=[2.5,6.5,8.5],
+  YT=[1,-0.8,0.6],
+  mc_lw_sample_arg(gp_predict(X,Kernel,XT,YT,Y),gp(XT,Kernel,YT),5,Y,L),
+  keysort(L,LS),
+  reverse(LS,[Y1-_,Y2-_,Y3-_|_]),
+  C = c3{data:_{xs:_{y:xt,f1:x,f2:x,f3:x}, 
+  columns:[[y|YT],[xt|XT],[x|X],[f1|Y1],[f2|Y2],[f3|Y3]],
+    types:_{f1: spline,f2:spline,f3:spline,y:scatter}},
+ % legend:_{show: false},
+  axis:_{ x:_{ tick:_{fit:false}}}}.
+
+
+
 name_s(V-_,N,[ND|V]):-
   atomic_concat(f,N,ND).
 
 /** <examples>
 ?- draw_fun_post(sq_exp_p,C).
+?- draw_fun_postp(sq_exp_p,C).
 */
