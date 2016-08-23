@@ -21,7 +21,7 @@ eval(X,Y):-
   random_fn(X,0,F),
   Y is F.
 
-op(+):0.5;op(-):0.5.
+op(L,+):0.5;op(L,-):0.5.
 
 
 
@@ -29,7 +29,7 @@ random_fn(X,L,F):-
   comb(L),
   random_fn(X,l(L),F1),
   random_fn(X,r(L),F2),
-  op(Op),
+  op(L,Op),
   F=..[Op,F1,F2].
 
 random_fn(X,L,F):-
