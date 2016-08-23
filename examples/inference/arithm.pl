@@ -58,7 +58,7 @@ random_const(_,C):discrete(C,[0:0.1,1:0.1,2:0.1,3:0.1,4:0.1,
 
 /** <examples>
 
-?- mc_mh_sample(eval(2,4),eval(1,3),10000,1,T,F,P).
+?- mc_mh_sample(eval(2,4),eval(1,3),1000,1,T,F,P).
 % perform Metropolis Hastings sampling of eval(2,Y) given that
 % eval(1,3) is true
 % expected result
