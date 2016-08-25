@@ -88,6 +88,12 @@ dens_lw(Samples,NBins,Chart):-
   mc_lw_sample_arg(kf_fin(1,_O2,T),kf_fin(1,[2.5],_T),Samples,T,L),
   densities(L0,L,NBins,Chart).
 
+dens_par(Samples,NBins,Chart):-
+  mc_sample_arg(kf_fin(1,_O1,Y),Samples,Y,L0),
+  mc_particle_sample_arg(kf_fin(1,_O2,T),[kf_fin(1,[2.5],_T)],Samples,T,L),
+  densities(L0,L,NBins,Chart).
+
+
 %! filter_par(+S:int,+Bins:int,-C:dict) is det
 % Draws a sample trajectory for 4 time points with observations O and true
 % states St. Then performs filtering on the trajectory: given O, compute the
@@ -96,9 +102,18 @@ dens_lw(Samples,NBins,Chart):-
 % at time 1, 2, 3 and 4 
 % (S1, S2, S3, S4, density on the left y axis, number of bins Bins) 
 % and with O and St (time on the right y axis).
-filter_par(Samples,NBins,C):-
+filter_par(Samples,C):-
   sample_trajectory(4,O,St),
+  filter_par(Samples,O,St,C).
+
+filter_sampled_par(Samples,C):-
+  o(O),
+  st(St),
+  filter_par(Samples,O,St,C).
+
+filter_par(Samples,O,St,C):-
   O=[O1,O2,O3,O4],
+  NBins=40,
   mc_particle_sample_arg(kf(4,_O,T),[kf_o(1,O1),kf_o(2,O2),kf_o(3,O3),kf_o(4,O4)],Samples,T,L),
   maplist(separate,L,T1,T2,T3,T4),
   density(T1,NBins,C1),
@@ -108,7 +123,7 @@ filter_par(Samples,NBins,C):-
   [[x|X1],[dens|S1]]=C1.data.columns,
   [[x|X2],[dens|S2]]=C2.data.columns,
   [[x|X3],[dens|S3]]=C3.data.columns,
-  [[x|X4],[dens|S4]]=C4.data.columns,
+  [[x|X4],[dens|S4]]=C4.data.columns,!,
   Y=[1,2,3,4],
   C = c3{data:_{xs:_{'True State':xt,'Obs':xo,'S1':x1,'S2':x2,'S3':x3,'S4':x4},
   columns:[[xt|St],['True State'|Y],
@@ -137,10 +152,22 @@ filter_par(Samples,NBins,C):-
 % at time 1, 2, 3 and 4 
 % (S1, S2, S3, S4, density on the left y axis, number of bins Bins) 
 % and with O and St (time on the right y axis).
-filter(Samples,NBins,C):-
+filter(Samples,C):-
   sample_trajectory(4,O,St),
+  filter(Samples,O,St,C).
+
+filter_sampled(Samples,C):-
+  o(O),
+  st(St),
+  filter(Samples,O,St,C).
+
+o([-0.13382010096024688, -1.1832019975321675, -3.2127809027386567, -4.586259511038596]).
+st([-0.18721387460211258, -2.187978176930458, -1.5472275345566668, -2.9840114021132713]).
+
+filter(Samples,O,St,C):-
   mc_lw_sample_arg(kf(4,_O,T),kf_fin(4,O,_T),Samples,T,L),
   maplist(separate,L,T1,T2,T3,T4),
+  NBins=40,
   density(T1,NBins,C1),
   density(T2,NBins,C2),
   density(T3,NBins,C3),
@@ -148,7 +175,7 @@ filter(Samples,NBins,C):-
   [[x|X1],[dens|S1]]=C1.data.columns,
   [[x|X2],[dens|S2]]=C2.data.columns,
   [[x|X3],[dens|S3]]=C3.data.columns,
-  [[x|X4],[dens|S4]]=C4.data.columns,
+  [[x|X4],[dens|S4]]=C4.data.columns,!,
   Y=[1,2,3,4],
   C = c3{data:_{xs:_{'True State':xt,'Obs':xo,'S1':x1,'S2':x2,'S3':x3,'S4':x4},
   columns:[[xt|St],['True State'|Y],
@@ -175,8 +202,11 @@ sample_trajectory(N,Ob,St):-
   mc_sample_arg(kf(N,O,T),1,(O,T),L),
   L=[[(Ob,St)]-_].
 /** <examples>
-?- filter_par(100,40,C).
-?- filter(1000,40,C).
+?- filter_sampled_par(100,C).
+?- filter_par(100,C).
+?- filter_sampled(1000,C).
+?- filter(1000,C).
+?- dens_par(1000,40,G).
 ?- dens_lw(1000,40,G).
 % plot the density of the state at time 1 in case of no observation (prior)
 % and in case of observing 2.5 by taking 1000 samples and dividing the domain
