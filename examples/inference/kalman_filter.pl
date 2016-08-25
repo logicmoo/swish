@@ -90,19 +90,25 @@ filter(Samples,NBins,C):-
   [[x|X2],[dens|S2]]=C2.data.columns,
   [[x|X3],[dens|S3]]=C3.data.columns,
   [[x|X4],[dens|S4]]=C4.data.columns,
-  append([S1,S2,S3,S4],AllD),
-  max_list(AllD,Max),
-  maplist(is,Y,[Max+50,Max+100,Max+150,Max+200]),
-  C = c3{data:_{xs:_{t:xt,o:xo,s1:x1,s2:x2,s3:x3,s4:x4},
-  columns:[[xt|St],[t|Y],
-    [xo|O],[o|Y],
-    [x1|X1],[s1|S1],
-    [x2|X2],[s2|S2],
-    [x3|X3],[s3|S3],
-    [x4|X4],[s4|S4]],
-    types:_{s1: spline,s2: spline,s3: spline,s4: spline,t:scatter,o:scatter}},
+  Y=[1,2,3,4],
+  C = c3{data:_{xs:_{'True State':xt,'Obs':xo,'S1':x1,'S2':x2,'S3':x3,'S4':x4},
+  columns:[[xt|St],['True State'|Y],
+    [xo|O],['Obs'|Y],
+    [x1|X1],['S1'|S1],
+    [x2|X2],['S2'|S2],
+    [x3|X3],['S3'|S3],
+    [x4|X4],['S4'|S4]],
+    types:_{'S1': spline,'S2': spline,'S3': spline,'S4': spline,'True State':scatter,'Obs':scatter},
+    axes:_{'S1':y,'S2':y,'S3':y,'S4':y,'True State':y2,'Obs':y2}},
  % legend:_{show: false},
-  axis:_{ x:_{ tick:_{fit:false}}}}.
+    axis:_{ x:_{ tick:_{fit:false}},
+      y2:_{
+            show: 'true',
+                label: 'Time',
+                min: -6
+       },
+       y:_{label:'Density'}}
+  }.
 
 separate([S1,S2,S3,S4]-W,S1-W,S2-W,S3-W,S4-W).
 
