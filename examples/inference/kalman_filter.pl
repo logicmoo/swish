@@ -40,6 +40,12 @@ kf(N,O,LS) :-
   init(S),
   kf_part(0, N, S,O,LS,_T).
 
+kf_o(N,ON):-
+  init(S),
+  N1 is N-1,
+  kf_part(0,N1,S,_O,_LS,T),
+  emit(T,N,ON).
+
 kf_part(I, N, S, [V|RO], [S|LS], T) :-
   I < N, 
   NextI is I+1,
@@ -66,18 +72,71 @@ obs_err(_,E):gaussian(E,0,1).
 
 :- end_lpad.
 
+%! hist(+S:int,+Bins:int,-C:dict) is det
+% Plots a histogram of the density of the state at time 1 in case of 
+% no observation
 hist(Samples,NBins,Chart):-
   mc_sample_arg(kf_fin(1,_O1,Y),Samples,Y,L0),
   histogram(L0,NBins,Chart).
 
+%! dens_lw(+S:int,+Bins:int,-C:dict) is det
+% Plots the density of the state at time 1 in case of no observation (prior)
+% and in case of observing 2.5.
+% Observation as in Russel and Norvig 2010, Fig 15.10
 dens_lw(Samples,NBins,Chart):-
   mc_sample_arg(kf_fin(1,_O1,Y),Samples,Y,L0),
   mc_lw_sample_arg(kf_fin(1,_O2,T),kf_fin(1,[2.5],_T),Samples,T,L),
   densities(L0,L,NBins,Chart).
-% plot the density of the state at time 1 in case of no observation (prior)
-% and in case of observing 2.5.
-% Observation as in Russel and Norvig 2010, Fig 15.10
 
+%! filter_par(+S:int,+Bins:int,-C:dict) is det
+% Draws a sample trajectory for 4 time points with observations O and true
+% states St. Then performs filtering on the trajectory: given O, compute the
+% distribution of the state for each time point by taking S samples.
+% Returns a graph C with the distributions of the state variable 
+% at time 1, 2, 3 and 4 
+% (S1, S2, S3, S4, density on the left y axis, number of bins Bins) 
+% and with O and St (time on the right y axis).
+filter_par(Samples,NBins,C):-
+  sample_trajectory(4,O,St),
+  O=[O1,O2,O3,O4],
+  mc_particle_sample_arg(kf(4,_O,T),[kf_o(1,O1),kf_o(2,O2),kf_o(3,O3),kf_o(4,O4)],Samples,T,L),
+  maplist(separate,L,T1,T2,T3,T4),
+  density(T1,NBins,C1),
+  density(T2,NBins,C2),
+  density(T3,NBins,C3),
+  density(T4,NBins,C4),
+  [[x|X1],[dens|S1]]=C1.data.columns,
+  [[x|X2],[dens|S2]]=C2.data.columns,
+  [[x|X3],[dens|S3]]=C3.data.columns,
+  [[x|X4],[dens|S4]]=C4.data.columns,
+  Y=[1,2,3,4],
+  C = c3{data:_{xs:_{'True State':xt,'Obs':xo,'S1':x1,'S2':x2,'S3':x3,'S4':x4},
+  columns:[[xt|St],['True State'|Y],
+    [xo|O],['Obs'|Y],
+    [x1|X1],['S1'|S1],
+    [x2|X2],['S2'|S2],
+    [x3|X3],['S3'|S3],
+    [x4|X4],['S4'|S4]],
+    types:_{'S1': spline,'S2': spline,'S3': spline,'S4': spline,'True State':scatter,'Obs':scatter},
+    axes:_{'S1':y,'S2':y,'S3':y,'S4':y,'True State':y2,'Obs':y2}},
+ % legend:_{show: false},
+    axis:_{ x:_{ tick:_{fit:false}},
+      y2:_{
+            show: 'true',
+                label: 'Time',
+                min: -6
+       },
+       y:_{label:'Density'}}
+  }.
+
+%! filter(+S:int,+Bins:int,-C:dict) is det
+% Draws a sample trajectory for 4 time points with observations O and true
+% states St. Then performs filtering on the trajectory: given O, compute the
+% distribution of the state for each time point by taking S samples.
+% Returns a graph C with the distributions of the state variable 
+% at time 1, 2, 3 and 4 
+% (S1, S2, S3, S4, density on the left y axis, number of bins Bins) 
+% and with O and St (time on the right y axis).
 filter(Samples,NBins,C):-
   sample_trajectory(4,O,St),
   mc_lw_sample_arg(kf(4,_O,T),kf_fin(4,O,_T),Samples,T,L),
@@ -116,6 +175,7 @@ sample_trajectory(N,Ob,St):-
   mc_sample_arg(kf(N,O,T),1,(O,T),L),
   L=[[(Ob,St)]-_].
 /** <examples>
+?- filter_par(100,40,C).
 ?- filter(1000,40,C).
 ?- dens_lw(1000,40,G).
 % plot the density of the state at time 1 in case of no observation (prior)
