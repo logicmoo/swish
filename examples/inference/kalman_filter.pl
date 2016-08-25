@@ -31,6 +31,9 @@ Third Edition, Prentice Hall, Figure 15.10 page 587
 :- mc.
 :- begin_lpad.
 
+kf_fin(N, T) :-
+  kf_fin(N,_O,T).
+
 kf_fin(N,O, T) :-
   init(S),
   kf_part(0, N, S,O,_LS,T).
@@ -113,13 +116,13 @@ filter_sampled_par(Samples,C):-
 
 filter_par(Samples,O,St,C):-
   O=[O1,O2,O3,O4],
-  NBins=40,
-  mc_particle_sample_arg(kf(4,_O,T),[kf_o(1,O1),kf_o(2,O2),kf_o(3,O3),kf_o(4,O4)],Samples,T,L),
-  maplist(separate,L,T1,T2,T3,T4),
-  density(T1,NBins,C1),
-  density(T2,NBins,C2),
-  density(T3,NBins,C3),
-  density(T4,NBins,C4),
+  NBins=20,
+  mc_particle_sample_arg([kf_fin(1,T1),kf_fin(2,T2),kf_fin(3,T3),kf_fin(4,T4)],
+  [kf_o(1,O1),kf_o(2,O2),kf_o(3,O3),kf_o(4,O4)],Samples,[T1,T2,T3,T4],[F1,F2,F3,F4]),
+  density(F1,NBins,C1),
+  density(F2,NBins,C2),
+  density(F3,NBins,C3),
+  density(F4,NBins,C4),
   [[x|X1],[dens|S1]]=C1.data.columns,
   [[x|X2],[dens|S2]]=C2.data.columns,
   [[x|X3],[dens|S3]]=C3.data.columns,
@@ -167,7 +170,7 @@ st([-0.18721387460211258, -2.187978176930458, -1.5472275345566668, -2.9840114021
 filter(Samples,O,St,C):-
   mc_lw_sample_arg(kf(4,_O,T),kf_fin(4,O,_T),Samples,T,L),
   maplist(separate,L,T1,T2,T3,T4),
-  NBins=40,
+  NBins=20,
   density(T1,NBins,C1),
   density(T2,NBins,C2),
   density(T3,NBins,C3),
