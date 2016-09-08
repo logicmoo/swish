@@ -514,4 +514,4 @@ eastbound(west10).
 %westbound(east5).
 :-end_in_neg.
 
-:-my_read_all.
+:-aleph_read_all.

@@ -90,21 +90,21 @@ random_const(_,C):discrete(C,[0:0.1,1:0.1,2:0.1,3:0.1,4:0.1,
 % F = 90,
 % P = 0.1.
 
-?- mc_mh_sample_arg(eval(2,Y),(eval(0,2),eval(1,3)),100,3,Y,V).
+?- mc_mh_sample_arg(eval(2,Y),(eval(0,2),eval(1,3)),100,100,3,Y,V).
 % sample arg Y of eval(2,Y) given that 
 % eval(0,2) and eval(1,3) are true
 % Sample using Metropolis Hastings
 % exected result
 % V = [[4]-100].
-?- mc_mh_sample_arg_bar(eval(2,Y),(eval(0,2),eval(1,3)),100,3,Y,V).
+?- mc_mh_sample_arg_bar(eval(2,Y),(eval(0,2),eval(1,3)),100,100,3,Y,V).
 
-?- mc_mh_sample_arg(eval(2,Y),eval(1,3),100,3,Y,V).
+?- mc_mh_sample_arg(eval(2,Y),eval(1,3),100,100,3,Y,V).
 % sample arg Y of eval(2,Y) given that 
 % eval(1,3) is true
 % Sample using Metropolis Hastings
 % exected result
-% V = [[3]-43, [1]-20, [2]-19, [5]-9, [6]-6, [4]-3].
-?- mc_mh_sample_arg_bar(eval(2,Y),eval(1,3),100,3,Y,V).
+% V = [[3]-52, [6]-20, [5]-16, [4]-12]
+?- mc_mh_sample_arg_bar(eval(2,Y),eval(1,3),100,100,3,Y,V).
 
 
 ?- mc_rejection_sample_arg(eval(2,Y),eval(1,3),100,Y,V).

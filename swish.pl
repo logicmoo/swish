@@ -192,6 +192,7 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(swish(lib/render/c3),	  []).
 :- use_module(swish(lib/render/url),	  []).
 :- use_module(swish(lib/render/lpad),	  []).
+:- use_module(swish(lib/render/prolog),	  []).
 
 %:- use_module(lib/pita).
 :- use_module(library(pita)).

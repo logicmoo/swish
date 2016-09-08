@@ -20,7 +20,7 @@
 :- modeb(*,mother(+person,-person)).
 :- modeb(*,father(+person,-person)).
 :- modeb(*,parent(+person,-person)).
-
+:- set(verbosity,0).
 :- set(abduce,true).
 :- abducible(parent/2).
 
@@ -872,4 +872,4 @@ grandparent(mum(mum(jane)),dad(mum(jane))).
 grandparent(mum(mum(jane)),mum(dad(jane))).
 grandparent(mum(mum(jane)),mum(mum(jane))).
 :-end_in_neg.
-:-my_read_all.
+:-aleph_read_all.

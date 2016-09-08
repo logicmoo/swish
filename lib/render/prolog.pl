@@ -27,7 +27,7 @@
     the GNU General Public License.
 */
 
-:- module(swish_render_lpad,
+:- module(swish_render_prolog,
 	  [ term_rendering//3			% +Term, +Vars, +Options
 	  ,clauses//1
 	  ]).
@@ -39,7 +39,7 @@
 :- use_module(library(slipcover)).
 :- use_module('../render').
 
-:- register_renderer(lpad, "Render a logic program with annotated disjunctions").
+:- register_renderer(prolog, "Render a logic program").
 
 /** <module> SWISH table renderer
 
@@ -62,52 +62,33 @@ term_rendering(Term, _Vars, _Options) -->
 	html(pre(\clauses(Term))).
 
 clauses([]) --> [].
-clauses([HC|T]) -->
+clauses([H1|T]) -->
 	{
+         copy_term(H1,HC),
 	 numbervars(HC,0,_),
-         HC=(H:-B),!,
-	 list2or(HL,H),
-	 list2and(BL,B)
+         (HC=(H:-B)->
+	   list2and(BL,B)
+         ;
+           BL=[],
+           H=HC
+         )
 	},
-	disj_clause(HL,BL),
+	single_clause(H,BL),
 	clauses(T).
 
-disj_clause(H,B)-->
+single_clause(H,B)-->
   {format(atom(I),' :-~n',[])},
   head(H,B,I).
 
-head([H:1.0|_Rest],[],_I)-->
+head(H,[],_I)-->
   {format(atom(A),"~q.~n~n",[H])},!,
   [A].
  
-head([H:1.0|_Rest],B,I)-->
+head(H,B,I)-->
   {format(atom(A),"~q",[H])},!,
   [A,I],
   body(B).
 
-head([H:P,'':_P],[],_I)-->
-  {format(atom(A),"~q:~g.~n~n",[H,P])},!,
-  [A].
-
-head([H:P,'':_P],B,I)-->
-  {format(atom(A),"~q:~g",[H,P])},!,
-  [A,I],
-  body(B).
-
-
-head([H:P],true,_I)-->
-  {format(atom(A),"~q:~g.~n~n",[H,P])},!,
-  [A].
-
-head([H:P],B,I)-->
-  {format(atom(A),"~q:~g",[H,P])},!,
-  [A,I],
-  body(B).
-
-head([H:P|Rest],B,I)-->
-  {format(atom(A),"~q:~g ; ",[H,P])},!,
-  [A],
-  head(Rest,B,I).
 
 body([])-->
   {format(atom(A),"  true.~n~n",[])},
@@ -132,22 +113,5 @@ body([H|T])-->
 %	ariry.
 
 is_list_of_clauses(Term) :-
-	is_list(Term), Term \== [],
-	maplist(is_clause, Term).
-
-is_clause((_H :- _B)).
-
-%%	is_list_of_lists(@Term, -Rows, -Cols) is semidet.
-%
-%	Recognise a list of lists of equal length.
-
-is_list_of_lists(Term, Rows, Cols) :-
-	is_list(Term), Term \== [],
-	length(Term, Rows),
-	maplist(is_list_row(Cols), Term),
-	Cols > 0.
-
-is_list_row(Length, Term) :-
-	is_list(Term),
-	length(Term, Length).
+	is_list(Term), Term \== [].
 
