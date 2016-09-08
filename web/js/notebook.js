@@ -702,6 +702,9 @@ var cellTypes = {
 	    this.find(".editor").prologEditor('makeCurrent');
 	    break;
 	  case "query":
+	    var ed = this.prevAll(".program").first().find(".editor");
+	    if ( ed.length == 1 )
+	      ed.prologEditor('makeCurrent');
 	    this.closest(".notebook")
                 .find(".nb-cell.program")
                 .not(this.nbCell("program_cells"))
@@ -893,15 +896,22 @@ var cellTypes = {
 
     /**
      * Returns all program cells in current notebook that are loaded
-     * for executing the receiving query.
+     * for executing the current cell.  This always starts with the
+     * background programs.  If `this` is a program cell, it is added.
+     * Otherwise the program cell before `this` is added.
      * @return {jQuery} set of nbCell elements that form the
      * sources for the receiving query cell.
      */
     program_cells: function() {
       var data = this.data(pluginName);
       var programs = this.closest(".notebook")
-	                 .find(".nb-cell.program.background")
-			 .add(this.prevAll(".program").first());
+	                 .find(".nb-cell.program.background");
+      if ( this.hasClass("program") ) {
+	if ( !this.hasClass("background") )
+	  programs = programs.add(this);
+      } else {
+	programs = programs.add(this.prevAll(".program").first());
+      }
       return programs;
     },
 
@@ -1001,6 +1011,7 @@ var cellTypes = {
   }
 
   methods.type.program = function(options) {	/* program */
+    var cell = this;
     var editor, bg;
     /*if (options && options.codeType == undefined)
     	options = {};*/
@@ -1010,7 +1021,11 @@ var cellTypes = {
     	  options.placeholder = "Your LPAD rules and facts go here ...";
          
     options.autoCurrent = false;
-   
+    options.getSource = function() {
+      var programs = cell.nbCell('programs');
+      return programs.prologEditor('getSource', undefined, true);
+    };
+
     this.html("");
 
     var buttons = $.el.div(
@@ -1093,7 +1108,7 @@ var cellTypes = {
 	  "Download answers as CSV": function() {
 	    var query  = cellText(this).replace(/\.\s*$/,"");
 	    var source = this.nbCell('programs')
-			     .prologEditor('getSource');
+			     .prologEditor('getSource', undefined, true);
 	    var options = {};
 	    var name   = this.attr("name");
 	    if ( name )
@@ -1258,11 +1273,13 @@ var cellTypes = {
       if ( pretext )
 	text = pretext + ", (" + prolog.trimFullStop(text) + ")";
     }
-    var query = { source: programs.prologEditor('getSource'),
-                  query:  text,
-		  tabled: settings.tabled||false,
-		  chunk:  settings.chunk,
-		  title:  false,
+    var query = { source:       programs.prologEditor('getSource',
+						      undefined, true),
+                  query:        text,
+		  tabled:       settings.tabled||false,
+		  chunk:        settings.chunk,
+		  title:        false,
+		  query_editor: this.find(".prolog-editor.query"),
 		  codeType: programs.prologEditor('getCodeType')
                 };
     if ( programs[0] )
@@ -1503,7 +1520,7 @@ var cellTypes = {
 		 *******************************/
 
   function cellText(cell) {
-    return cell.find(".editor").prologEditor('getSource');
+    return cell.find(".editor").prologEditor('getSource', undefined, true);
   }
   
   function cellCode(cell) {
@@ -1622,7 +1639,7 @@ function Notebook(options) {
  */
 Notebook.prototype.swish = function(options) {
   var pcells = this.cell().nbCell("programs");
-  var source = pcells.prologEditor('getSource');
+  var source = pcells.prologEditor('getSource', undefined, true);
 
   if ( source )
     options.src = source;

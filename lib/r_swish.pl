@@ -38,10 +38,12 @@
 :- use_module(library(http/html_write)).
 :- use_module(library(http/js_write)).
 
-% We publish to the user module to avoid autoloading `real'.
-:- use_module(user:library(r/r_call)).
-:- use_module(user:library(r/r_data)).
+% We publish to the R interface to `swish`
+:- use_module(swish:library(r/r_call)).
+:- use_module(swish:library(r/r_data)).
 
+:- use_module(library(r/r_call)).
+:- use_module(library(r/r_serve)).
 :- use_module(download).
 
 /** <Module> Bind Rserve to SWISH
@@ -101,19 +103,57 @@ plot(svg(SVG), _Options) --> !,
 plot(Term, _Options) --> !,
 	{ domain_error(image, Term) }.
 
+%%	pan_zoom
+%
+%	Add pan and soom behaviour to embedded SVG.  This function also
+%	renames the `id` attribute and their references.
+%
+%	@bug	We need a generic way to fix all references to the ID.
+%		Is there a list of such attributes?
+%	@bug	Instead of `"use"`, we should use `"[xlink\\:href]"`,
+%		but this does not seem to work!?
+%	@bug	When generalised, this could move into runner.js.
+
 pan_zoom -->
 	html(\js_script({|javascript||
 var svg  = node.node().find("svg");
-//svg.removeAttr("width height");		// trying to remove white space
-//svg.find("rect").first().remove();	// trying to remove white space
 var data = { w0: svg.width(),
 	     h0: svg.height()
 	   };
 var pan;
 
+function fixIDs(node, prefix1) {
+  var i=0;
+  node.each(function() {
+    var prefix = prefix1+(i++)+"_";
+    var img = $(this);
+    var hprefix = "#"+prefix;
+    var re = /(url\()#([^)]*)(\))/;
+
+    img.find("[id]").each(function() {
+      var elem = $(this);
+      elem.attr("id", prefix+elem.attr("id"));
+    });
+    img.find("use").each(function() {
+      var elem = $(this);
+      var r = elem.attr("xlink:href");
+      if ( r.charAt(0) == "#" )
+	elem.attr("xlink:href", hprefix+r.slice(1));
+    });
+    img.find("[clip-path]").each(function() {
+      var elem = $(this);
+      var r = elem.attr("clip-path").match(re);
+      if ( r.length == 4 )
+	elem.attr("clip-path", r[1]+hprefix+r[2]+r[3]);
+    });
+  });
+}
+
+fixIDs(svg, "N"+node.unique_id()+"_");
+
 function updateSize() {
   var w = svg.closest("div.Rplots").innerWidth();
-  console.log(w);
+  console.log(data.w0, w);
 
   function reactive() {
     if ( !data.reactive ) {
@@ -123,11 +163,11 @@ function updateSize() {
     }
   }
 
+  reactive();
   w = Math.max(w*0.95, 100);
   if ( w < data.w0 ) {
     svg.width(w);
     svg.height(w = Math.max(w*data.h0/data.w0, w/4));
-    reactive();
     if ( pan ) {
       pan.resize();
       pan.fit();
@@ -170,11 +210,10 @@ r_download(File) :-
 	    debug(r(file), 'Got ~D bytes from ~p', [Len, File])
 	;   true
 	),
-	file_name_extension(Name, Ext, File),
+	file_name_extension(_Name, Ext, File),
 	download_encoding(Ext, Enc),
 	download_button(Content,
-			[ name(Name),
-			  ext(Ext),
+			[ filename(File),
 			  encoding(Enc)
 			]).
 r_download(File) :-

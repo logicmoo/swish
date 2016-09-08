@@ -149,6 +149,8 @@ define([ "cm/lib/codemirror",
 
 	if ( options.mode == "prolog" ) {
 	  data.role = options.role;
+	  if ( options.getSource )
+	    data.getSource = options.getSource;
 
 	  if ( config.http.locations.cm_highlight ) {
 	    options.prologHighlightServer =
@@ -260,6 +262,9 @@ define([ "cm/lib/codemirror",
 	  if ( data.role != "query" )
 	    elem.prologEditor('print');
 	});
+	elem.on("clearMessages", function(ev) {
+	  elem.prologEditor('clearMessages');
+	});
 
 	if ( options.save ) {
 	  //storage.typeName = options.typeName||"program";
@@ -277,9 +282,6 @@ define([ "cm/lib/codemirror",
 
 	  elem.on("source-error", function(ev, error) {
 	    elem.prologEditor('highlightError', error);
-	  });
-	  elem.on("clearMessages", function(ev) {
-	    elem.prologEditor('clearMessages');
 	  });
 	  elem.on("pengine-died", function(ev, id) {
 	    if ( data.pengines ) {
@@ -438,11 +440,16 @@ define([ "cm/lib/codemirror",
     /**
      * FIXME: Add indication of the source, such that errors
      * can be relayed to the proper editor.
+     *
+     * @param {String} [role] Only return source for editors that
+     * match the given role.
+     * @param {Boolean} [direct] If `true`, do not try to indirect
+     * over the `data.getSource` function.
      * @returns {String} current contents of the editor.  If
      * the jQuery object holds multiple editors, we return the
      * joined content of the editors.
      */
-    getSource: function(role) {
+    getSource: function(role, direct) {
       var src = [];
 
       this.each(function() {
@@ -450,8 +457,15 @@ define([ "cm/lib/codemirror",
 	  var data = $(this).data(pluginName);
 
 	  if ( data ) {
-	    if ( !role || (role == data.role) )
-	      src.push(data.cm.getValue());
+	    if ( !role || (role == data.role) ) {
+	      var mysrc;
+	      if ( typeof(data.getSource) == "function" && !direct ) {
+		mysrc = data.getSource();
+	      } else {
+		mysrc = data.cm.getValue();
+	      }
+	      src.push(mysrc);
+	    }
 	  }
 	}
       });
@@ -694,35 +708,42 @@ define([ "cm/lib/codemirror",
     /**
      * Highlight a (syntax) error in the source.
      * @param {Object} error
-     * @param {String} error.data contains the error message
+     * @param {String} error.data contains the error message (HTML
+     * string)
      * @param {Object} error.location contains the location, providing
      * `line` and `ch` attributes.
      */
     highlightError: function(error) {
       if ( error.location.file &&
-	   this.prologEditor('isMyFile', error.location.file) ) {
+	   (error.location.file == true ||
+	    this.prologEditor('isMyFile', error.location.file)) ) {
 	var data = this.data(pluginName);
-	var msg  = $(error.data).text();
-	var left;
+	var chmark;
 
 	if ( error.location.ch ) {
 	  left = data.cm.charCoords({ line: error.location.line-1,
-				      ch:   error.location.ch
+				      ch:   error.location.ch-1
 				    },
 				    "local").left;
-	} else {
-	  left = 0;
+	  chmark = $.el.div({class:"source-msg-charmark"},
+			    $.el.span({class:"glyphicon glyphicon-chevron-up"}));
+	  $(chmark).css("padding-left", left+"px");
 	}
 
-	msg = msg.replace(/^.*?:[0-9][0-9]*: /, "");
-	var elem = $.el.span({class:"source-msg error"},
-			     msg,
-			     $("<span>&times;</span>")[0]);
-	$(elem).css("margin-left", left+"px");
-
+	var elem = $.el.div({ class:"source-msg error error-context",
+			      title:"Error message.  Click to remove"
+			    },
+			    chmark,
+			    $(error.data)[0],
+			    $.el.span({class:"glyphicon glyphicon-remove-circle"}));
 	var widget = data.cm.addLineWidget(error.location.line-1, elem);
 
-	$(elem).on("click", function() {
+	if ( error.error_context )
+	  $(elem).data("error_context", error.error_context);
+	$(elem).on("click", function(ev) {
+	  if ( error.error_handler &&
+	       error.error_handler(ev) == false )
+	    return;
 	  widget.clear();
 	});
 	$(elem).data("cm-widget", widget);
@@ -996,6 +1017,15 @@ define([ "cm/lib/codemirror",
 
 	if ( cm._searchMarkers.length > 0 )
 	  cm.on("cursorActivity", clearSearchMarkers);
+      } else {					/* mark entire line */
+	cm._searchMarkers.push(
+	      cm.markText({line:line, ch:0},
+			  {line:line, ch:cm.getLine(line).length},
+			  {className:"CodeMirror-search-match",
+			   clearOnEnter: true,
+			   clearWhenEmpty: true,
+			   title: "Target line"
+			  }));
       }
 
       return this;
