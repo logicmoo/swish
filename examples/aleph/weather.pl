@@ -114,4 +114,4 @@ class(d14,play).
 
 :-begin_in_neg.
 :-end_in_neg.
-:-my_read_all.
+:-aleph_read_all.
