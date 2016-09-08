@@ -20,7 +20,7 @@
 :- modeb(*,mother(+person,-person)).
 :- modeb(*,father(+person,-person)).
 :- modeb(*,parent(+person,-person)).
-
+:- set(verbosity,0).
 :- set(abduce,true).
 :- abducible(parent/2).
 
