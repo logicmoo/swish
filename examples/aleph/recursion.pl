@@ -54,4 +54,4 @@ mem(2,[]).
 mem(2,[3]).
 :-end_in_neg.
 
-:-my_read_all.
+:-aleph_read_all.

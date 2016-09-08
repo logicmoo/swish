@@ -190,4 +190,4 @@ class(crocodile,nmammal).
 
 :-end_in_neg.
 
-:-my_read_all.
+:-aleph_read_all.

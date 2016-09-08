@@ -18,7 +18,7 @@ This notebook gives an overview of example programs for inductive logic programm
   - Wedge ([wedge.pl](example/aleph/wedge.pl)) Simple illustration of constructing tree-based models within Aleph
 
 All examples are included in the standalone version of =aleph= at https://github.com/friguzzi/aleph 
-The stanalone version of =aleph= can be installed as a SWI-Prolog pack http://www.swi-prolog.org/pack/list
+The standalone version of =aleph= can be installed as a SWI-Prolog pack http://www.swi-prolog.org/pack/list
 </div>
 
 </div>
