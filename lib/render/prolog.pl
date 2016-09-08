@@ -81,11 +81,11 @@ single_clause(H,B)-->
   head(H,B,I).
 
 head(H,[],_I)-->
-  {format(atom(A),"~p.~n~n",[H])},!,
+  {format(atom(A),"~q.~n~n",[H])},!,
   [A].
  
 head(H,B,I)-->
-  {format(atom(A),"~p",[H])},!,
+  {format(atom(A),"~q",[H])},!,
   [A,I],
   body(B).
 
@@ -95,11 +95,11 @@ body([])-->
   [A].
 
 body([H])-->
-  {format(atom(A),"  ~p.~n~n",[H])},!,
+  {format(atom(A),"  ~q.~n~n",[H])},!,
   [A].
 
 body([H|T])-->
-  {format(atom(A),"  ~p,~n",[H])},
+  {format(atom(A),"  ~q,~n",[H])},
   [A],body(T).
 
 

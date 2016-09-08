@@ -77,35 +77,35 @@ disj_clause(H,B)-->
   head(H,B,I).
 
 head([H:1.0|_Rest],[],_I)-->
-  {format(atom(A),"~p.~n~n",[H])},!,
+  {format(atom(A),"~q.~n~n",[H])},!,
   [A].
  
 head([H:1.0|_Rest],B,I)-->
-  {format(atom(A),"~p",[H])},!,
+  {format(atom(A),"~q",[H])},!,
   [A,I],
   body(B).
 
 head([H:P,'':_P],[],_I)-->
-  {format(atom(A),"~p:~g.~n~n",[H,P])},!,
+  {format(atom(A),"~q:~g.~n~n",[H,P])},!,
   [A].
 
 head([H:P,'':_P],B,I)-->
-  {format(atom(A),"~p:~g",[H,P])},!,
+  {format(atom(A),"~q:~g",[H,P])},!,
   [A,I],
   body(B).
 
 
 head([H:P],true,_I)-->
-  {format(atom(A),"~p:~g.~n~n",[H,P])},!,
+  {format(atom(A),"~q:~g.~n~n",[H,P])},!,
   [A].
 
 head([H:P],B,I)-->
-  {format(atom(A),"~p:~g",[H,P])},!,
+  {format(atom(A),"~q:~g",[H,P])},!,
   [A,I],
   body(B).
 
 head([H:P|Rest],B,I)-->
-  {format(atom(A),"~p:~g ; ",[H,P])},!,
+  {format(atom(A),"~q:~g ; ",[H,P])},!,
   [A],
   head(Rest,B,I).
 
@@ -114,11 +114,11 @@ body([])-->
   [A].
 
 body([H])-->
-  {format(atom(A),"  ~p.~n~n",[H])},!,
+  {format(atom(A),"  ~q.~n~n",[H])},!,
   [A].
 
 body([H|T])-->
-  {format(atom(A),"  ~p,~n",[H])},
+  {format(atom(A),"  ~q,~n",[H])},
   [A],body(T).
 
 
