@@ -100,6 +100,9 @@ preferences.setDefault("emacs-keybinding", false);
       	"Help ...": function() {
       	  menuBroadcast("help", {file:"help.html"});
       	},
+	"Help on aleph...": function(){
+	  menuBroadcast("help", {file:"help-aleph.html"});
+	},
       	"Help on cplint...": function() {
       	  menuBroadcast("help", {file:"help-cplint.html"});
       	},
@@ -126,15 +129,17 @@ preferences.setDefault("emacs-keybinding", false);
       	"Background ...": function() {
       	  menuBroadcast("help", {file:"background.html"});
 	      },
-      }/*,
+      },
       "Tutorial":  {
           type: "active",
           action: function() {
-            console.log("click on tutorial");
-            methods.playURL.call($("body"), {url:"/tutorial/tutorial.swinb"});
+            var win = window.open("http://ds.ing.unife.it/~gcota/plptutorial/", '_blank');
+            win.focus();
+            //console.log("click on tutorial");
+            //methods.playURL.call($("body"), {url:"/tutorial/tutorial.swinb"});
           }
 
-        }*/
+        }
 
     }
   }; // defaults;
