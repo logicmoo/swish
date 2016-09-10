@@ -4,6 +4,9 @@
 
 :-use_module(library(aleph)).
 :- aleph.
+:- if(current_predicate(use_rendering/1)).
+:- use_rendering(prolog).
+:- endif.
 :- modeh(1,class(+day,-class)).
 :- modeb(1,outlook(+day,#outlook)).
 :- modeb(1,temp(+day,-temp)).

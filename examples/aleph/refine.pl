@@ -9,6 +9,9 @@
 ?- induce(Program).
 */
 :- use_module(library(aleph)).
+:- if(current_predicate(use_rendering/1)).
+:- use_rendering(prolog).
+:- endif.
 :- aleph.
 :- set(i,2).
 :- set(verbose,1).
