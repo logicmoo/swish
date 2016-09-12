@@ -8,7 +8,7 @@
 % value of the mode_overlap_threshold parameter
 
 /** <examples>
-?- induce_modes.
+?- induce_modes(Modes).
 */
 
 
