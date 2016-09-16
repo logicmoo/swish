@@ -8,11 +8,14 @@
 % value of the mode_overlap_threshold parameter
 
 /** <examples>
-?- induce_modes.
+?- induce_modes(Modes).
 */
 
 
 :-use_module(library(aleph)).
+:- if(current_predicate(use_rendering/1)).
+:- use_rendering(prolog).
+:- endif.
 :- aleph.
 :- set(i,2).
 :- set(clauselength,4).

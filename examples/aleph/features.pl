@@ -1,26 +1,26 @@
-% Simple illustration of the use of recording good clauses found
-%       during the search using the Michalski's trains problem.
-% This will store a Prolog encoding of clauses above minscore 
-% (optionally in the file specified by goodfile)
-% To run do the following:
-%       a. Load Aleph
-%       b. read_all(train).
-%       c. sat(1).
-%       d. reduce.
-%	e. show(good).
-
-/** <examples>
-?- reduce_and_show(good).
+/* Simple illustration of the use of Aleph to construct features
+   on Michalski's trains problem
+ To run do the following:
+       a. induce_features(Features)
 */
-:-use_module(library(aleph)).
+/** <examples>
+?- induce_features(Features).
+*/
+
+:- use_module(library(aleph)).
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(prolog).
 :- endif.
 :- aleph.
-:-style_check(-discontiguous).
 :- set(i,2).
-:- set(good,true).
-% :- set(goodfile,'good.pl').	% optional file to store good clauses
+:- set(clauselength,10).
+:- set(minacc,0.6).
+:- set(noise,3).
+:- set(minscore,3).
+:- set(minpos,3).
+:- set(nodes,5000).
+:- set(explore,true).
+:- set(max_features,10).
 
 :- modeh(1,eastbound(+train)).
 :- modeb(1,short(+car)).
@@ -44,8 +44,33 @@
 :- determination(eastbound/1,wheels/2).
 :- determination(eastbound/1,has_car/2).
 :- determination(eastbound/1,load/3).
+
+% show examples as boolean vectors
+
+:- set(portray_examples,true).
+
+aleph_portray(train_pos):-
+        setting(train_pos,File),
+        show_features(File,positive).
+aleph_portray(train_neg):-
+        setting(train_neg,File),
+        show_features(File,negative).
+
+show_features(File,Class):-
+        open(File,read,Stream),
+        repeat,
+        read(Stream,Example),
+        (Example = end_of_file -> close(Stream);
+                write_features(Example,Class),
+                fail).
+
+write_features(Example,_):-
+        features(_,(Example:- Body)),
+        (Body -> write(1), write(' '); write(0), write(' ')),
+        fail.
+write_features(_,Class):-
+	writeq(Class), nl.
 :-begin_bg.
-% type definitions
 car(car_11).  car(car_12).  car(car_13).  car(car_14).
 car(car_21).  car(car_22).  car(car_23).
 car(car_31).  car(car_32).  car(car_33).
@@ -267,12 +292,14 @@ load(car_102,rectangle,2).
 wheels(car_101,2).
 wheels(car_102,2).
 :-end_bg.
+
 :-begin_in_pos.
 eastbound(east1).
 eastbound(east2).
 eastbound(east3).
 eastbound(east4).
 eastbound(east5).
+
 :-end_in_pos.
 :-begin_in_neg.
 eastbound(west6).
@@ -280,6 +307,6 @@ eastbound(west7).
 eastbound(west8).
 eastbound(west9).
 eastbound(west10).
+
 :-end_in_neg.
 :-aleph_read_all.
-
