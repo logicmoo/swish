@@ -100,9 +100,6 @@ preferences.setDefault("emacs-keybinding", false);
       	"Help ...": function() {
       	  menuBroadcast("help", {file:"help.html"});
       	},
-	"Help on aleph...": function(){
-	  menuBroadcast("help", {file:"help-aleph.html"});
-	},
       	"Help on cplint...": function() {
       	  menuBroadcast("help", {file:"help-cplint.html"});
       	},
@@ -110,6 +107,9 @@ preferences.setDefault("emacs-keybinding", false);
 	  var win = window.open("http://cplint.lamping.unife.it/pldoc/doc/home/trill/lib/swipl/pack/cplint/prolog/", '_blank');
 	  win.focus();
 	 },
+	"Help on aleph...": function(){
+	  menuBroadcast("help", {file:"help-aleph.html"});
+	},
       	"Runner ...": function() {
       	  menuBroadcast("help", {file:"runner.html"});
       	},

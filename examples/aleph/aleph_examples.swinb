@@ -7,6 +7,8 @@ This notebook gives an overview of example programs for inductive logic programm
 
   - Abduce ([abduce.pl](example/aleph/abduce.pl)) Induce how to formally define the grandparent relation. 
   - Animals ([animals.pl](example/aleph/animals.pl)) Simple illustration of interactive construction of tree-based models within Aleph
+  - Constraints ([constraints.pl](example/aleph/constraints.pl)) Simple illustration of the extraction of integrity constraints
+  - Features ([features.pl](example/aleph/features.pl)) Simple illustration of the use of Aleph to construct features on Michalski's trains problem
   - Gcws ([gcws.pl](example/aleph/gcws.pl)) Simple illustration of the technique of generalised closed-world specialisation within Aleph
   - Good clauses ([good.pl](example/aleph/good.pl)) Simple illustration of the use of recording good clauses found during the search using the Michalski's trains problem.
   - Automatic extraction modes ([modes.pl](example/aleph/modes.pl)) Simple illustration of the automatic extraction of modes in Aleph using Michalski's trains problem.
