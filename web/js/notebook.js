@@ -1,3 +1,38 @@
+/*  Part of SWISH
+
+    Author:        Jan Wielemaker
+    E-mail:        J.Wielemaker@cs.vu.nl
+    WWW:           http://www.swi-prolog.org
+    Copyright (C): 2015-2016, VU University Amsterdam
+			      CWI Amsterdam
+    All rights reserved.
+
+    Redistribution and use in source and binary forms, with or without
+    modification, are permitted provided that the following conditions
+    are met:
+
+    1. Redistributions of source code must retain the above copyright
+       notice, this list of conditions and the following disclaimer.
+
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in
+       the documentation and/or other materials provided with the
+       distribution.
+
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+    COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+    INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+    BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+    CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+    ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+    POSSIBILITY OF SUCH DAMAGE.
+*/
+
 /**
  * @fileOverview
  * Manage the cell structure of a notebook modelled after IPython
@@ -1012,9 +1047,8 @@ var cellTypes = {
 
   methods.type.program = function(options) {	/* program */
     var cell = this;
-    var editor, bg;
-    /*if (options && options.codeType == undefined)
-    	options = {};*/
+    var editor;
+
     options = options||{};
     if (options.codeType)
     	if(options.codeType == "lpad")
@@ -1032,10 +1066,10 @@ var cellTypes = {
       {class:"btn-group nb-cell-buttons", role:"group"},
       glyphButton("triangle-bottom", "singleline", "Show only first line",
 		  "default", "xs"),
-      bg=glyphButton("cloud", "background", "Use as background program",
-		     "success", "xs"));
+      imageButton("background", "Use as background program", "xs"));
     this.append(buttons,
 		editor=$.el.div({class:"editor with-buttons"}));
+    console.log("XXX");
     if ( options.background )
     { this.addClass("background");
     }
@@ -1077,9 +1111,6 @@ var cellTypes = {
       { role: "query",
 	sourceID: function() {
 	  return cell.nbCell('programs').prologEditor('getSourceID');
-	},
-	prologQuery: function(q) {
-	  cell.nbCell('run');
 	}
       });
 
@@ -1610,6 +1641,16 @@ function glyphButton(glyph, action, title, style, size) {
 		    class:"btn btn-"+style+" btn-"+size+" action-"+action,
 		    title:title, "data-action":action},
 		   $.el.span({class:"glyphicon glyphicon-"+glyph}));
+
+  return btn;
+}
+
+function imageButton(action, title, size) {
+  size = size||"sm";
+  var btn = $.el.a({href:"#",
+		    class:"btn btn-default btn-image btn-"+size+" action-"+action,
+		    title:title, "data-action":action},
+		   $.el.span({class:"image-icon"}));
 
   return btn;
 }

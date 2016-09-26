@@ -1,10 +1,4 @@
-/*  Part of SWISH
-
-    Author:        Jan Wielemaker
-    E-mail:        J.Wielemaker@vu.nl
-    WWW:           http://www.swi-prolog.org
-    Copyright (c)  2016, VU University Amsterdam
-    All rights reserved.
+SWISH is licensed under the Simpified BSD license:
 
     Redistribution and use in source and binary forms, with or without
     modification, are permitted provided that the following conditions
@@ -30,30 +24,3 @@
     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
-*/
-
-:- module(swish_render_url,
-	  [ term_rendering//3			% +Term, +Vars, +Options
-	  ]).
-:- use_module(library(http/html_write)).
-:- use_module('../render').
-
-:- register_renderer(url, "Make URLs clickable").
-
-/** <module> SWISH url renderer
-
-Renders a URL as a clickable link
-*/
-
-%%	term_rendering(+URL, +Vars, +Options)//
-%
-%	Renders  a URL as a clickable link.
-
-term_rendering(URL, _Vars, _Options) -->
-	{   (   atom(URL)
-	    ->	true
-	    ;   string(URL)
-	    ),
-	    uri_is_global(URL)
-	},
-	html(a(href(URL), URL)).
