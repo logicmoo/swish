@@ -100,26 +100,33 @@ preferences.setDefault("emacs-keybinding", false);
 	}
       },
       "Edit":
-        { "Clear messages": function() {
-      	  menuBroadcast("clearMessages");
-      	},
-      	"Changes": "--",
-      	"View changes": function() {
-      	  menuBroadcast("diff");
-      	},
-      	"Revert changes": function() {
-      	  menuBroadcast("revert");
-      	},
-      	"Options": "--",
-      	"Semantic highlighting": {
-      	  preference: "semantic-highlighting",
-      	  type: "checkbox"
-      	},
-      	"Emacs Keybinding": {
-      	  preference: "emacs-keybinding",
-      	  type: "checkbox",
-      	  value: "false"
-      	}
+      { "Clear messages": function() {
+	  menuBroadcast("clearMessages");
+	},
+	"Changes": "--",
+	"View changes": function() {
+	  menuBroadcast("diff");
+	},
+	"Edit": "--",
+	"Find (Ctrl-F)": function() {
+	  menuBroadcast("edit-command", "find");
+	},
+	"Find and replace (Shift-Ctrl-F)": function() {
+	  menuBroadcast("edit-command", "replace");
+	},
+	"Jump to line (Alt-G)": function() {
+	  menuBroadcast("edit-command", "jumpToLine");
+	},
+	"Options": "--",
+	"Semantic highlighting": {
+	  preference: "semantic-highlighting",
+	  type: "checkbox"
+	},
+	"Emacs Keybinding": {
+	  preference: "emacs-keybinding",
+	  type: "checkbox",
+	  value: "false"
+	}
       },
       "Examples": function(navbar, dropdown) {
 	     $("body").swish('populateExamples', navbar, dropdown);

@@ -56,17 +56,16 @@ ul.dropdown-menu li.checkbox span  { margin-left: 20px; }
   width: 18px;
 }
 
-.navbar-default .navbar-nav  .active  a {
-  background-color: #f8f8f8;
-  color: #777;
+a.accelerated
+{ position: relative;
 }
 
-.navbar-default .navbar-nav  .active  a:hover {
-  background-color: #e7e7e7;
-  color: #333;
-  cursor: pointer;
+a.accelerated span.accell-spacer
+{ color: #fff;
 }
 
-.navbar-default .navbar-nav  .dropdown  a:hover {
-  cursor: pointer;
+a.accelerated span.accell-text
+{ color: #888;
+  position: absolute;
+  right: 10px;
 }

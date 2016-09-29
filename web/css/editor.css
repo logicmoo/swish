@@ -1,5 +1,6 @@
 @import url("../bower_components/codemirror/lib/codemirror.css");
 @import url("../bower_components/codemirror/addon/hint/show-hint.css");
+@import url("../bower_components/codemirror/addon/dialog/dialog.css");
 @import url("../js/codemirror/theme/prolog.css");
 @import url("../js/codemirror/addon/hover/prolog-hover.css");
 @import url("../js/codemirror/addon/hint/templates-hint.css");
@@ -103,4 +104,14 @@ div.edit-modal .goto-source
   background: #fff;
   box-shadow: 10px 10px 5px #888888;
   z-index: 2001;
+}
+
+		 /*******************************
+		 *	      DIALOG		*
+		 *******************************/
+
+div.CodeMirror-dialog
+{ border: 1px solid #888;
+  background: #f8f8f8;
+  box-shadow: 10px 10px 5px #888888;
 }
