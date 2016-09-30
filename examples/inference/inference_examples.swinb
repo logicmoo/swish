@@ -55,7 +55,9 @@ Examples divided by features:
   [widgetmsw.pl](example/inference/widgetmsw.pl),
   [slp_pcfg.pl](example/inference/slp_pcfg.pl), [slp_pdcg.pl](example/inference/slp_pdcg.pl)
   - variable number of objects: 
-  [var_objdb.pl](example/inference/var_objdb.pl), [var_obj.pl](example/inference/var_obj.pl)
+  [var_objdb.pl](example/inference/var_objdb.pl), 
+  [var_obj.pl](example/inference/var_obj.pl),
+  [var_obj_geom.pl](example/inference/var_obj_geom.pl)
   - flexible probabilities:
   [flexprob.pl](example/inference/flexprob.pl),
   [persons.pl](example/inference/persons.pl),
@@ -69,7 +71,9 @@ Examples divided by features:
   [pcfglr.pl](example/inference/pcfglr.pl), [markov_chaindb.pl](example/inference/markov_chaindb.pl), [slp_pcfg.pl](example/inference/slp_pcfg.pl)
   [markov_chain.pl](example/inference/markov_chain.pl),
   [prefix.pl](example/inference/prefix.pl),
-  [var_objdb.pl](example/inference/var_objdb.pl), [var_obj.pl](example/inference/var_obj.pl),
+  [var_objdb.pl](example/inference/var_objdb.pl), 
+  [var_obj.pl](example/inference/var_obj.pl),
+  [var_obj_geom.pl](example/inference/var_obj_geom.pl),
   [plcg.pl](example/inference/plcg.pl), [pre_plcg.pl](example/inference/pre_plcg.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   [gpl.pl](example/inference/gpl.pl), [rmc.pl](example/inference/rmc.pl),
@@ -98,6 +102,7 @@ Examples divided by features:
   [markov_chain.pl](example/inference/markov_chain.pl),
   [prefix.pl](example/inference/prefix.pl),
   [var_obj.pl](example/inference/var_obj.pl),
+  [var_obj_geom.pl](example/inference/var_obj_geom.pl),
   [plcg.pl](example/inference/plcg.pl), [pre_plcg.pl](example/inference/pre_plcg.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   [gpl.pl](example/inference/gpl.pl), [rmc.pl](example/inference/rmc.pl),
@@ -121,7 +126,9 @@ Examples divided by features:
   [pcfglr.pl](example/inference/pcfglr.pl), [markov_chaindb.pl](example/inference/markov_chaindb.pl),
   [markov_chain.pl](example/inference/markov_chain.pl),
   [prefix.pl](example/inference/prefix.pl), [testdb.pl](example/inference/testdb.pl),
-  [var_objdb.pl](example/inference/var_objdb.pl), [var_obj.pl](example/inference/var_obj.pl),
+  [var_objdb.pl](example/inference/var_objdb.pl), 
+  [var_obj.pl](example/inference/var_obj.pl),
+  [var_obj_geom.pl](example/inference/var_obj_geom.pl),
   [plcg.pl](example/inference/plcg.pl), [pre_plcg.pl](example/inference/pre_plcg.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   [gpl.pl](example/inference/gpl.pl), [rmc.pl](example/inference/rmc.pl),
@@ -152,7 +159,9 @@ Examples divided by features:
   [pcfglr.pl](example/inference/pcfglr.pl), [markov_chaindb.pl](example/inference/markov_chaindb.pl),
   [markov_chain.pl](example/inference/markov_chain.pl),
   [prefix.pl](example/inference/prefix.pl), [testdb.pl](example/inference/testdb.pl),
-  [var_objdb.pl](example/inference/var_objdb.pl), [var_obj.pl](example/inference/var_obj.pl),
+  [var_objdb.pl](example/inference/var_objdb.pl), 
+  [var_obj.pl](example/inference/var_obj.pl),
+  [var_obj_geom.pl](example/inference/var_obj_geom.pl),
   [plcg.pl](example/inference/plcg.pl), [pre_plcg.pl](example/inference/pre_plcg.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   [gpl.pl](example/inference/gpl.pl), [rmc.pl](example/inference/rmc.pl),
@@ -217,7 +226,9 @@ Examples divided by features:
   [metacomb.pl](example/inference/metacomb.pl), [flexprob.pl](example/inference/flexprob.pl),
   [persons.pl](example/inference/persons.pl), 
   [testdb.pl](example/inference/testdb.pl),
-  [var_objdb.pl](example/inference/var_objdb.pl), [var_obj.pl](example/inference/var_obj.pl),
+  [var_objdb.pl](example/inference/var_objdb.pl), 
+  [var_obj.pl](example/inference/var_obj.pl),
+  [var_obj_geom.pl](example/inference/var_obj_geom.pl),
   [arithm.pl](example/inference/arithm.pl).
 
 <a name="#list">Complete list of examples with description:</a>
@@ -306,11 +317,13 @@ Examples divided by features:
   - Existence uncertainty/unknown objects. 
   The programs models a domain where the number of objects is uncertain.
   In particular, the number of objects follows a geometric distribution
-  with parameter 0.3.
+  with parameter 0.7.
   We can ask what is the probability that the object number n exists.
   The goal has an infinite number of explanations so we have to either
   set a depth bound ([var_objdb.pl](example/inference/var_objdb.pl)) or
-  use approximate inference ([var_obj.pl](example/inference/var_obj.pl)).
+  use approximate inference ([var_obj.pl](example/inference/var_obj.pl) with
+  nonground facts and [var_obj_geom.pl](example/inference/var_obj_geom.pl) using
+  the geometric distribution primitive).
   From
   Poole, David. _The independent choice logic and beyond._ Probabilistic
   inductive logic programming. Springer Berlin Heidelberg, 2008. 222-243.
