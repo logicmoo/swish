@@ -123,7 +123,7 @@ filter_par(Samples,C):-
   sample_trajectory(4,O,St),
   filter_par(Samples,O,St,C).
 
-%! filter_sampled par(+S:int,-C:dict) is det
+%! filter_sampled_par(+S:int,-C:dict) is det
 % Considers a sampled trajectory for 4 time points and performs particle filtering
 filter_sampled_par(Samples,C):-
   o(O),

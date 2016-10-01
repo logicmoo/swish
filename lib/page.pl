@@ -317,13 +317,10 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
 	p([span([style('color:red')],['New']),': ',
+	a([href('/example/inference/kalman_filter.pl')],['Particle filtering']),', ',
 	a([href('/example/inference/dirichlet_process.pl')],['Dirichlet Process (stick breaking)']),', ',
 	a([href('/example/inference/dp_chinese.pl')],['Dirichlet Process (Chinese restaurant)']),', ',
-	a([href('/example/inference/dp_mix.pl')],['Dirichlet Process Mixture Model']),', ',
-	a([href('/help/help-cplint.html#download-query-results-through-an-api'),target('_blank')],
-	['API']),', ',
-	a([href('/example/inference/truel.pl')],
-	['truel example'])
+	a([href('/example/inference/dp_mix.pl')],['Dirichlet Process Mixture Model'])
 %	a([href('/help/help-cplint.html#cont'),target('_blank')],
 %	['continuous random variables']),' and ',
 %	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
