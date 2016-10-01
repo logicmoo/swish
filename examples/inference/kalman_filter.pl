@@ -14,6 +14,9 @@ Liklihood weighing is used to condition the distribution on evidence on
 a continuous random variable (evidence with probability 0).
 CLP(R) constraints allow both sampling and weighing samples with the same
 program.
+Filtering can be used to estimate the sequence of state variables
+given a sequence of observations. Either likelihood weighting or particle 
+filtering can be used for this purpose.
 From
 Islam, Muhammad Asiful, C. R. Ramakrishnan, and I. V. Ramakrishnan. 
 "Inference in probabilistic logic programs with continuous random variables." 
@@ -23,7 +26,24 @@ Russell, S. and Norvig, P. 2010. Arficial Intelligence: A Modern Approach.
 Third Edition, Prentice Hall, Figure 15.10 page 587
 
 */
-:- use_module(library(mcintyre)).
+
+/** <examples>
+?- filter_sampled_par(100,C).
+?- filter_par(100,C).
+?- filter_sampled(1000,C).
+?- filter(1000,C).
+?- dens_par(1000,40,G).
+?- dens_lw(1000,40,G).
+% plot the density of the state at time 1 in case of no observation (prior)
+% and in case of observing 2.5 by taking 1000 samples and dividing the domain
+% in 40 bins
+?- hist(1000,40,G).
+% plot the density of the state at time 1 in case of no observation
+% by taking 1000 samples and dividing the domain
+% in 40 bins
+
+*/
+ :- use_module(library(mcintyre)).
 :- use_module(library(clpr)).
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(c3).
@@ -97,23 +117,28 @@ dens_par(Samples,NBins,Chart):-
   densities(L0,L,NBins,Chart).
 
 
-%! filter_par(+S:int,+Bins:int,-C:dict) is det
-% Draws a sample trajectory for 4 time points with observations O and true
-% states St. Then performs filtering on the trajectory: given O, compute the
-% distribution of the state for each time point by taking S samples.
-% Returns a graph C with the distributions of the state variable 
-% at time 1, 2, 3 and 4 
-% (S1, S2, S3, S4, density on the left y axis, number of bins Bins) 
-% and with O and St (time on the right y axis).
+%! filter_par(+S:int,-C:dict) is det
+% Draws a sample trajectory for 4 time points and performs particle filtering
 filter_par(Samples,C):-
   sample_trajectory(4,O,St),
   filter_par(Samples,O,St,C).
 
+%! filter_sampled par(+S:int,-C:dict) is det
+% Considers a sampled trajectory for 4 time points and performs particle filtering
 filter_sampled_par(Samples,C):-
   o(O),
   st(St),
   filter_par(Samples,O,St,C).
 
+%! filter_par(+S:int,+O:list,+St:list,-C:dict) is det
+% Takes observations O and true states St for 4 time points 
+% and performs filtering on the trajectory: given O, computes the
+% distribution of the state for each time point.
+% It uses particle filtering with S particles.
+% Returns a graph C with the distributions of the state variable 
+% at time 1, 2, 3 and 4 
+% (S1, S2, S3, S4, density on the left y axis) 
+% and with O and St (time on the right y axis).
 filter_par(Samples,O,St,C):-
   O=[O1,O2,O3,O4],
   NBins=20,
@@ -137,7 +162,6 @@ filter_par(Samples,O,St,C):-
     [x4|X4],['S4'|S4]],
     types:_{'S1': spline,'S2': spline,'S3': spline,'S4': spline,'True State':scatter,'Obs':scatter},
     axes:_{'S1':y,'S2':y,'S3':y,'S4':y,'True State':y2,'Obs':y2}},
- % legend:_{show: false},
     axis:_{ x:_{ tick:_{fit:false}},
       y2:_{
             show: 'true',
@@ -147,18 +171,16 @@ filter_par(Samples,O,St,C):-
        y:_{label:'Density'}}
   }.
 
-%! filter(+S:int,+Bins:int,-C:dict) is det
-% Draws a sample trajectory for 4 time points with observations O and true
-% states St. Then performs filtering on the trajectory: given O, compute the
-% distribution of the state for each time point by taking S samples.
-% Returns a graph C with the distributions of the state variable 
-% at time 1, 2, 3 and 4 
-% (S1, S2, S3, S4, density on the left y axis, number of bins Bins) 
-% and with O and St (time on the right y axis).
+%! filter(+S:int,-C:dict) is det
+% Draws a sample trajectory for 4 time points and performs filtering with
+% likelihood weighting
 filter(Samples,C):-
   sample_trajectory(4,O,St),
   filter(Samples,O,St,C).
 
+%! filter_sampled(+S:int,-C:dict) is det
+% Considers a sampled trajectory for 4 time points and performs filtering
+% with likelihood weighting
 filter_sampled(Samples,C):-
   o(O),
   st(St),
@@ -167,6 +189,15 @@ filter_sampled(Samples,C):-
 o([-0.13382010096024688, -1.1832019975321675, -3.2127809027386567, -4.586259511038596]).
 st([-0.18721387460211258, -2.187978176930458, -1.5472275345566668, -2.9840114021132713]).
 
+%! filter(+S:int,+O:list,+St:list,-C:dict) is det
+% Takes observations O and true states St for 4 time points 
+% and performs filtering on the trajectory: given O, computes the
+% distribution of the state for each time point by taking S samples
+% using likelihood weighting.
+% Returns a graph C with the distributions of the state variable 
+% at time 1, 2, 3 and 4 
+% (S1, S2, S3, S4, density on the left y axis) 
+% and with O and St (time on the right y axis).
 filter(Samples,O,St,C):-
   mc_lw_sample_arg(kf(4,_O,T),kf_fin(4,O,_T),Samples,T,L),
   maplist(separate,L,T1,T2,T3,T4),
@@ -204,21 +235,4 @@ separate([S1,S2,S3,S4]-W,S1-W,S2-W,S3-W,S4-W).
 sample_trajectory(N,Ob,St):-
   mc_sample_arg(kf(N,O,T),1,(O,T),L),
   L=[[(Ob,St)]-_].
-/** <examples>
-?- filter_sampled_par(100,C).
-?- filter_par(100,C).
-?- filter_sampled(1000,C).
-?- filter(1000,C).
-?- dens_par(1000,40,G).
-?- dens_lw(1000,40,G).
-% plot the density of the state at time 1 in case of no observation (prior)
-% and in case of observing 2.5 by taking 1000 samples and dividing the domain
-% in 40 bins
-?- hist(1000,40,G).
-% plot the density of the state at time 1 in case of no observation
-% by taking 1000 samples and dividing the domain
-% in 40 bins
 
-
-*/
- 

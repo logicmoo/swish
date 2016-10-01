@@ -20,11 +20,14 @@ inductive logic programming. Springer Berlin Heidelberg, 2008. 222-243.
 :- mc.
 
 :- begin_lpad.
-numObj(N):geometric(N,0.7).
+numObj_1(N):geometric(N,0.7).
+
+numObj(N):-
+  numObj_1(N0),
+  N is N0-1.
 
 obj(I):-
- numObj(N0),
- N is N0-1,
+ numObj(N),
  between(1, N, I).
 
 :- end_lpad.
@@ -41,9 +44,9 @@ obj(I):-
 % expected result ~ 0.002666
 ?- mc_prob_bar(obj(5),P). % what is the probability that object 5 exists?
 % expected result ~ 0.002666
-?- mc_prob(numObj(2),P). % what is the probability that there are 3 objects?
+?- mc_prob(numObj(2),P). % what is the probability that there are 2 objects?
 % expected result ~ 0.0656
-?- mc_prob(numObj(5),P). % what is the probability that there are 6 objects?
+?- mc_prob(numObj(5),P). % what is the probability that there are 5 objects?
 % expected result ~ 0.0014
 ?- mc_sample(obj(5),1000,T,F,P). % take 1000 samples of obj(5)
 ?- mc_sample_bar(obj(5),1000,Chart). % take 1000 samples of obj(5)
