@@ -47,13 +47,13 @@ predictions and you can computed the expected value of the predictions.
 % XT=[2.5,6.5,8.5]
 % YT=[1,-0.8,0.6]
 % draws 5 functions predicting points with X=[0,...,10] with a 
-% squared exponential kernel
+% squared exponential kernel. The graphs shows as dots the given points.
 ?- draw_fun_pred_exp(sq_exp_p,C).
 % Given the three points
 % XT=[2.5,6.5,8.5]
 % YT=[1,-0.8,0.6]
 % draws the expected prediction for points with X=[0,...,10] with a
-% squared exponential kernel
+% squared exponential kernel. The graphs shows as dots the given points.
 */
 
 :- use_module(library(mcintyre)).
