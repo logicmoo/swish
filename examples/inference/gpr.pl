@@ -21,8 +21,9 @@ if i=j and 0 otherwise).
 When performing GP regression, you choose the kernel and you want to estimate
 the parameters of the kernel. You can define a prior distribution over the 
 parameters. In this program, you can sample kernels and thus functions and 
-predictions and you can computed the expected value of the predictions.
-
+predictions and you can computed the expected value of the predictions for 
+a squared exponential kernel with l uniformly
+distributed in {1,2,3} and sigma uniformly distributed in [-2,2].
 
 */
 
@@ -70,7 +71,7 @@ predictions and you can computed the expected value of the predictions.
 %! gp(+X:list,+Kernel:atom,-Y:list) is det
 % gp, given a list of values X and a kernel name, returns in Y
 % the list of values of type f(x) where x belongs to X and f is 
-% a function sampled from the Gaussian process
+% a function sampled from the Gaussian process.
 gp(X,Kernel,Y):-
   compute_cov(X,Kernel,0,C),
   gp(C,Y).
@@ -107,7 +108,7 @@ cov_row([H|T],XH,Ker,[KH|KT]):-
 %! gp_predict(+XP:list,+Kernel:atom,+XT:list,+YT:list,-YP:list) is det
 % Given that the points described by the lists XT and YP and a Kernel,
 % predict the Y values of points with X values in XP and returns them in YP.
-% Prediction is performed by Gaussian process regression
+% Prediction is performed by Gaussian process regression.
 gp_predict(XP,Kernel,Var,XT,YT,YP):-
   compute_cov(XT,Kernel,Var,C),
   matrix_inversion(C,C_1),
@@ -131,7 +132,8 @@ compute_k([XH|XT],X,Ker,[HK|TK]):-
 
 % list of kernels
 
-% squared exponential kernel with a prior on its parameters
+% squared exponential kernel with a prior on its parameters: l is uniformly
+% distributed in {1,2,3} and sigma is uniformly distributed in [-2,2].
 sq_exp_p(X,XP,K):-
   sigma(Sigma),
   l(L),
@@ -142,12 +144,12 @@ l(L):uniform(L,[1,2,3]).
 
 sigma(Sigma):uniform(Sigma,-2,2).
 
-% squared exponential kernel with fixed parameters: sigma=1, l=1
+% squared exponential kernel with fixed parameters: sigma=1, l=1.
 sq_exp(X,XP,K):-
   K is exp(-((X-XP)^2)/2).
 
 % squared exponential with linear and constant compoonent, 
-% from Bishop, page 307 eq 6.63
+% from Bishop, page 307 eq 6.63.
 sq_exp_const_lin(Theta0,Theta1,Theta2,Theta3,X,XP,K):-
   K is Theta0*exp(-((X-XP)^2)*Theta1/2)+Theta2+Theta3*X*XP.
 
@@ -156,7 +158,7 @@ min(X,XP,K):-
   K is min(X,XP).
 
 % linear kernel with an additional term for the diagonal to ensure positive
-% definedness
+% definedness.
 lin(X,X,K):-!,
   K is (X*X)+1.
 
@@ -171,14 +173,14 @@ ou(X,XP,K):-
 
 %! draw_fun(+Kernel:atom,-C:dict) is det
 % draws 5 functions sampled from the Gaussian process with kernel Kernel
-% at points X=[-3,-2,-1,0,1,2,3]
+% at points X=[-3,-2,-1,0,1,2,3].
 draw_fun(Kernel,C):-
   X=[-3,-2,-1,0,1,2,3],
   draw_fun(X,Kernel,C).
   
 %! draw_fun(+X:list,+Kernel:atom,-C:dict) is det
 % draws 5 functions sampled from the Gaussian process with kernel Kernel
-% at points X
+% at points X.
 draw_fun(X,Kernel,C):-
   mc_sample_arg_first(gp(X,Kernel,Y),5,Y,L),
   numlist(1,5,LD),
@@ -190,7 +192,7 @@ draw_fun(X,Kernel,C):-
 % Given the three points
 % XT=[2.5,6.5,8.5]
 % YT=[1,-0.8,0.6]
-% draws 5 functions predicting points with X=[0,...,10]
+% draws 5 functions predicting points with X=[0,...,10].
 draw_fun_pred(Kernel,C):-
   numlist(0,10,X),
   XT=[2.5,6.5,8.5],
@@ -207,7 +209,7 @@ draw_fun_pred(Kernel,C):-
 % Given the three points
 % XT=[2.5,6.5,8.5]
 % YT=[1,-0.8,0.6]
-% draws the expected prediction for points with X=[0,...,10]
+% draws the expected prediction for points with X=[0,...,10].
 draw_fun_pred_exp(Kernel,C):-
   numlist(0,10,X),
   XT=[2.5,6.5,8.5],
