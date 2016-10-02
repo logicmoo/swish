@@ -20,7 +20,7 @@ over the observed values) and delta_ij is the Kronecker function (delta_ij=1
 if i=j and 0 otherwise).
 When performing GP regression, you choose the kernel and you want to estimate
 the parameters of the kernel. You can define a prior distribution over the 
-parameters. In this program, you can sample kernels and thus function and 
+parameters. In this program, you can sample kernels and thus functions and 
 predictions and you can computed the expected value of the predictions.
 
 
