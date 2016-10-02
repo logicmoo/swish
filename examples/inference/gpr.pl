@@ -1,13 +1,39 @@
 /*
 Gaussian process (GP), see https://en.wikipedia.org/wiki/Gaussian_process
-and http://arxiv.org/pdf/1505.02965v2.pdf
+and http://arxiv.org/pdf/1505.02965v2.pdf and
+Christopher M. Bishop, 
+Pattern Recognition and Machine Learning, Springer, 2006, section 6.4
+
+A Gaussian Process defines a probability distribution over functions. 
+This distribution has the property that, given N values,
+their image through a function sampled from the GP follows a multivariate 
+normal with mean 0 and covariance matrix K.
+A GP is defined by a kernel function k that defines K in this way
+K_nm=k(x_n,x_m)
+GPs can be used for regression: the random functions are assumed to be used
+for predicting the y value corresponding to a x value given a set X and Y of
+observed values. It can be prove that y is Gaussian distributed with mean
+m(y)=k*C^-1*Y 
+where k is the row vector with elements k(X_i, x) and C has elements
+C_ij=k(x_i,x_j)+sigma*delta_ij, with sigma a user defined parameter (variance
+over the observed values).
 
 */
 
 /** <examples>
 ?- draw_fun(sq_exp_p,C).
-?- draw_fun(sq_exp,C).
+% draw 5 functions from a GP with a squared exponential kernel with a prior 
+% over the parameters sigma and l
+?- draw_fun(sq_exp_const_lin(1.0,4.0,0.0,5.00),C).
+% draw 5 functions from a GP with a squared exponential, constant, linear 
+% kernel (see Bishop page 308 Figure 6.5, bottom right
+??- draw_fun(sq_exp,C).
+% draw 5 functions from a GP with a squared exponential kernel with 
+% parameters sigma=1 and l=1
 ?- draw_fun(ou,C).
+% kernel
+% draw 5 functions from a GP with a Ornstein-Uhlenbeck kernel with 
+% parameters sigma=1 and l=1
 ?- draw_fun(lin,C).
 ?- draw_fun([1,2,3,4,5,6],min,C).
 ?- draw_fun_pred(sq_exp_p,C).
@@ -30,30 +56,31 @@ and http://arxiv.org/pdf/1505.02965v2.pdf
 % the list of values of type f(x) where x belongs to X and f is 
 % a function sampled from the Gaussian process
 gp(X,Kernel,Y):-
-  compute_cov(X,Kernel,C),
+  compute_cov(X,Kernel,0,C),
   gp(C,Y).
 
 gp(Cov,Y):gaussian(Y,Mean,Cov):-
   length(Cov,N),
   list0(N,Mean).
 
-compute_cov(X,Kernel,C):-
+compute_cov(X,Kernel,Var,C):-
   length(X,N),
-  cov(X,N,Kernel,CT,CND),
+  cov(X,N,Kernel,Var,CT,CND),
   transpose(CND,CNDT),
   matrix_sum(CT,CNDT,C).
 
-cov([],_,_,[],[]).
+cov([],_,_,_,[],[]).
 
-cov([XH|XT],N,Ker,[KH|KY],[KHND|KYND]):-
+cov([XH|XT],N,Ker,Var,[KH|KY],[KHND|KYND]):-
   length(XT,LX),
   N1 is N-LX-1,
   list0(N1,KH0),
   cov_row(XT,XH,Ker,KH1),
-  call(Ker,XH,XH,KXH),
+  call(Ker,XH,XH,KXH0),
+  KXH is KXH0+Var,
   append([KH0,[KXH],KH1],KH),
   append([KH0,[0],KH1],KHND),
-  cov(XT,N,Ker,KY,KYND).
+  cov(XT,N,Ker,Var,KY,KYND).
 
 cov_row([],_,_,[]).
 
@@ -65,8 +92,8 @@ cov_row([H|T],XH,Ker,[KH|KT]):-
 % Given that the points described by the lists XT and YP and a Kernel,
 % predict the Y values of points with X values in XP and returns them in YP.
 % Prediction is performed by Gaussian process regression
-gp_predict(XP,Kernel,XT,YT,YP):-
-  compute_cov(XT,Kernel,C),
+gp_predict(XP,Kernel,Var,XT,YT,YP):-
+  compute_cov(XT,Kernel,Var,C),
   matrix_inversion(C,C_1),
   transpose([YT],YST),
   matrix_multiply(C_1,YST,C_1T),
@@ -102,6 +129,11 @@ sigma(Sigma):uniform(Sigma,-2,2).
 % squared exponential kernel with fixed parameters: sigma=1, l=1
 sq_exp(X,XP,K):-
   K is exp(-((X-XP)^2)/2).
+
+% squared exponential with linear and constant compoonent, 
+% from Bishop, page 307 eq 6.63
+sq_exp_const_lin(Theta0,Theta1,Theta2,Theta3,X,XP,K):-
+  K is Theta0*exp(-((X-XP)^2)*Theta1/2)+Theta2+Theta3*X*XP.
 
 % min kernel
 min(X,XP,K):-
@@ -147,7 +179,7 @@ draw_fun_pred(Kernel,C):-
   numlist(0,10,X),
   XT=[2.5,6.5,8.5],
   YT=[1,-0.8,0.6],
-  mc_lw_sample_arg(gp_predict(X,Kernel,XT,YT,Y),gp(XT,Kernel,YT),5,Y,L),
+  mc_lw_sample_arg(gp_predict(X,Kernel,0.3,XT,YT,Y),gp(XT,Kernel,YT),5,Y,L),
   keysort(L,LS),
   reverse(LS,[Y1-_,Y2-_,Y3-_|_]),
   C = c3{data:_{xs:_{y:xt,f1:x,f2:x,f3:x}, 
@@ -172,7 +204,7 @@ draw_fun_pred_exp(Kernel,C):-
 
 compute_e([],_,_,_,[]).
 compute_e([X|T],Kernel,XT,YT,[YE|TYE]):-
-  mc_lw_expectation(gp_predict([X],Kernel,XT,YT,[Y]),gp(XT,Kernel,YT),5,Y,YE),
+  mc_lw_expectation(gp_predict([X],Kernel,0.3,XT,YT,[Y]),gp(XT,Kernel,YT),5,Y,YE),
   compute_e(T,Kernel,XT,YT,TYE).
 
 name_s(V-_,N,[ND|V]):-
