@@ -6,9 +6,11 @@
 This notebook gives an overview of example programs for inference:
 
 Examples divided by features:
+  - Gaussian process regression: [gpr.pl](example/inference/gpr.pl)
   - Dirichlet process: [dirichlet_process.pl](example/inference/dirichlet_process.pl), [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
   - continuous random variables: 
+  [gpr.pl](example/inference/gpr.pl),
   [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), [kalman_filter.pl](example/inference/kalman_filter.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
@@ -23,7 +25,9 @@ Examples divided by features:
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
   - stochastic logic programs: [slp_pcfg.pl](example/inference/slp_pcfg.pl), [slp_pdcg.pl](example/inference/slp_pdcg.pl) 
+  - particle filtering: [kalman_filter.pl](example/inference/kalman_filter.pl)
   - likelihood weighting: 
+  [gpr.pl](example/inference/gpr.pl),
   [kalman_filter.pl](example/inference/kalman_filter.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
@@ -41,6 +45,7 @@ Examples divided by features:
   [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), [widget.pl](example/inference/widget.pl),
   [widgetmsw.pl](example/inference/widgetmsw.pl)
   - argument sampling: 
+  [gpr.pl](example/inference/gpr.pl),
   [dirichlet_process.pl](example/inference/dirichlet_process.pl),
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl),
@@ -64,7 +69,9 @@ Examples divided by features:
   [dirichlet_process.pl](example/inference/dirichlet_process.pl),
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
-  - computation of expectations: [arithm.pl](example/inference/arithm.pl),
+  - computation of expectations: 
+  [gpr.pl](example/inference/gpr.pl),
+  [arithm.pl](example/inference/arithm.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   - infinite number of explanations:
   [pcfglrdb.pl](example/inference/pcfglrdb.pl),
@@ -84,6 +91,7 @@ Examples divided by features:
   [metacomb.pl](example/inference/metacomb.pl)
   - combining rules: [metacomb.pl](example/inference/metacomb.pl)
   - graphics: 
+  [gpr.pl](example/inference/gpr.pl),
   [path.pl](example/inference/path.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   [hmmpos.pl](example/inference/hmmpos.pl),
@@ -115,7 +123,8 @@ Examples divided by features:
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
   [seven_scientists.pl](example/inference/seven_scientists.pl), [widget.pl](example/inference/widget.pl),
-  [widgetmsw.pl](example/inference/widgetmsw.pl)
+  [widgetmsw.pl](example/inference/widgetmsw.pl),
+  [gpr.pl](example/inference/gpr.pl)
   - unconditional inference: [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
   [sneezing.pl](example/inference/sneezing.pl), [eruption.pl](example/inference/eruption.pl), [mendel.pl](example/inference/mendel.pl), [bloodtype.pl](example/inference/bloodtype.pl),
   [path.pl](example/inference/path.pl), [alarm.pl](example/inference/alarm.pl), [hmm.pl](example/inference/hmm.pl), [pcfg.pl](example/inference/pcfg.pl),
@@ -179,7 +188,8 @@ Examples divided by features:
   [truel.pl](example/inference/truel.pl),
   [dirichlet_process.pl](example/inference/dirichlet_process.pl),
   [dp_chinese.pl](example/inference/dp_chinese.pl),
-  [dp_mix.pl](example/inference/dp_mix.pl)
+  [dp_mix.pl](example/inference/dp_mix.pl),
+  [gpr.pl](example/inference/gpr.pl)
   - .cpl format: [coin.cpl](example/inference/coin.cpl), [dice.cpl](example/inference/dice.cpl), [epidemic.cpl](example/inference/epidemic.cpl), [earthquake.cpl](example/inference/earthquake.cpl),
   [sneezing.cpl](example/inference/sneezing.cpl), [eruption.cpl](example/inference/eruption.cpl), [mendel.cpl](example/inference/mendel.cpl), [bloodtype.cpl](example/inference/bloodtype.cpl),
   [path.cpl](example/inference/path.cpl), [alarm.cpl](example/inference/alarm.cpl), [hmm.cpl](example/inference/hmm.cpl), [pcfg.cpl](example/inference/pcfg.cpl), 
@@ -218,6 +228,7 @@ Examples divided by features:
   - Bayesian estimation: 
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
   [seven_scientists.pl](example/inference/seven_scientists.pl)
+  - regression: [gpr.pl](example/inference/gpr.pl)
   - toy: [earthquake.pl](example/inference/earthquake.pl),
    [eruption.pl](example/inference/eruption.pl),
   [alarm.pl](example/inference/alarm.pl), 
@@ -517,5 +528,10 @@ is done.
   - Dirichlet process (DP) ([dp_chinese.pl](example/inference/dp_chinese.pl)) with a Chinese Restaurant Process, see https://en.wikipedia.org/wiki/Dirichlet_process
   - Mixture model from a Dirichlet process, ([dp_mix.pl](example/inference/dp_mix.pl)) see http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=nonparametrics/dp-mixture-model
   https://en.wikipedia.org/wiki/Dirichlet_process
+  - Gaussian process (GP) regression ([gpr.pl](example/inference/gpr.pl)) see 
+  https://en.wikipedia.org/wiki/Gaussian_process
+  http://arxiv.org/pdf/1505.02965v2.pdf and
+  Christopher M. Bishop, 
+  Pattern Recognition and Machine Learning, Springer, 2006, section 6.4
 </div>
 </div>

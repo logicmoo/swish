@@ -8,15 +8,21 @@ A Gaussian Process defines a probability distribution over functions.
 This distribution has the property that, given N values,
 their image through a function sampled from the GP follows a multivariate 
 normal with mean 0 and covariance matrix K.
-A GP is defined by a kernel function k that defines K in this way
+A GP is defined by a kernel function k that determines K in this way
 K_nm=k(x_n,x_m)
-GPs can be used for regression: the random functions are assumed to be used
-for predicting the y value corresponding to a x value given a set X and Y of
-observed values. It can be prove that y is Gaussian distributed with mean
+GPs can be used for regression: the random functions 
+predict the y value corresponding to a x value given a set X and Y of
+observed values. It can be proven that y is Gaussian distributed with mean
 m(y)=k*C^-1*Y 
 where k is the row vector with elements k(X_i, x) and C has elements
 C_ij=k(x_i,x_j)+sigma*delta_ij, with sigma a user defined parameter (variance
-over the observed values).
+over the observed values) and delta_ij is the Kronecker function (delta_ij=1
+if i=j and 0 otherwise).
+When performing GP regression, you choose the kernel and you want to estimate
+the parameters of the kernel. You can define a prior distribution over the 
+parameters. In this program, you can sample kernels and thus function and 
+predictions and you can computed the expected value of the predictions.
+
 
 */
 
@@ -31,13 +37,23 @@ over the observed values).
 % draw 5 functions from a GP with a squared exponential kernel with 
 % parameters sigma=1 and l=1
 ?- draw_fun(ou,C).
-% kernel
-% draw 5 functions from a GP with a Ornstein-Uhlenbeck kernel with 
-% parameters sigma=1 and l=1
+% draw 5 functions from a GP with a Ornstein-Uhlenbeck kernel 
 ?- draw_fun(lin,C).
+% draw 5 functions from a GP with a linear kernel 
 ?- draw_fun([1,2,3,4,5,6],min,C).
+% draw 5 functions from a GP with a min kernel 
 ?- draw_fun_pred(sq_exp_p,C).
+% Given the three points
+% XT=[2.5,6.5,8.5]
+% YT=[1,-0.8,0.6]
+% draws 5 functions predicting points with X=[0,...,10] with a 
+% squared exponential kernel
 ?- draw_fun_pred_exp(sq_exp_p,C).
+% Given the three points
+% XT=[2.5,6.5,8.5]
+% YT=[1,-0.8,0.6]
+% draws the expected prediction for points with X=[0,...,10] with a
+% squared exponential kernel
 */
 
 :- use_module(library(mcintyre)).
