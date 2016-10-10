@@ -125,7 +125,7 @@ Examples divided by features:
   [seven_scientists.pl](example/inference/seven_scientists.pl), [widget.pl](example/inference/widget.pl),
   [widgetmsw.pl](example/inference/widgetmsw.pl),
   [gpr.pl](example/inference/gpr.pl)
-  - unconditional inference: [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
+  - unconditional inference: [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
   [sneezing.pl](example/inference/sneezing.pl), [eruption.pl](example/inference/eruption.pl), [mendel.pl](example/inference/mendel.pl), [bloodtype.pl](example/inference/bloodtype.pl),
   [path.pl](example/inference/path.pl), [alarm.pl](example/inference/alarm.pl), [hmm.pl](example/inference/hmm.pl), [pcfg.pl](example/inference/pcfg.pl),
   [uwcse.pl](example/inference/uwcse.pl), [cora.pl](example/inference/cora.pl),
@@ -156,7 +156,7 @@ Examples divided by features:
   - .pl format: [coin.pl](example/inference/coin.pl), [coin.swinb](example/inference/coin.swinb), 
   [coinmc.pl](example/inference/coinmc.pl), 
   [coinmsw.pl](example/inference/coinmsw.pl),
-  [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
+  [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
   [sneezing.pl](example/inference/sneezing.pl), [eruption.pl](example/inference/eruption.pl), [mendel.pl](example/inference/mendel.pl), [bloodtype.pl](example/inference/bloodtype.pl),
   [path.pl](example/inference/path.pl), [alarm.pl](example/inference/alarm.pl), [hmm.pl](example/inference/hmm.pl), [pcfg.pl](example/inference/pcfg.pl),
   [uwcse.pl](example/inference/uwcse.pl), [cora.pl](example/inference/cora.pl),
@@ -219,7 +219,8 @@ Examples divided by features:
   [gpl.pl](example/inference/gpl.pl), [rmc.pl](example/inference/rmc.pl),
   - medicine: [epidemic.pl](example/inference/epidemic.pl),
   [sneezing.pl](example/inference/sneezing.pl),
-  - games: [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.pl](example/inference/dice.pl), [trigger.pl](example/inference/trigger.pl), [coin2.pl](example/inference/coin2.pl), [threesideddice.pl](example/inference/threesideddice.pl),
+  - games: [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), 
+  [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [trigger.pl](example/inference/trigger.pl), [coin2.pl](example/inference/coin2.pl), [threesideddice.pl](example/inference/threesideddice.pl),
   [truel.pl](example/inference/truel.pl)
   - social networks:
   [uwcse.pl](example/inference/uwcse.pl)
@@ -253,7 +254,7 @@ Examples divided by features:
    volume 3131 of LNCS, pages 195-209. Springer, 2004. 
    [coinmc.pl](example/inference/coinmc.pl) is a version for inference with MCINTYRE (Monte Carlo sampling).
  [coinmsw.pl](example/inference/coinmsw.pl) is a version that models the problem with PRISM syntax.
-  - Dice ([dice.cpl](example/inference/dice.cpl), 
+  - Dice ([dice.swinb](example/inference/dice.swinb), [dice.cpl](example/inference/dice.cpl), 
   [dice.pl](example/inference/dice.pl)) 
   A six-sided die is repeatedly thrown until the outcome is six. 
   From J. Vennekens, S. Verbaeten, and M. Bruynooghe. 
