@@ -1,0 +1,109 @@
+<div class="notebook">
+
+<div class="nb-cell markdown">
+# Throwing a coin 
+We throw a coin with uncertainty on its fairness.
+
+The coin is fair with 90% probability and biased with 10% probability.
+If the coin is fair, it lands heads with 50% probability and tails with 
+50% probability.
+If the coin is biased, it lands heads with 60% probability and tails with 
+40% probability.
+
+What is the probability that coin lands heads?
+
+</div>
+<div class="nb-cell query">
+prob(heads(coin),Prob). 
+</div>
+<div class="nb-cell markdown">
+
+What is the probability that coin lands heads represented graphically?
+
+</div>
+<div class="nb-cell query">
+prob_bar(heads(coin),Prob). 
+</div>
+<div class="nb-cell markdown">
+
+What is the probability that coin lands tails?
+
+</div>
+<div class="nb-cell query">
+prob(tails(coin),Prob). 
+</div>
+<div class="nb-cell markdown">
+
+What is the probability that coin lands tails represented graphically?
+
+</div>
+<div class="nb-cell query">
+prob_bar(tails(coin),Prob). 
+</div>
+<div class="nb-cell markdown">
+
+What is the probability that coin lands heads given the coin is biased?
+
+</div>
+<div class="nb-cell query">
+prob(heads(coin),biased(coin),Prob).  
+</div>
+<div class="nb-cell markdown">
+
+## Code
+
+Preamble:
+</div>
+<div class="nb-cell program prolog" data-background="true">
+:- use_module(library(pita)).
+
+:- if(current_predicate(use_rendering/1)).
+:- use_rendering(c3).
+:- endif.
+
+:- pita.
+
+:- begin_lpad.
+</div>
+
+<div class="nb-cell markdown">
+
+If we toss a =Coin= that is not biased then it lands heads with probability 1/2
+and tails with probability 1/2:
+</div>
+<div class="nb-cell program prolog" data-background="true">
+heads(Coin): 1/2; tails(Coin) : 1/2:-toss(Coin),\+biased(Coin).
+</div>
+<div class="nb-cell markdown">
+If we toss a =Coin= that is biased then it lands heads with probability 0.6
+and tails with probability 0.4:
+</div>
+<div class="nb-cell program prolog" data-background="true">
+heads(Coin): 0.6 ; tails(Coin) : 0.4:-toss(Coin),biased(Coin).
+</div>
+<div class="nb-cell markdown">
+A =Coin= is fair with probability 0.9 and biased with probability 0.1:
+</div>
+<div class="nb-cell program prolog" data-background="true">
+fair(Coin):0.9 ; biased(Coin):0.1.
+</div>
+<div class="nb-cell markdown">
+=coin= is certainly tossed:
+</div>
+<div class="nb-cell program prolog" data-background="true">
+toss(coin).
+</div>
+<div class="nb-cell markdown">
+Epilogue:
+</div>
+<div class="nb-cell program prolog" data-background="true">
+
+:- end_lpad.
+</div>
+<div class="nb-cell markdown">
+From
+J. Vennekens, S. Verbaeten, and M. Bruynooghe. Logic programs with annotated 
+disjunctions. In International Conference on Logic Programming, 
+volume 3131 of LNCS, pages 195-209. Springer, 2004.
+</div>
+</div>

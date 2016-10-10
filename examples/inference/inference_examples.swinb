@@ -125,7 +125,7 @@ Examples divided by features:
   [seven_scientists.pl](example/inference/seven_scientists.pl), [widget.pl](example/inference/widget.pl),
   [widgetmsw.pl](example/inference/widgetmsw.pl),
   [gpr.pl](example/inference/gpr.pl)
-  - unconditional inference: [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
+  - unconditional inference: [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
   [sneezing.pl](example/inference/sneezing.pl), [eruption.pl](example/inference/eruption.pl), [mendel.pl](example/inference/mendel.pl), [bloodtype.pl](example/inference/bloodtype.pl),
   [path.pl](example/inference/path.pl), [alarm.pl](example/inference/alarm.pl), [hmm.pl](example/inference/hmm.pl), [pcfg.pl](example/inference/pcfg.pl),
   [uwcse.pl](example/inference/uwcse.pl), [cora.pl](example/inference/cora.pl),
@@ -153,7 +153,7 @@ Examples divided by features:
   - Distributional clauses syntax:
   [indian_gpadc.pl](example/inference/indian_gpadc.pl),
   [nballsdc.pl](example/inference/nballsdc.pl)
-  - .pl format: [coin.pl](example/inference/coin.pl), 
+  - .pl format: [coin.pl](example/inference/coin.pl), [coin.swinb](example/inference/coin.swinb), 
   [coinmc.pl](example/inference/coinmc.pl), 
   [coinmsw.pl](example/inference/coinmsw.pl),
   [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
@@ -219,7 +219,7 @@ Examples divided by features:
   [gpl.pl](example/inference/gpl.pl), [rmc.pl](example/inference/rmc.pl),
   - medicine: [epidemic.pl](example/inference/epidemic.pl),
   [sneezing.pl](example/inference/sneezing.pl),
-  - games: [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.pl](example/inference/dice.pl), [trigger.pl](example/inference/trigger.pl), [coin2.pl](example/inference/coin2.pl), [threesideddice.pl](example/inference/threesideddice.pl),
+  - games: [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.pl](example/inference/dice.pl), [trigger.pl](example/inference/trigger.pl), [coin2.pl](example/inference/coin2.pl), [threesideddice.pl](example/inference/threesideddice.pl),
   [truel.pl](example/inference/truel.pl)
   - social networks:
   [uwcse.pl](example/inference/uwcse.pl)
@@ -243,7 +243,8 @@ Examples divided by features:
   [arithm.pl](example/inference/arithm.pl).
 
 <a name="#list">Complete list of examples with description:</a>
-  - Coin ([coin.cpl](example/inference/coin.cpl),
+  - Coin ([coin.swinb](example/inference/coin.swinb), 
+   [coin.cpl](example/inference/coin.cpl),
    [coin.pl](example/inference/coin.pl)) 
    Throwing a coin with uncertainty on its fairness, 
    from J. Vennekens, S. Verbaeten, and M. Bruynooghe. 
