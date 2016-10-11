@@ -92,6 +92,7 @@ Examples divided by features:
   - combining rules: [metacomb.pl](example/inference/metacomb.pl)
   - graphics: 
   [gpr.pl](example/inference/gpr.pl),
+  [path.swinb](example/inference/path.swinb),
   [path.pl](example/inference/path.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   [hmmpos.pl](example/inference/hmmpos.pl),
@@ -127,6 +128,7 @@ Examples divided by features:
   [gpr.pl](example/inference/gpr.pl)
   - unconditional inference: [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
   [sneezing.pl](example/inference/sneezing.pl), [eruption.pl](example/inference/eruption.pl), [mendel.pl](example/inference/mendel.pl), [bloodtype.pl](example/inference/bloodtype.pl),
+  [path.swinb](example/inference/path.swinb),
   [path.pl](example/inference/path.pl), [alarm.pl](example/inference/alarm.pl), [hmm.pl](example/inference/hmm.pl), [pcfg.pl](example/inference/pcfg.pl),
   [uwcse.pl](example/inference/uwcse.pl), [cora.pl](example/inference/cora.pl),
   [mendelc.pl](example/inference/mendelc.pl), [meta.pl](example/inference/meta.pl)
@@ -158,6 +160,7 @@ Examples divided by features:
   [coinmsw.pl](example/inference/coinmsw.pl),
   [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
   [sneezing.pl](example/inference/sneezing.pl), [eruption.pl](example/inference/eruption.pl), [mendel.pl](example/inference/mendel.pl), [bloodtype.pl](example/inference/bloodtype.pl),
+  [path.swinb](example/inference/path.swinb),
   [path.pl](example/inference/path.pl), [alarm.pl](example/inference/alarm.pl), [hmm.pl](example/inference/hmm.pl), [pcfg.pl](example/inference/pcfg.pl),
   [uwcse.pl](example/inference/uwcse.pl), [cora.pl](example/inference/cora.pl),
   [monty.pl](example/inference/monty.pl), 
@@ -207,6 +210,7 @@ Examples divided by features:
   [plcg.pl](example/inference/plcg.pl), [pre_plcg.pl](example/inference/pre_plcg.pl),
   [hmmpos.pl](example/inference/hmmpos.pl), [hmmpos2.pl](example/inference/hmmpos2.pl), [slp_pcfg.pl](example/inference/slp_pcfg.pl), [slp_pdcg.pl](example/inference/slp_pdcg.pl)
   - biology: 
+  [path.swinb](example/inference/path.swinb),
   [path.pl](example/inference/path.pl),  [hmm.pl](example/inference/hmm.pl), 
   - puzzles: [monty.pl](example/inference/monty.pl), [monty_simple.pl](example/inference/monty_simple.pl), [jail.pl](example/inference/jail.pl),
   [indian_gpa.pl](example/inference/indian_gpa.pl),
@@ -268,7 +272,7 @@ Examples divided by features:
   - Eruption ([eruption.cpl](example/inference/eruption.cpl), [eruption.pl](example/inference/eruption.pl)) Occurrence of an eruption or an earthquake at Stromboli. From Elena Bellodi and Fabrizio Riguzzi. _Structure learning of probabilistic logic programs by searching the clause space_. Theory and Practice of Logic Programming, FirstView Articles, 2014.
   - Mendelian inheritance of the color of pea plants ([mendel.cpl](example/inference/mendel.cpl), [mendel.pl](example/inference/mendel.pl)) Mendelian inheritance of the color of pea plants. From H. Blockeel. _Probabilistic logical models for mendel's experiments: An exercise_. In Inductive Logic Programming, Work in Progress Track, 2004.
   - Mendelian inheritance of human bloodtype ([bloodtype.cpl](example/inference/bloodtype.cpl), [bloodtype.pl](example/inference/bloodtype.pl)) Mendelian inheritance of the bloodtype of people. The problem is to predict the probability of the bloodtype of a person. From Wannes Meert, Jan Struyf, and Hendrik Blockeel. _CP-Logic theory inference with contextual variable elimination and comparison to BDD based inference methods_. Inductive Logic Programming. Springer Berlin Heidelberg, 2010.
-  - Path ([path.cpl](example/inference/path.cpl), [path.pl](example/inference/path.pl)) Computing the probability of a path between two nodes in a probabilistic graph. Each edge has a probability of being present. From L. De Raedt, A. Kimmig, and H. Toivonen. _ProbLog: A probabilistic Prolog and its application in link discovery_. In International Joint Conference on Artificial Intelligence, pages 2462-2467, 2007.  By running the query graph(G) you can see a nice picture of the probabilistic graph.
+  - Path ([path.swinb](example/inference/path.swinb), [path.cpl](example/inference/path.cpl), [path.pl](example/inference/path.pl)) Computing the probability of a path between two nodes in a probabilistic graph. Each edge has a probability of being present. From L. De Raedt, A. Kimmig, and H. Toivonen. _ProbLog: A probabilistic Prolog and its application in link discovery_. In International Joint Conference on Artificial Intelligence, pages 2462-2467, 2007.  By running the query graph(G) you can see a nice picture of the probabilistic graph.
   - Alarm Bayesian network ([alarm.cpl](example/inference/alarm.cpl), [alarm.pl](example/inference/alarm.pl)) The Alarm Bayesian network, from Figure 2 in J. Vennekens, S. Verbaeten, and M. Bruynooghe. _Logic programs with annotated disjunctions_. In International Conference on Logic Programming, volume 3131 of LNCS, pages 195-209. Springer, 2004.
   - Hidden Markov Model ([hmm.cpl](example/inference/hmm.cpl), [hmm.pl](example/inference/hmm.pl)) Hidden Markov model for modeling DNA sequences. The model has three states, q1, q2 and end, and four output symbols, a, c, g, and t, corresponding to the four nucleotides (letter). From Christiansen, H. and Gallagher, J. P. _Non-discriminating arguments and their uses_. In International Conference on Logic Programming. volume 5649 of LNCS, pages 55-69. Springer, 2009.
   - Probabilistic Context Free Grammar ([pcfg.cpl](example/inference/pcfg.cpl),
