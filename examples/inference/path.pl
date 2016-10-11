@@ -18,7 +18,7 @@ Artificial Intelligence, pages 2462-2467, 2007.
 :- begin_lpad.
 
 % path(X,Y) is true if there is a path between nodes X and Y
-% edge(a,b) indicates that there is an edge between a nad b
+% edge(a,b) indicates that there is an edge between a and b
 
 path(X,X).
 % there is surely a path between a node and itself
