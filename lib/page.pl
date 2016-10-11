@@ -318,7 +318,7 @@ swish_navbar(Options) -->
         a([id('dismisslink'),href('')],['Dismiss']),
 	p([span([style('color:red')],['New']),': ',
 	a([href('/example/inference/gpr.pl')],['Gaussian Process regression']),', ',
-	a([href('/example/inference/kalman_filter.pl')],['Particle filtering']),', ',
+	a([href('/example/inference/kalman_filter.swinb')],['Particle filtering']),', ',
 	a([href('/example/inference/dirichlet_process.pl')],['Dirichlet Process (stick breaking)']),', ',
 	a([href('/example/inference/dp_chinese.pl')],['Dirichlet Process (Chinese restaurant)']),', ',
 	a([href('/example/inference/dp_mix.pl')],['Dirichlet Process mixture model'])

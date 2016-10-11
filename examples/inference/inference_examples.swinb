@@ -11,7 +11,9 @@ Examples divided by features:
   [dp_mix.pl](example/inference/dp_mix.pl)
   - continuous random variables: 
   [gpr.pl](example/inference/gpr.pl),
-  [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), [kalman_filter.pl](example/inference/kalman_filter.pl),
+  [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), 
+  [kalman_filter.swinb](example/inference/kalman_filter.swinb),
+  [kalman_filter.pl](example/inference/kalman_filter.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
   [seven_scientists.pl](example/inference/seven_scientists.pl), 
@@ -25,9 +27,12 @@ Examples divided by features:
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
   - stochastic logic programs: [slp_pcfg.pl](example/inference/slp_pcfg.pl), [slp_pdcg.pl](example/inference/slp_pdcg.pl) 
-  - particle filtering: [kalman_filter.pl](example/inference/kalman_filter.pl)
+  - particle filtering: 
+  [kalman_filter.swinb](example/inference/kalman_filter.swinb),
+  [kalman_filter.pl](example/inference/kalman_filter.pl)
   - likelihood weighting: 
   [gpr.pl](example/inference/gpr.pl),
+  [kalman_filter.swinb](example/inference/kalman_filter.swinb),
   [kalman_filter.pl](example/inference/kalman_filter.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
@@ -52,7 +57,9 @@ Examples divided by features:
   [markov_chain.pl](example/inference/markov_chain.pl),
   [plcg.pl](example/inference/plcg.pl),
   [hmmpos.pl](example/inference/hmmpos.pl), [hmmpos2.pl](example/inference/hmmpos2.pl),
-  [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), [kalman_filter.pl](example/inference/kalman_filter.pl),
+  [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), 
+  [kalman_filter.swinb](example/inference/kalman_filter.swinb),
+  [kalman_filter.pl](example/inference/kalman_filter.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
   [seven_scientists.pl](example/inference/seven_scientists.pl), 
@@ -97,6 +104,7 @@ Examples divided by features:
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   [hmmpos.pl](example/inference/hmmpos.pl),
   [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), 
+  [kalman_filter.swinb](example/inference/kalman_filter.swinb),
   [kalman_filter.pl](example/inference/kalman_filter.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
@@ -120,7 +128,9 @@ Examples divided by features:
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
   - conditional inference: [threesideddice.pl](example/inference/threesideddice.pl),
-  [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), [kalman_filter.pl](example/inference/kalman_filter.pl),
+  [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), 
+  [kalman_filter.swinb](example/inference/kalman_filter.swinb),
+  [kalman_filter.pl](example/inference/kalman_filter.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
   [seven_scientists.pl](example/inference/seven_scientists.pl), [widget.pl](example/inference/widget.pl),
@@ -178,7 +188,9 @@ Examples divided by features:
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   [gpl.pl](example/inference/gpl.pl), [rmc.pl](example/inference/rmc.pl),
   [hmmpos.pl](example/inference/hmmpos.pl), [hmmpos2.pl](example/inference/hmmpos2.pl),
-  [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), [kalman_filter.pl](example/inference/kalman_filter.pl),
+  [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), 
+  [kalman_filter.swinb](example/inference/kalman_filter.swinb),
+  [kalman_filter.pl](example/inference/kalman_filter.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
   [seven_scientists.pl](example/inference/seven_scientists.pl), [widget.pl](example/inference/widget.pl),
@@ -228,7 +240,9 @@ Examples divided by features:
   [truel.pl](example/inference/truel.pl)
   - social networks:
   [uwcse.pl](example/inference/uwcse.pl)
-  - filtering: [kalman_filter.pl](example/inference/kalman_filter.pl),
+  - filtering: 
+  [kalman_filter.swinb](example/inference/kalman_filter.swinb),
+  [kalman_filter.pl](example/inference/kalman_filter.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
   - Bayesian estimation: 
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
@@ -428,7 +442,8 @@ Examples divided by features:
   illustrates the use of the predicate histogram/3 for graphing the
   probability density function of continuous random variables.
   - One-dimensional  Kalman filter
-  ([kalman_filter.pl](example/inference/kalman_filter.pl), PRISM syntax
+  ([kalman_filter.swinb](example/inference/kalman_filter.swinb),
+  [kalman_filter.pl](example/inference/kalman_filter.pl), PRISM syntax
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl)).
   Hidden Markov model with a real
   value as state and a real value as output. The next state is given by
