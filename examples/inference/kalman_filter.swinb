@@ -25,8 +25,7 @@ program.
 Filtering can be used to estimate the sequence of state variables
 given a sequence of observations. Either likelihood weighting or particle 
 filtering can be used for this purpose.
-</div>
-<div class="nb-cell markdown">
+
 The following query plots the density of the state at time 1 in case of no observation (prior)
 and in case of observing 2.5 
 (observation as in Russel and Norvig 2010, Fig 15.10) by taking 1000 samples using likelihood weighting
@@ -380,6 +379,7 @@ Islam, Muhammad Asiful, C. R. Ramakrishnan, and I. V. Ramakrishnan.
 "Inference in probabilistic logic programs with continuous random variables." 
 Theory and Practice of Logic Programming 12.4-5 (2012): 505-523.
 http://arxiv.org/pdf/1112.2681v3.pdf
+
 Russell, S. and Norvig, P. 2010. Arficial Intelligence: A Modern Approach. 
 Third Edition, Prentice Hall, Figure 15.10 page 587
 </div>
