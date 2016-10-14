@@ -37,12 +37,16 @@ into 40 bins:
 dens_lw(1000,40,G).
 </div>
 <div class="nb-cell markdown">
+As you can see, the peak of the posterior distribution is close to 2.5.
+
 Do the same with particle filtering:
 </div>
 <div class="nb-cell query">
 dens_par(1000,40,G).
 </div>
 <div class="nb-cell markdown">
+Again the peak of the posterior distribution is close to 2.5.
+
 The following query draws a sample trajectory for 4 time points and performs particle filtering.
 The query returns a graph =G= with the distributions of the state variable 
 at time 1, 2, 3 and 4 
@@ -53,12 +57,18 @@ and with the points for the observations Obs and the states St with respect to t
 filter_sampled_par(100,C).
 </div>
 <div class="nb-cell markdown">
+As you can see, the peaks of the densities follow the observations (and the 
+unobserved states).
+
 Do the same with likelihood weighting:
 </div>
 <div class="nb-cell query">
 filter_sampled(1000,C).
 </div>
 <div class="nb-cell markdown">
+Again the peaks of the densities follow the observations (and the 
+unobserved states).
+
 Consider the sampled trajectory for 4 time points with observations 
 [-0.13382010096024688, -1.1832019975321675, -3.2127809027386567, -4.5862595110
 38596] 
