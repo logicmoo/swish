@@ -319,9 +319,7 @@ swish_navbar(Options) -->
 	p([span([style('color:red')],['New']),': ',
 	a([href('/example/inference/gpr.pl')],['Gaussian Process regression']),', ',
 	a([href('/example/inference/kalman_filter.swinb')],['Particle filtering']),', ',
-	a([href('/example/inference/dirichlet_process.pl')],['Dirichlet Process (stick breaking)']),', ',
-	a([href('/example/inference/dp_chinese.pl')],['Dirichlet Process (Chinese restaurant)']),', ',
-	a([href('/example/inference/dp_mix.pl')],['Dirichlet Process mixture model'])
+	a([href('/example/inference/path.swinb')],['BDD drwaing'])
 %	a([href('/help/help-cplint.html#cont'),target('_blank')],
 %	['continuous random variables']),' and ',
 %	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
