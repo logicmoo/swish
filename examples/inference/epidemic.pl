@@ -10,7 +10,7 @@ diagrams for probabilistic logic programs. Intelligent Data Analysis,
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(c3).
 :- use_rendering(graphviz).
-:- use_rendering(table,[header(['Rule index','Grounding substitution','Multivalued variable index'])]).
+:- use_rendering(table,[header(['Multivalued variable index','Rule index','Grounding substitution'])]).
 :- endif.
 
 :- pita.
