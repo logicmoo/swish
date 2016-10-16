@@ -319,7 +319,7 @@ swish_navbar(Options) -->
 	p([span([style('color:red')],['New']),': BDD drawing: ',
 	a([href('/example/inference/path.swinb')],['path']),', ',
 	a([href('/example/inference/dice.swinb')],['dice']),', ',
-	a([href('/example/inference/epidemic.pl')],['epidemic']),', ',
+	a([href('/example/inference/epidemic.pl')],['epidemic']),'; ',
 	a([href('/example/inference/gpr.pl')],['Gaussian Process regression']),', ',
 	a([href('/example/inference/kalman_filter.swinb')],['Particle filtering'])
 %	a([href('/help/help-cplint.html#cont'),target('_blank')],
