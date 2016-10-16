@@ -46,11 +46,47 @@ Run
 swish_daemon.
 
 user:file_search_path(swish, SwishDir) :-
+	getenv('SWISH_HOME', SwishDir), !.
+user:file_search_path(swish, SwishDir) :-
 	source_file(swish_daemon, ThisFile),
 	file_directory_name(ThisFile, SwishDir).
 
+:- initialization load_swish_modules.
 :- initialization http_daemon.
 
 :- use_module(swish(lib/ssl_certificate)).
 :- [swish(swish)].
 :- use_module(swish:swish(lib/swish_debug)).
+
+%%	load_swish_modules
+%
+%	Load additional modules into SWISH. These   are  loaded from the
+%	environment variable =SWISH_MODULES=, which is   a `:` separated
+%	list of modules to load of the   form Alias/Local. If the syntax
+%	Module@Context is used, the exports of  Module are imported into
+%	the module Context. For example:
+%
+%	  - =|swish/lib/r_swish@swish|= loads the R connection into the
+%	    swish application context.
+%	  - =|swish/lib/authenticate|= load the authentication module.
+
+load_swish_modules :-
+	getenv('SWISH_MODULES', Atom),
+	Atom \== '', !,
+	atomic_list_concat(Modules, :, Atom),
+	maplist(load_swish_module, Modules).
+load_swish_modules.
+
+load_swish_module(Spec) :-
+	atomic_list_concat([Module,Into], @, Spec), !,
+	module_term(Module, Term),
+	use_module(Into:Term).
+load_swish_module(Module) :-
+	module_term(Module, Term),
+	use_module(Term).
+
+module_term(Spec, Term) :-
+	sub_atom(Spec, B, _, A, /), !,
+	sub_atom(Spec, 0, B, _, Alias),
+	sub_atom(Spec, _, A, 0, Local),
+	Term =.. [Alias, Local].
