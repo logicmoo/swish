@@ -83,7 +83,7 @@ A solid edge indicates a 0-child, a dashed edge indicates a 0-child and
 a dotted 
 edge indicates a negated 0-child.
 Each level of the BDD is associated to a variable of the form XI_J indicated on the left:
-I indicates mutlivaluted variable index and J the index of the Boolean variable of I.
+I indicates the multivaluted variable index and J the index of the Boolean variable of I.
 The table =Var= contains the associations between the rule groundings and the
 multivalued variables:
 the first column contains contains the multivalued variable index,
