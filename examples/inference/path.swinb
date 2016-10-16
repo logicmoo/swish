@@ -27,12 +27,14 @@ prob_bar(path(a,e),Prob).
 What is the BDD for query path(a,e)?
 </div>
 <div class="nb-cell query">
-bdd_dot_string(path(a,e),BDD).  
+bdd_dot_string(path(a,e),BDD,Var).  
 </div>
 <div class="nb-cell markdown">
 A solid edge indicates a 0-child, a dashed edge indicates a 0-child and 
 a dotted 
 edge indicates a negated 0-child.
+Each level of the BDD is associated to a variable of the form XI_J indicated on the left:
+I indicates the rule index and J the index of the Boolean variable of rule I.
 
 
 ## Code
@@ -45,6 +47,7 @@ Preamble:
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(c3).
 :- use_rendering(graphviz).
+:- use_rendering(table,[header(['Rule index','Grounding substitution','Multivalued variable index'])]).
 :- endif.
 
 :- pita.

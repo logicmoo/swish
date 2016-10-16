@@ -53,12 +53,19 @@ prob(heads(coin),biased(coin),Prob).
 What is the BDD for query heads(coin)?
 </div>
 <div class="nb-cell query">
-bdd_dot_string(heads(coin),BDD).  
+bdd_dot_string(heads(coin),BDD,Var).  
 </div>
 <div class="nb-cell markdown">
 A solid edge indicates a 0-child, a dashed edge indicates a 0-child and 
 a dotted 
 edge indicates a negated 0-child.
+Each level of the BDD is associated to a variable of the form XI_J indicated on the left:
+I indicates mutlivaluted variable index and J the index of the Boolean variable of I.
+The table =Var= contains the associations between the rule groundings and the
+multivalued variables: the first column contains the rule index, corresponding
+to its position in the program, the second column contains the list of constants
+grounding the rule, each replacing a variable in the order of appearance in the
+rule, and the last column contains the multivalued variable index.
 
 ## Code
 
@@ -70,6 +77,7 @@ Preamble:
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(c3).
 :- use_rendering(graphviz).
+:- use_rendering(table,[header(['Rule index','Grounding substitution','Multivalued variable index'])]).
 :- endif.
 
 :- pita.

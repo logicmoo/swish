@@ -43,11 +43,17 @@ toss(coin).
 % what is the probability that coin lands heads given the coin is biased?
 % expected result 0.6
 
-?- bdd_dot_string(heads(coin),BDD).  
+?- bdd_dot_string(heads(coin),BDD,Var).  
 % What is the BDD for query heads(coin)?
 % A solid edge indicates a 0-child, a dashed edge indicates a 0-child and 
 % a dotted 
 % edge indicates a negated 0-child.
+% The table Var contains the associations between the rule groundings and the
+% multivalued variables: the first column contains the rule index, corresponding
+% to its position in the program, the second column contains the list 
+% of constants grounding the rule, each replacing a variable in the order of appearance in the
+% rule, and the last column contains the multivalued variable index.
+
 
 
 */
