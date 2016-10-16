@@ -317,9 +317,9 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
 	p([span([style('color:red')],['New']),': ',
+	a([href('/example/inference/path.swinb')],['BDD drwaing']),', ',
 	a([href('/example/inference/gpr.pl')],['Gaussian Process regression']),', ',
-	a([href('/example/inference/kalman_filter.swinb')],['Particle filtering']),', ',
-	a([href('/example/inference/path.swinb')],['BDD drwaing'])
+	a([href('/example/inference/kalman_filter.swinb')],['Particle filtering'])
 %	a([href('/help/help-cplint.html#cont'),target('_blank')],
 %	['continuous random variables']),' and ',
 %	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
