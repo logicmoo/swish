@@ -36,11 +36,12 @@ edge indicates a negated 0-child.
 Each level of the BDD is associated to a variable of the form XI_J indicated on the left:
 I indicates the rule index and J the index of the Boolean variable of rule I.
 The table =Var= contains the associations between the rule groundings and the
-multivalued variables: the first column contains the rule index, corresponding
-to its position in the program, the second column contains the list of constants
-grounding the rule, each replacing a variable in the order of appearance in the
-rule, and the last column contains the multivalued variable index.
-
+multivalued variables:
+the first column contains contains the multivalued variable index,
+the second column contains the rule index, corresponding
+to its position in the program, and the last column contains the list 
+of constants grounding the rule, each replacing a variable in the order of appearance in the
+rule.
 
 
 ## Code
@@ -53,7 +54,7 @@ Preamble:
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(c3).
 :- use_rendering(graphviz).
-:- use_rendering(table,[header(['Rule index','Grounding substitution','Multivalued variable index'])]).
+:- use_rendering(table,[header(['Multivalued variable index','Rule index','Grounding substitution'])]).
 :- endif.
 
 :- pita.

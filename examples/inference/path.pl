@@ -11,7 +11,7 @@ Artificial Intelligence, pages 2462-2467, 2007.
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(c3).
 :- use_rendering(graphviz).
-:- use_rendering(table,[header(['Rule index','Grounding substitution','Multivalued variable index'])]).
+:- use_rendering(table,[header(['Multivalued variable index','Rule index','Grounding substitution'])]).
 :- endif.
 
 :- pita.
@@ -59,10 +59,6 @@ graph(digraph(G)):-
 % a dotted 
 % edge indicates a negated 0-child.
 % The table Var contains the associations between the rule groundings and the
-% multivalued variables: the first column contains the rule index, corresponding
-% to its position in the program, the second column contains the list 
-% of constants grounding the rule, each replacing a variable in the order of appearance in the
-% rule, and the last column contains the multivalued variable index.
-
+% multivalued variables.
 
 */
