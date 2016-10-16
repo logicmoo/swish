@@ -25,8 +25,7 @@ program.
 Filtering can be used to estimate the sequence of state variables
 given a sequence of observations. Either likelihood weighting or particle 
 filtering can be used for this purpose.
-</div>
-<div class="nb-cell markdown">
+
 The following query plots the density of the state at time 1 in case of no observation (prior)
 and in case of observing 2.5 
 (observation as in Russel and Norvig 2010, Fig 15.10) by taking 1000 samples using likelihood weighting
@@ -37,12 +36,16 @@ into 40 bins:
 dens_lw(1000,40,G).
 </div>
 <div class="nb-cell markdown">
+As you can see, the peak of the posterior distribution is close to 2.5.
+
 Do the same with particle filtering:
 </div>
 <div class="nb-cell query">
 dens_par(1000,40,G).
 </div>
 <div class="nb-cell markdown">
+Again the peak of the posterior distribution is close to 2.5.
+
 The following query draws a sample trajectory for 4 time points and performs particle filtering.
 The query returns a graph =G= with the distributions of the state variable 
 at time 1, 2, 3 and 4 
@@ -53,12 +56,18 @@ and with the points for the observations Obs and the states St with respect to t
 filter_sampled_par(100,C).
 </div>
 <div class="nb-cell markdown">
+As you can see, the peaks of the densities follow the observations (and the 
+unobserved states).
+
 Do the same with likelihood weighting:
 </div>
 <div class="nb-cell query">
 filter_sampled(1000,C).
 </div>
 <div class="nb-cell markdown">
+Again the peaks of the densities follow the observations (and the 
+unobserved states).
+
 Consider the sampled trajectory for 4 time points with observations 
 [-0.13382010096024688, -1.1832019975321675, -3.2127809027386567, -4.5862595110
 38596] 
@@ -370,6 +379,7 @@ Islam, Muhammad Asiful, C. R. Ramakrishnan, and I. V. Ramakrishnan.
 "Inference in probabilistic logic programs with continuous random variables." 
 Theory and Practice of Logic Programming 12.4-5 (2012): 505-523.
 http://arxiv.org/pdf/1112.2681v3.pdf
+
 Russell, S. and Norvig, P. 2010. Arficial Intelligence: A Modern Approach. 
 Third Edition, Prentice Hall, Figure 15.10 page 587
 </div>

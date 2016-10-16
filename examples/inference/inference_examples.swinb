@@ -56,7 +56,9 @@ Examples divided by features:
   [dp_mix.pl](example/inference/dp_mix.pl),
   [markov_chain.pl](example/inference/markov_chain.pl),
   [plcg.pl](example/inference/plcg.pl),
-  [hmmpos.pl](example/inference/hmmpos.pl), [hmmpos2.pl](example/inference/hmmpos2.pl),
+  [hmmpos.swinb](example/inference/hmmpos.swinb),
+  [hmmpos.pl](example/inference/hmmpos.pl), 
+  [hmmpos2.pl](example/inference/hmmpos2.pl),
   [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), 
   [kalman_filter.swinb](example/inference/kalman_filter.swinb),
   [kalman_filter.pl](example/inference/kalman_filter.pl),
@@ -102,6 +104,7 @@ Examples divided by features:
   [path.swinb](example/inference/path.swinb),
   [path.pl](example/inference/path.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
+  [hmmpos.swinb](example/inference/hmmpos.swinb),
   [hmmpos.pl](example/inference/hmmpos.pl),
   [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), 
   [kalman_filter.swinb](example/inference/kalman_filter.swinb),
@@ -123,6 +126,7 @@ Examples divided by features:
   [plcg.pl](example/inference/plcg.pl), [pre_plcg.pl](example/inference/pre_plcg.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   [gpl.pl](example/inference/gpl.pl), [rmc.pl](example/inference/rmc.pl),
+  [hmmpos.swinb](example/inference/hmmpos.swinb),
   [hmmpos.pl](example/inference/hmmpos.pl), [hmmpos2.pl](example/inference/hmmpos2.pl),
   [dirichlet_process.pl](example/inference/dirichlet_process.pl),
   [dp_chinese.pl](example/inference/dp_chinese.pl),
@@ -153,6 +157,7 @@ Examples divided by features:
   [plcg.pl](example/inference/plcg.pl), [pre_plcg.pl](example/inference/pre_plcg.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   [gpl.pl](example/inference/gpl.pl), [rmc.pl](example/inference/rmc.pl),
+  [hmmpos.swinb](example/inference/hmmpos.swinb),
   [hmmpos.pl](example/inference/hmmpos.pl), 
   [hmmpos2.pl](example/inference/hmmpos2.pl),
   [truel.pl](example/inference/truel.pl),
@@ -220,6 +225,7 @@ Examples divided by features:
   [pcfglr.pl](example/inference/pcfglr.pl),
   [prefix.pl](example/inference/prefix.pl), 
   [plcg.pl](example/inference/plcg.pl), [pre_plcg.pl](example/inference/pre_plcg.pl),
+  [hmmpos.swinb](example/inference/hmmpos.swinb),
   [hmmpos.pl](example/inference/hmmpos.pl), [hmmpos2.pl](example/inference/hmmpos2.pl), [slp_pcfg.pl](example/inference/slp_pcfg.pl), [slp_pdcg.pl](example/inference/slp_pdcg.pl)
   - biology: 
   [path.swinb](example/inference/path.swinb),
@@ -400,7 +406,7 @@ Examples divided by features:
   Theory and Practice of Logic Programming 12.4-5 (2012): 681-700.
   This program was kindly provided by Andrey Gorlin and adapted to MCINTYRE
   by Fabrizio Riguzzi.
-  - Hidden Markov model for part-of-speech tagging.  ([hmmpos.pl](example/inference/hmmpos.pl))
+  - Hidden Markov model for part-of-speech tagging.  ([hmmpos.swinb](example/inference/hmmpos.swinb), [hmmpos.pl](example/inference/hmmpos.pl))
   The states represent parts-of-speech, and the symbols emitted by the states 
   are words. The assumption is that a word depends probabilistically on just 
   its own part-of-speech (i.e. its tag) which in turn depends on the 
