@@ -317,6 +317,7 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
 	p([span([style('color:red')],['New']),': BDD drawing: ',
+	a([href('/example/inference/coin.swinb')],['coin']),', ',
 	a([href('/example/inference/path.swinb')],['path']),', ',
 	a([href('/example/inference/dice.swinb')],['dice']),', ',
 	a([href('/example/inference/epidemic.pl')],['epidemic']),'; ',
