@@ -52,4 +52,10 @@ graph(digraph(G)):-
 % expected result 0.22888
 ?- graph(G). % shows the probabilistic graph
 
+?- bdd_dot_string(path(a,e),BDD).  
+% What is the BDD for query path(a,e)?
+% A solid edge indicates a 0-child, a dashed edge indicates a 0-child and 
+% a dotted 
+% edge indicates a negated 0-child.
+
 */
