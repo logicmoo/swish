@@ -55,7 +55,7 @@ graph(digraph(G)):-
 
 ?- bdd_dot_string(path(a,e),BDD,Var).  
 % What is the BDD for query path(a,e)?
-% A solid edge indicates a 0-child, a dashed edge indicates a 0-child and 
+% A solid edge indicates a 1-child, a dashed edge indicates a 0-child and 
 % a dotted 
 % edge indicates a negated 0-child.
 % The table Var contains the associations between the rule groundings and the
