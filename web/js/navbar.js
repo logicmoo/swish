@@ -75,10 +75,7 @@ define([ "jquery", "preferences", "laconic" ],
 
 	for(var p in actions) {
 	  if ( actions.hasOwnProperty(p) ) {
-      console.log("init navbar");
-      console.log(p);
       if (actions[p].type == "active") {
-        console.log("sono io il tutorial!");
         elem.navbar('appendActive',p, actions[p]);
         // elem.navbar();
       } else {
@@ -97,7 +94,6 @@ define([ "jquery", "preferences", "laconic" ],
     },
 
     appendActive: function(label, option) {
-            console.log("appendActive");
             var ul = this.children(".nav.navbar-nav");
             var a = $.el.a(label);
             $(a).data('action', option.action);
@@ -213,7 +209,6 @@ define([ "jquery", "preferences", "laconic" ],
       } else {
 	     a = $.el.a(label);
       }
-      console.log("navbar action: " + options);
       $(a).data('action', options);
       if ( options.name )
 	     $(a).attr("id", options.name);

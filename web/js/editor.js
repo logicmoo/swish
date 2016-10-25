@@ -680,13 +680,10 @@ define([ "cm/lib/codemirror",
      * the content of the editor.
      */
     print: function(src) {
-      console.log(src);
       var pre = $.el.pre({class:"cm-s-prolog"});
-      console.log(pre);
-
+      
       if ( !src ) src = this.prologEditor('getSource');
-      console.log(src);
-
+      
       CodeMirror.runMode(src, "prolog", pre);
 
       function printWithIframe(elem) {
@@ -696,7 +693,6 @@ define([ "cm/lib/codemirror",
 	iframe.contentWindow.print();
       }
 
-      console.log(pre);
       $.ajax({ url: "/css/print.css",
 	       dataType: "text",
 	       success: function(data) {

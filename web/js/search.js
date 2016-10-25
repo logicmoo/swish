@@ -409,7 +409,6 @@ define([ "jquery", "config", "typeahead" ],
 		  $(ev.target).parents(".swish").swish('playURL', play);
 		} else {
 		  elem.data("target", {datum:datum, set:set});
-		  console.log(elem.data("target"));
 		}
 	      });
 
