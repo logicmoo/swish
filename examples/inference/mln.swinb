@@ -1,9 +1,5 @@
 <div class="notebook">
-<div class="nb-cell html">
-  <script type="text/javascript">
-$.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML");
-</script>
-
+<div class="nb-cell html math">
 <h2>Markov Logic Networks</h2>
 
 Markov Networks (MN) and Markov Logic Networks (MLN) can be encoded with 
@@ -26,34 +22,64 @@ The problem is now how to assign values to the conditional probability table
 <code>Factor(anna)</code> so that the joint distribution of 
 <code>Intelligent(anna)</code> and <code>GoodMarks(anna)</code> in the BN
 is the same as that of the MN. The MLN clause above contributes
-to the probabilities of the worlds with a factor 
+to the probabilities of the worlds with a factor
 \(e^{1.5}\)
  for the worlds where the
-clause is true and 1 for the worlds where the clause is false. We can normalize
-the values by dividing for the sum over the worlds of the factor values:
+clause is true and 1 for the worlds where the clause is false.
+
+In the BN, the probability of a world would be represented by 
+\(P(i,g|f)\) where \(i\) and \(g\) are values for
+<code>Intelligent(anna)</code> and <code>GoodMarks(anna)</code> and \(f\) is <co
+de>Factor(anna)</code>\(=true\).  \(P(i,g|f)\) is given by
+\[
+P(i,g|f)=\frac{P(i,g,f)}{P(f)}=\frac{P(i,g)P(f|i,g)}{\sum_{i',g'}P(i',g')P(f|i',g')}
+\]
+so each world \((i,g)\) gets multiplied by the factor \(P(f|i,g)\)
+We can multiply all the factor values by a constant and get the same result,
+as the constant will be 
+simplified between the numrator and the denominator.
+For example, we can divide 
+the values for the sum over the worlds of the factor values:
 there are four worlds, in three the factor is true and in one it is false,
-so we normalize by dividing for \(3e^{1.5}+1\). In this way we get probability values
-for the CPT: \(e^{1.5}/(3e^{1.5}+1)\) is the probability of <code>Factor(anna)</code> being
+so we divide for \(3e^{1.5}+1\). This ensures that all factor values are
+between 0 and 1 and can be used as probability values
+in the CPT: \(e^{1.5}/(3e^{1.5}+1)\) is the probability of <code>Factor(anna)</code> being
 true given that the parents' values make the clause true and \(1/(3e^{1.5}+1)\) is the
 probability of  <code>Factor(anna)</code> being
 true given that the parents' values make the clause false.
-In this way in fact \(P(i,g|f)\) where \(i\) and \(g\) are values for 
+In this way in fact \(P(f|i,g)\) where \(i\) and \(g\) are values for 
 <code>Intelligent(anna)</code> and <code>GoodMarks(anna)</code> and \(f\) is <code>Factor(anna)</code>\(=true\) is given
 by
 \[
-P(i,g|f)=\frac{P(i,g,f)}{P(f)}=\frac{P(i)P(g)P(i,g|f)}{\sum_{i',g'}P(i')P(g')P(i',g'|f)}
+P(i,g|f)=\frac{P(i,g,f)}{P(f)}=\frac{P(i)P(g)P(f|i,g)}{\sum_{i',g'}P(i')P(g')P(f|i',g')}
 \]
 If we assign 0.5 to \(P(i)\) and \(P(f)\) we get
 \[
-P(i,g|f)=\frac{0.25P(i,g|f)}{0.25\sum_{i',g'}P(i',g'|f)}=
-\frac{P(i,g|f)}{\sum_{i',g'}P(i',g'|f)}
-=\frac{e^{1.5}}{3e^{1.5}+1}
+P(i,g|f)=\frac{0.25P(f|i,g)}{0.25\sum_{i',g'}P(f|i',g')}=
+\frac{P(f|i,g)}{\sum_{i',g'}P(f|i',g')}
+=\frac{1}{3e^{1.5}+1}
 \]
 if \(i=true\) and \(g=\mathit{false}\) and
 \[
 =\frac{e^{1.5}}{3e^{1.5}+1}
 \]
 otherwise.
+
+Alternatively, we can multiply all factor values for \(e^{-1.5}\). In this way
+the worlds where the clause is true get a \(1\) factor and the other worlds get
+a \(e^{-1.5}\). These factor values are between \(0\) and \(1\) and so can be 
+used as probabilities in the CPT. If the weight \(\alpha\) of the clause is 
+negative, then the factor \(e^\alpha\) will appear in the weight of worlds where 
+the clause is true and 1 in the weight of the other worlds
+and these values can be used directly in the CPT.
+  <script type="text/javascript">
+var cell=notebook.$(".math");
+var fileref=document.createElement('script');
+        fileref.setAttribute("type","text/javascript");
+        fileref.setAttribute("src", "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML");
+ cell.appendChild(fileref);
+</script>
+
 </div>
 <div class="nb-cell query">
 prob(heads(coin),Prob). 
@@ -69,20 +95,29 @@ Preamble:
 :- pita.
 
 :- begin_lpad.
+</div>
+<div class="nb-cell html">
+The MLN formula
+<pre><code>1.5  Intelligent(x) => GoodMarks(x) 
+</code></pre>
+is translated into the four clauses
+</div>
+<div class="nb-cell program prolog" data-background="true">
 
-intelligent(_):0.5.
-
-good_marks(_):0.5.
-
-friends(_,_):0.5.
-
-% 1.5  Intelligent(x) => GoodMarks(x) 
-factor1(X): 0.31025740516:- \+intelligent(X), \+good_marks(X).
-factor1(X): 0.31025740516:- \+intelligent(X), good_marks(X).
+factor1(X): 0.31025740516:- \+intelligent(X).
 factor1(X): 0.0692277845:- intelligent(X), \+good_marks(X).
 factor1(X): 0.31025740516:- intelligent(X), good_marks(X).
+</div>
+<div class="nb-cell html">
+where \(0.3102574051=e^{1.5}/(3e^{-1.5}+1)\) and \(0.0692277845=1/(3e^{-1.5}+1)\).
 
-% 1.1 Friends(x, y) => (Intelligent(x) <=> Intelligent(y)) 1.1
+The MLN formula
+<pre><code>
+1.1 Friends(x, y) => (Intelligent(x) <=> Intelligent(y)) 
+</code></pre>
+is translated into the four clauses
+</div>
+<div class="nb-cell program prolog" data-background="true">
 factor2(X,Y): 0.150020804:- \+friends(X,Y).
 factor2(X,Y): 0.150020804:- friends(X,Y), intelligent(X),intelligent(Y).
 factor2(X,Y): 0.150020804:- friends(X,Y), \+intelligent(X),\+intelligent(Y).
@@ -91,7 +126,13 @@ factor2(X,Y): 0.049937588:- friends(X,Y), \+intelligent(X),intelligent(Y).
 
 student(anna).
 student(bob).
-evidence:- factor1(anna),factor1(bob),factor2(anna,anna),
+intelligent(_):0.5.
+
+good_marks(_):0.5.
+
+friends(_,_):0.5.
+
+%evidence:- factor1(anna),factor1(bob),factor2(anna,anna),
     factor2(anna,bob),factor2(bob,anna),factor2(bob,bob).
 
 ev_intelligent_bob_friends_anna_bob:-
