@@ -341,9 +341,6 @@ define([ "jquery", "config", "preferences", "cm/lib/codemirror",
       if ( tabled )
 	query.tabled = true;
 
-      console.log("query.run");
-      console.log(data);
-      console.log(query);
       query.codeType=data.codeType;
       
       this.queryEditor('addHistory', q);

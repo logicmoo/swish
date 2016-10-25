@@ -122,7 +122,6 @@ define([ "jquery", "config", "preferences",
      */
     run: function(query) {
       var data = this.data('prologRunners');
-	console.log("runner.run " + query.codeType);
       if ( query.iconifyLast )
 	this.prologRunners('iconifyLast');
 
@@ -380,7 +379,6 @@ define([ "jquery", "config", "preferences",
 	/* Load pengines.js incrementally because we wish to ask the
 	   one from the pengine server rather than a packaged one.
 	*/
-	console.log("runner.init " + query.codeType);
 	require([config.http.locations.pengines+"/pengines.js"],
 		function() {
 	  var runnersrc = "";
@@ -389,7 +387,6 @@ define([ "jquery", "config", "preferences",
 	  else 
 	    runnersrc = query.source;
 	
-	  console.log(runnersrc);
 	  data.prolog = new Pengine({
 	    server: config.http.locations.pengines,
 	    runner: elem,
@@ -626,9 +623,7 @@ define([ "jquery", "config", "preferences",
 	}
       }
 
-      console.log(receiver);
       var result = receiver[request.method].apply(receiver, request.arguments);
-      console.log(result);
 
       prompt.pengine.respond(Pengine.stringify(result));
     },

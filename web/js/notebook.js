@@ -761,7 +761,6 @@ var cellTypes = {
 
 
     type: function(type, code) {
-      console.log("nbCell type" + type + code);
       var data = this.data(pluginName);
         
         if ( data.st_type != type ) {
@@ -1069,7 +1068,6 @@ var cellTypes = {
       imageButton("background", "Use as background program", "xs"));
     this.append(buttons,
 		editor=$.el.div({class:"editor with-buttons"}));
-    console.log("XXX");
     if ( options.background )
     { this.addClass("background");
     }

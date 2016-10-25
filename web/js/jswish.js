@@ -396,23 +396,15 @@ preferences.setDefault("emacs-keybinding", false);
      */
     openExampleFunction: function(ex) {
       var swish = this;
-      console.log("openExampleFunction");
-      console.log(ex);
       if ( ex.type == "divider" ) {
 	return "--";
       } else if ( ex.type == "store" ) {
 	return function() {
-    console.log("openExampleFunction methods");
-    console.log(methods);
-    console.log("faccio playFile");
-	  methods.playFile.call(swish, ex.file);
+    	  methods.playFile.call(swish, ex.file);
 	};
       } else {
 	return function() {
-    console.log("openExampleFunction methods");
-    console.log(methods);
-    console.log("faccio playURL");
-    methods.playURL.call(swish, {url:ex.href});
+    	  methods.playURL.call(swish, {url:ex.href});
 	};
       }
     },
@@ -446,17 +438,12 @@ preferences.setDefault("emacs-keybinding", false);
 		     var name = ex.file || ex.href;
 		     title = ex.title;
 		     options = that.swish('openExampleFunction', ex);
-         console.log("populateExamples after openExampleFunction");
-         console.log(options);
 		     if ( name )
 		       options.typeIcon = name.split('.').pop();
 		   }
 
 		   $("#navbar").navbar('extendDropdown', dropdown,
 				       title, options);
-       console.log(dropdown);
-       console.log(title);
-       console.log(options);
 		 }
 	       }
 	     });
@@ -589,11 +576,6 @@ preferences.setDefault("emacs-keybinding", false);
    * interested.
    */
   function menuBroadcast(event, data) {
-    console.log("menuBroadcast");
-    console.log(event);
-    console.log(data);
-    console.log($(".swish-event-receiver"));
-    console.log(jQuery._data($(".swish-event-receiver"), "events"));
     $(".swish-event-receiver").trigger(event, data);
   }
 
