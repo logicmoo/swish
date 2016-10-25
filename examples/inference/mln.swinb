@@ -1,0 +1,109 @@
+<div class="notebook">
+<div class="nb-cell html">
+  <script type="text/javascript">
+$.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML");
+</script>
+
+<h2>Markov Logic Networks</h2>
+
+Markov Networks (MN) and Markov Logic Networks (MLN) can be encoded with 
+Probabilistic Logic Programming. The encoding is based on the observation that
+a MN factor can be represented with a Bayesian Newtork (BN) with an extra node that
+is always observed.
+For example, the MLN clause
+<pre><code>1.5  Intelligent(x) => GoodMarks(x) 
+</code></pre>
+for a single constant <code>anna</code> originates an edge betwenn the Boolean nodes  
+for  <code>Intelligent(anna)</code> and <code>GoodMarks(anna)</code>. This means that the two variables
+cannot be d-separated in any way. This dependence can be modelend with BNs by
+adding an extra Boolean node, <code>Factor(anna)</code>, that is a child of 
+ <code>Intelligent(anna)</code> and <code>GoodMarks(anna)</code> and is observed. In this way,
+ <code>Intelligent(anna)</code> and <code>GoodMarks(anna)</code> are not d-separated in the BN no 
+matter what other nodes the BN contains.
+
+The problem is now how to assign values to the conditional probability table
+(CPT) of
+<code>Factor(anna)</code> so that the joint distribution of 
+<code>Intelligent(anna)</code> and <code>GoodMarks(anna)</code> in the BN
+is the same as that of the MN. The MLN clause above contributes
+to the probabilities of the worlds with a factor 
+\(e^{1.5}\)
+ for the worlds where the
+clause is true and 1 for the worlds where the clause is false. We can normalize
+the values by dividing for the sum over the worlds of the factor values:
+there are four worlds, in three the factor is true and in one it is false,
+so we normalize by dividing for \(3e^{1.5}+1\). In this way we get probability values
+for the CPT: \(e^{1.5}/(3e^{1.5}+1)\) is the probability of <code>Factor(anna)</code> being
+true given that the parents' values make the clause true and \(1/(3e^{1.5}+1)\) is the
+probability of  <code>Factor(anna)</code> being
+true given that the parents' values make the clause false.
+In this way in fact \(P(i,g|f)\) where \(i\) and \(g\) are values for 
+<code>Intelligent(anna)</code> and <code>GoodMarks(anna)</code> and \(f\) is <code>Factor(anna)</code>\(=true\) is given
+by
+\[
+P(i,g|f)=\frac{P(i,g,f)}{P(f)}=\frac{P(i)P(g)P(i,g|f)}{\sum_{i',g'}P(i')P(g')P(i',g'|f)}
+\]
+If we assign 0.5 to \(P(i)\) and \(P(f)\) we get
+\[
+P(i,g|f)=\frac{0.25P(i,g|f)}{0.25\sum_{i',g'}P(i',g'|f)}=
+\frac{P(i,g|f)}{\sum_{i',g'}P(i',g'|f)}
+=\frac{e^{1.5}}{3e^{1.5}+1}
+\]
+if \(i=true\) and \(g=\mathit{false}\) and
+\[
+=\frac{e^{1.5}}{3e^{1.5}+1}
+\]
+otherwise.
+</div>
+<div class="nb-cell query">
+prob(heads(coin),Prob). 
+</div>
+<div class="nb-cell markdown">
+## Code
+
+Preamble:
+</div>
+<div class="nb-cell program prolog" data-background="true">
+:- use_module(library(pita)).
+
+:- pita.
+
+:- begin_lpad.
+
+intelligent(_):0.5.
+
+good_marks(_):0.5.
+
+friends(_,_):0.5.
+
+% 1.5  Intelligent(x) => GoodMarks(x) 
+factor1(X): 0.31025740516:- \+intelligent(X), \+good_marks(X).
+factor1(X): 0.31025740516:- \+intelligent(X), good_marks(X).
+factor1(X): 0.0692277845:- intelligent(X), \+good_marks(X).
+factor1(X): 0.31025740516:- intelligent(X), good_marks(X).
+
+% 1.1 Friends(x, y) => (Intelligent(x) <=> Intelligent(y)) 1.1
+factor2(X,Y): 0.150020804:- \+friends(X,Y).
+factor2(X,Y): 0.150020804:- friends(X,Y), intelligent(X),intelligent(Y).
+factor2(X,Y): 0.150020804:- friends(X,Y), \+intelligent(X),\+intelligent(Y).
+factor2(X,Y): 0.049937588:- friends(X,Y), intelligent(X),\+intelligent(Y).
+factor2(X,Y): 0.049937588:- friends(X,Y), \+intelligent(X),intelligent(Y).
+
+student(anna).
+student(bob).
+evidence:- factor1(anna),factor1(bob),factor2(anna,anna),
+    factor2(anna,bob),factor2(bob,anna),factor2(bob,bob).
+
+ev_intelligent_bob_friends_anna_bob:-
+    intelligent(bob),friends(anna,bob),evidence.
+
+:- end_lpad.
+
+/** <examples>
+
+?- prob(intelligent(anna),P).
+?- prob(intelligent(anna),ev_intelligent_bob_friends_anna_bob,P).
+
+*/
+</div>
+</div>
