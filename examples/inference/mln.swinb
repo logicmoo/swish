@@ -1,7 +1,7 @@
 <div class="notebook">
-<div class="nb-cell html math">
+<div class="nb-cell html">
 <script type="text/javascript">
-$.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",function() {MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+$.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",function() {MathJax.Hub.Queue(["Typeset",MathJax.Hub]);});
 </script>
 <h2>Markov Logic Networks</h2>
 
@@ -87,7 +87,8 @@ formula \(C_{i1}\vee\ldots\vee C_{in_i}\) where the disjuncts are mutually exclu
 clause_i(X):e^\alpha/(1+e^\alpha)\leftarrow C_{ij}
 \]
 for all  \(j\).
-Similalry, \(\neg C_i\) should be transformed into a DNF formula \(D_{i1}\vee\ldots\vee D_{im_i}\) with mutually exclusive disjuncts and the LPAD should contain the clauses
+Similalry, \(\neg C_i\) should be transformed into a disjoint sum 
+\(D_{i1}\vee\ldots\vee D_{im_i}\) and the LPAD should contain the clauses
 \[
 clause_i(X):1/(1+e^\alpha)\leftarrow D_{il}
 \]
@@ -106,6 +107,21 @@ This solution has the advantage that some clauses are certain, reducing the
 number of random variables.
 If \(\alpha\) is positive in formula \(\alpha \ C\), we can consider 
 \(-\alpha \ \neg C\).
+</p>
+<p>MLN formulas can also be added to a regular probabilistic
+logic program, their effect is equivalent to a 
+soft form of evidence, where certain worlds are weighted more than others.
+This is the same as soft evidence in Figaro.
+MLN hard constraints, i.e., formulas with an infinite weight, can instead be 
+used to rule out completely certain worlds, those violating the constraint. 
+For example, given hard constraint \(C.\) with disjoint sum 
+\(C_{i1}\vee\ldots\vee C_{in_i}\), the LPAD should contain the clauses
+\[
+clause_i(X)\leftarrow C_{ij}
+\]
+for all \(j\), and the evidence should contain \(clause_i(x)\) for all
+groundings \(x\) of \(X\). In this way, the worlds that violate \(C\) are
+ruled out.
 </p>
 <p>
 Let see an example where we translate to LPADs the MLN
@@ -143,7 +159,8 @@ where \(0.8175744762=e^{1.5}/(1+e^{-1.5})\) and \(0.1824255238=1/(1+e^{-1.5})\).
 The MLN formula
 <pre><code>1.1 Friends(x, y) => (Intelligent(x) <=> Intelligent(y)) 
 </code></pre>
-is translated into the lauses
+is translated into the clauses
+</p>
 </div>
 <div class="nb-cell program prolog" data-background="true">
 clause2(X,Y): 0.7502601056:- \+friends(X,Y).
@@ -183,7 +200,6 @@ predicates:
 <div class="nb-cell program prolog" data-background="true">
 evidence_mln:- clause1(anna),clause1(bob),clause2(anna,anna),
     clause2(anna,bob),clause2(bob,anna),clause2(bob,bob).
-
 </div>
 <div class="nb-cell markdown">
 We want to query the probability that Anna gets good marks given that
@@ -214,7 +230,7 @@ clause1p(X):- \+intelligent(X).
 clause1p(X): 0.22313016014:- intelligent(X), \+good_marks(X).
 clause1p(X):- intelligent(X), good_marks(X).
 </div>
-<div class="nb-cell markdown">
+<div class="nb-cell html">
 where \(0.22313016014=e^{-1.5}\).
 
 The new evidence is:
@@ -233,25 +249,17 @@ she is fried with Bob and Bob is intelligent is computed by:
 prob(good_marks(anna),ev_intelligent_bob_friends_anna_bob_p,P).
 </div>
 <div class="nb-cell markdown">
-The probability is higher than the prior probability of Anna getting
+The probability is again higher than the prior probability of Anna getting
 good marks:
 </div>
 <div class="nb-cell query">
 prob(good_marks(anna),evidence_mln_p,P).
 </div>
 <div class="nb-cell markdown">
-Epilogue:
+## Epilogue:
 </div>
 <div class="nb-cell program prolog" data-background="true">
 
 :- end_lpad.
-</div>
-
-
-/** <examples>
-
-?- prob(intelligent(anna),P).
-
-*/
 </div>
 </div>
