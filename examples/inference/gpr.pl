@@ -106,7 +106,7 @@ cov_row([H|T],XH,Ker,[KH|KT]):-
   cov_row(T,XH,Ker,KT).
 
 %! gp_predict(+XP:list,+Kernel:atom,+XT:list,+YT:list,-YP:list) is det
-% Given that the points described by the lists XT and YP and a Kernel,
+% Given the points described by the lists XT and YT and a Kernel,
 % predict the Y values of points with X values in XP and returns them in YP.
 % Prediction is performed by Gaussian process regression.
 gp_predict(XP,Kernel,Var,XT,YT,YP):-
