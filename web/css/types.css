@@ -6,9 +6,11 @@
   background-image: url("../icons/pl.png");
 }
 
+/* TO REMOVE
 .type-icon.cpl {
   background-image: url("../icons/cpl.png");
 }
+*/
 
 .type-icon.swinb {
   background-image: url("../icons/swinb.png");

@@ -101,7 +101,6 @@ define([ "cm/lib/codemirror",
       matchBrackets: true,
       textHover: true,
       prologKeys: true,
-      codeType: "prolog",
       extraKeys: {
 	"Ctrl-Space": "autocomplete",
 	"Alt-/": "autocomplete",
@@ -166,16 +165,6 @@ define([ "cm/lib/codemirror",
 	var storage = {};		/* storage meta-data */
 	var data = {};			/* our data */
 	var ta;				/* textarea */
-	ta=elem.children("textarea")[0];
-	
-	
-	var ext  = $(ta).data("url");
-	if (ext) {
-	  ext = ext.split('.').pop();
-	  if (ext == "cpl" || ext == "lpad") ext = "lpad";
-	  else if (ext == "pl") ext = "prolog";
-	  opts.codeType = ext;
-	}
 
 	opts      = opts||{};
 	opts.mode = opts.mode||"prolog";
@@ -244,28 +233,7 @@ define([ "cm/lib/codemirror",
 	  elem.on("mouseup", function(ev) {
 	    cancelLongClick();
 	  });
-	} else if ( options.mode == "lpad" ) {
-	  options.placeholder = "Your LPAD rules and facts go here ..."
-	  data.role = options.role;
-
-	  if ( config.http.locations.cm_highlight ) {
-	    options.prologHighlightServer =
-	    { url:  config.http.locations.cm_highlight,
-	      role: options.role,
-	      enabled: false
-	    };
-	    if ( options.sourceID )
-	      options.prologHighlightServer.sourceID = options.sourceID;
-	    options.extraKeys["Ctrl-R"] = "refreshHighlight";
-	  }
-
-	  if ( options.role == "source" ) {
-	    options.continueComments = "Enter";
-	    options.gutters = ["Prolog-breakpoints"]
-	  }
 	}
-
-	
 
 	/*
 	 * Create CodeMirror
@@ -314,9 +282,7 @@ define([ "cm/lib/codemirror",
 	});
 
 	if ( options.save ) {
-	  //storage.typeName = options.typeName||"program";
-	  if (!storage.typeName)
-	    storage.typeName = options.typeName || data.cm.options.codeType;
+	  storage.typeName = options.typeName||"program";
 	  elem.prologEditor('setupStorage', storage);
 	}
 
@@ -519,36 +485,6 @@ define([ "cm/lib/codemirror",
 
       return src.join("\n\n");
     },
-    
-    /**
-     * FIXME: Add indication of the code type, such that errors
-     * can be relayed to the proper editor.
-     * @returns {String} current code type of the contents of the editor.  If
-     * the jQuery object holds multiple editors, we return the
-     * joined content of the editors.
-     */
-    getCodeType: function(role) {
-      var src = [];
-
-      this.each(function() {
-	if ( $(this).prologEditor('isPengineSource') ) {
-	  var data = $(this).data(pluginName);
-	  if ( data ) {
-	    if ( !role || (role == data.role) )
-	      src.push(data.cm.options.codeType);
-	  }
-	}
-      });
-
-      if (src.length == 1)
-        return src[0];
-      else {
-        if ($.inArray('lpad', src) > -1)
-          return "lpad"
-        else
-          return "prolog"
-      }
-    },
 
     /**
      * @returns {Object} holding extended source information
@@ -681,9 +617,9 @@ define([ "cm/lib/codemirror",
      */
     print: function(src) {
       var pre = $.el.pre({class:"cm-s-prolog"});
-      
+
       if ( !src ) src = this.prologEditor('getSource');
-      
+
       CodeMirror.runMode(src, "prolog", pre);
 
       function printWithIframe(elem) {
@@ -720,21 +656,8 @@ define([ "cm/lib/codemirror",
       var data = this.data(pluginName);
 
       if ( pref.name == "semantic-highlighting" ) {
-	if (data.cm.options.codeType == "lpad") {
-	  data.cm.setOption("prologHighlightServer",
-			  { enabled: false });
-	} else {
-	  data.cm.setOption("prologHighlightServer",
+	data.cm.setOption("prologHighlightServer",
 			  { enabled: pref.value });
-	}
-      }
-
-      if ( pref.name == "emacs-keybinding") {
-	if (pref.value == true) {
-	  data.cm.setOption("keyMap", "emacs");
-	} else {
-	  data.cm.setOption("keyMap", "default");
-	}
       }
 
       if ( pref.name == "emacs-keybinding") {
@@ -792,26 +715,6 @@ define([ "cm/lib/codemirror",
 	$(elem).data("cm-widget", widget);
       }
 
-      return this;
-    },
-
-    /**
-     * Re-run the highlighting.  Used for query editors if the
-     * associated editor has changed.
-     */
-    refreshHighlight: function() {
-      var data = this.data(pluginName);
-      data.cm.serverAssistedHighlight(true);
-      return this;
-    },
-
-    /**
-     * Refresh the editor.  This is often needed if it is resized.
-     */
-    refresh: function() {
-      var data = this.data(pluginName);
-      if ( data )
-	data.cm.refresh();
       return this;
     },
 
@@ -1274,28 +1177,15 @@ define([ "cm/lib/codemirror",
     }
   }; // methods
 
-  tabbed.tabTypes.prolog = {
+  tabbed.tabTypes.program = {
     dataType: "pl",
-    typeName: "prolog",
-    label: "Prolog",
+    typeName: "program",
+    label: "Program",
     contentType: "text/x-prolog",
     order: 100,
     create: function(dom, options) {
       $(dom).addClass("prolog-editor")
             .prologEditor($.extend({save:true}, options))
-	    .prologEditor('makeCurrent');
-    }
-  };
-  
-  tabbed.tabTypes.lpad = {
-    dataType: "cpl",
-    typeName: "lpad",
-    label: "LPAD",
-    contentType: "text/x-prolog",
-    order: 100,
-    create: function(dom, options) {
-      $(dom).addClass("prolog-editor")
-            .prologEditor({placeholder: "Your LPAD rules and facts go here ...", save:true, codeType: "lpad"}, options)
 	    .prologEditor('makeCurrent');
     }
   };

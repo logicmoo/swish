@@ -129,7 +129,7 @@ preferences.setDefault("emacs-keybinding", false);
 	}
       },
       "Examples": function(navbar, dropdown) {
-	     $("body").swish('populateExamples', navbar, dropdown);
+	$("body").swish('populateExamples', navbar, dropdown);
       },
       "Help":
       { "About ...": function() {
@@ -275,7 +275,7 @@ preferences.setDefault("emacs-keybinding", false);
     playFile: function(options) {
       var elem = this;
       if ( typeof(options) == "string" )
-	     options = {file:options};
+	options = {file:options};
 
       /*var existing = this.find(".storage").storage('match', options);
       if ( existing && existing.storage('expose', "Already open") )
@@ -364,7 +364,6 @@ preferences.setDefault("emacs-keybinding", false);
 			   ]);
 
 		 elem.swish('setSource', msg);
-
 	       },
 	       error: function(jqXHR) {
 		 modal.ajaxError(jqXHR);
@@ -396,15 +395,16 @@ preferences.setDefault("emacs-keybinding", false);
      */
     openExampleFunction: function(ex) {
       var swish = this;
+
       if ( ex.type == "divider" ) {
 	return "--";
       } else if ( ex.type == "store" ) {
 	return function() {
-    	  methods.playFile.call(swish, ex.file);
+	  methods.playFile.call(swish, ex.file);
 	};
       } else {
 	return function() {
-    	  methods.playURL.call(swish, {url:ex.href});
+	  methods.playURL.call(swish, {url:ex.href});
 	};
       }
     },
@@ -465,7 +465,7 @@ preferences.setDefault("emacs-keybinding", false);
 
       if ( (src=$(".prolog-editor").prologEditor('getSource', "source")) )
 	list.push(src);
-      if ( (src=$(".background.prolog.source").text()) ) 
+      if ( (src=$(".background.prolog.source").text()) )
 	list.push(src);
 
       return list.join("\n\n");

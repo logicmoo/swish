@@ -75,13 +75,13 @@ define([ "jquery", "preferences", "laconic" ],
 
 	for(var p in actions) {
 	  if ( actions.hasOwnProperty(p) ) {
-      if (actions[p].type == "active") {
-        elem.navbar('appendActive',p, actions[p]);
-        // elem.navbar();
-      } else {
-	      elem.navbar('appendDropdown', p);
-	     elem.navbar('populateDropdown', p, actions[p]);
-      }
+	    if (actions[p].type == "active") {
+	        elem.navbar('appendActive',p, actions[p]);
+	        // elem.navbar();
+	    } else {
+	        elem.navbar('appendDropdown', p);
+	        elem.navbar('populateDropdown', p, actions[p]);
+	    }
 	  }
 	}
 
@@ -105,6 +105,7 @@ define([ "jquery", "preferences", "laconic" ],
             ul.append(li);
             return this;
     },
+
 
     /**
      * @param {String} label Name of new dropdown to add
@@ -198,7 +199,7 @@ define([ "jquery", "preferences", "laconic" ],
       var i;
 
       if ( options.typeIcon ) {
-	     a = $.el.a($.el.span({class:"dropdown-icon type-icon "+options.typeIcon}),
+	a = $.el.a($.el.span({class:"dropdown-icon type-icon "+options.typeIcon}),
 		   label);
       } else if ( (i=label.indexOf("(")) > 0 ) {
 	var accell = label.substr(i);
@@ -207,11 +208,12 @@ define([ "jquery", "preferences", "laconic" ],
 		   $.el.span({class:"accell-spacer"},accell),
 		   $.el.span({class:"accell-text"},accell));
       } else {
-	     a = $.el.a(label);
+	a = $.el.a(label);
       }
+
       $(a).data('action', options);
       if ( options.name )
-	     $(a).attr("id", options.name);
+	$(a).attr("id", options.name);
 
       dropdown.append($.el.li(a));
     } else {						/* Checkbox item */

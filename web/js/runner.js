@@ -122,6 +122,7 @@ define([ "jquery", "config", "preferences",
      */
     run: function(query) {
       var data = this.data('prologRunners');
+
       if ( query.iconifyLast )
 	this.prologRunners('iconifyLast');
 
@@ -327,22 +328,13 @@ define([ "jquery", "config", "preferences",
 	if ( query.title != false ) {
 	  var qspan = $.el.span({class:"query cm-s-prolog"});
 	  CodeMirror.runMode(query.query, "prolog", qspan);
-	  if (query.codeType != "lpad") {
-	    elem.append($.el.div(
-	      {class:"runner-title ui-widget-header"},
-	      titleBarButton("remove-circle", "Close",        'close'),
-	      titleBarButton("minus",         "Iconify",      'toggleIconic'),
-	      titleBarButton("download",      "Download CSV", 'downloadCSV'),
-	      stateButton(),
-	      qspan));
-            } else {
-	    elem.append($.el.div(
-	      {class:"runner-title ui-widget-header"},
-	      titleBarButton("remove-circle", "Close",        'close'),
-	      titleBarButton("minus",         "Iconify",      'toggleIconic'),
-	      stateButton(),
-	      qspan));
-	  }  
+	  elem.append($.el.div(
+	    {class:"runner-title ui-widget-header"},
+	    titleBarButton("remove-circle", "Close",        'close'),
+	    titleBarButton("minus",         "Iconify",      'toggleIconic'),
+	    titleBarButton("download",      "Download CSV", 'downloadCSV'),
+	    stateButton(),
+	    qspan));
 	} else {
 	  var close = glyphButton("remove-circle", "Close");
 	  elem.append(close);
@@ -379,19 +371,15 @@ define([ "jquery", "config", "preferences",
 	/* Load pengines.js incrementally because we wish to ask the
 	   one from the pengine server rather than a packaged one.
 	*/
+
 	require([config.http.locations.pengines+"/pengines.js"],
 		function() {
-	  var runnersrc = "";
-	  if (query.codeType == "lpad")
-	    runnersrc = ":- use_module(library(pengines)).\n:- use_module(library(pita)).\n:-pita.\n:-begin_lpad.\n" + query.source + "\n:- end_lpad.";
-	  else 
-	    runnersrc = query.source;
-	
+
 	  data.prolog = new Pengine({
 	    server: config.http.locations.pengines,
 	    runner: elem,
 	    application: "swish",
-	    src: runnersrc,
+	    src: query.source,
 	    destroy: false,
 	    format: 'json-html',
 	    oncreate: handleCreate,
@@ -1034,20 +1022,9 @@ define([ "jquery", "config", "preferences",
     if ( data.chunk )
       options.chunk = data.chunk;
 
-/**/
-    var runnerquery = "";
-    if (data.query.codeType == "lpad")
-      runnerquery = "s(" + termNoFullStop(data.query.query) + ",Prob)";
-    else 
-      runnerquery = termNoFullStop(data.query.query);
-    this.pengine.ask("'$swish wrapper'((" +
-		     runnerquery +
-		     "\n), "+resvar+")", options);
-/*
-    this.pengine.ask("'$swish wrapper'((" +
+    this.pengine.ask("'$swish wrapper'((\n" +
 		     termNoFullStop(data.query.query) +
-		     "), Residuals)", options);
-*/
+		     "\n), "+resvar+")", options);
     elem.prologRunner('setState', "running");
   }
 

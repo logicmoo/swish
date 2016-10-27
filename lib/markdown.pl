@@ -105,7 +105,9 @@ wiki_file_codes_to_dom(String, File, DOM) :-
 
 prolog:doc_autolink_extension(swinb, notebook).
 
+/* TO REMOVE
 prolog:doc_autolink_extension(cpl, program).
+*/
 
 :- public
 	file//2.
