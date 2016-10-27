@@ -60,7 +60,7 @@ To model the MLN formula we just have to ensure that \(P(c|x')\) is
 proportional to \(e^{\alpha}\) when \(x'\) makes \(C\) true and to 1 when 
 \(x'\) makes \(C\) false. We cannot use \(e^\alpha\) directly in the CPT for 
 \(C\) because it can be larger than 1 but we can use the values
-\(e^\alpha/(1+e^\alpha)\) and \(1/(1+e^\alpha)\) that are proportianal to 
+\(e^\alpha/(1+e^\alpha)\) and \(1/(1+e^\alpha)\) that are proportional to 
 \(e^\alpha\) and \(1\) and are surely less than 1.
 </p>
 <p>
