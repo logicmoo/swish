@@ -11,6 +11,6 @@
 
 /** <examples> Your example queries go here, e.g.
 
-?- mc_expectation(eval(2,Y),100,Y,E).
+?- mc_sample(query,1000,Prob).
 
 */

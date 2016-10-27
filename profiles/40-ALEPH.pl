@@ -31,8 +31,6 @@
 
 /** <examples> Your example queries go here, e.g.
 
-?- induce_tree.
-
 ?- induce(Program).
 
 */
