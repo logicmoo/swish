@@ -6,6 +6,7 @@
 This notebook gives an overview of example programs for inference:
 
 Examples divided by features:
+  - Markov Logic Networks: [mln.swinb](example/inference/mln.swinb)
   - Gaussian process regression: [gpr.pl](example/inference/gpr.pl)
   - Dirichlet process: [dirichlet_process.pl](example/inference/dirichlet_process.pl), [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
@@ -131,7 +132,8 @@ Examples divided by features:
   [dirichlet_process.pl](example/inference/dirichlet_process.pl),
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
-  - conditional inference: [threesideddice.pl](example/inference/threesideddice.pl),
+  - conditional inference: [mln.swinb](example/inference/mln.swinb),
+[threesideddice.pl](example/inference/threesideddice.pl),
   [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), 
   [kalman_filter.swinb](example/inference/kalman_filter.swinb),
   [kalman_filter.pl](example/inference/kalman_filter.pl),
@@ -199,6 +201,7 @@ Examples divided by features:
   [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [trigger.pl](example/inference/trigger.pl), [coin2.pl](example/inference/coin2.pl), [threesideddice.pl](example/inference/threesideddice.pl),
   [truel.pl](example/inference/truel.pl)
   - social networks:
+  [mln.swinb](example/inference/mln.swinb),
   [uwcse.pl](example/inference/uwcse.pl)
   - filtering: 
   [kalman_filter.swinb](example/inference/kalman_filter.swinb),
@@ -509,5 +512,7 @@ is done.
   http://arxiv.org/pdf/1505.02965v2.pdf and
   Christopher M. Bishop, 
   Pattern Recognition and Machine Learning, Springer, 2006, section 6.4
+  - Markov Logic Networks ([mln.swinb](example/inference/mln.swinb)): how to 
+  represent MLNs with probabilistic logic programming
 </div>
 </div>
