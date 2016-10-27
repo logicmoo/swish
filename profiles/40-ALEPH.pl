@@ -27,3 +27,12 @@
 
 :-aleph_read_all.
 
+
+
+/** <examples> Your example queries go here, e.g.
+
+?- induce_tree.
+
+?- induce(Program).
+
+*/

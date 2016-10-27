@@ -28,3 +28,13 @@
 
 
 % Models / Examples
+
+
+
+/** <examples> Your example queries go here, e.g.
+
+?- induce_par([train],P),test(P,[test],LL,AUCROC,ROC,AUCPR,PR).
+
+?- induce([train],P),test(P,[test],LL,AUCROC,ROC,AUCPR,PR).
+
+*/
