@@ -106,7 +106,7 @@ cycle_N(N0,Step,[E|RestE],[N0|RestN],[NLN0|RestNLN]):-
   N0>0,
   mc_expectation(coupons(N0,T),10,T,E),
   N is N0-Step,
-  NLN0 is N0*log(N0),
+  NLN0 is 1+N0*log(N0),
   cycle_N(N,Step,RestE,RestN,RestNLN).
   
 
