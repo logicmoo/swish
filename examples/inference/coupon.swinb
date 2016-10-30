@@ -1,0 +1,130 @@
+<div class="notebook">
+
+<div class="nb-cell html">
+<h2>The Coupon Collector Problem</h2>
+
+<p>From [1]:
+<blockquote>Suppose each box of cereal contains
+one of N different coupons and once a consumer has collected a coupon of each
+type, he can trade them for a prize. The aim of the problem is determining the
+average number of cereal boxes the consumer should buy to collect all coupon
+types, assuming that each coupon type occurs with the same probability in the
+cereal boxes.</blockquote>
+</p>
+<p>
+If there 5 different coupons, how many boxes do I have to buy to get the 
+prize?</p>
+</div>
+<div class="nb-cell query">
+mc_sample_arg_first(coupons(5,T),1,T,[NT-_]).
+</div>
+<div class="nb-cell markdown">
+If there are 5 different coupons, what is the distribution of the number of
+boxes I have to buy to get the prize?
+</div>
+<div class="nb-cell query">
+dist(5,100,Chart).
+</div>
+<div class="nb-cell markdown">
+If there are 5 different coupons, what is the expected number of
+boxes I have to buy to get the prize?
+</div>
+<div class="nb-cell query">
+mc_expectation(coupons(5,T),100,T,Exp).
+</div>
+<div class="nb-cell query">
+boxes_vs_N(6,1,Chart).
+</div>
+<div class="nb-cell markdown">
+
+## Code
+
+Preamble:
+</div>
+<div class="nb-cell program prolog" data-background="true">
+:- use_module(library(mcintyre)).
+
+:- if(current_predicate(use_rendering/1)).
+:- use_rendering(c3).
+:- endif.
+
+:- mc.
+
+:- begin_lpad.
+</div>
+<div class="nb-cell markdown">
+The walk starts at time=0 and X=0.
+</div>
+<div class="nb-cell program prolog" data-background="true">
+coupons(N,T):-
+  new_coupon(N,[],0,N,T).
+</div>
+<div class="nb-cell markdown">
+If X is 0, the walk ends.
+</div>
+<div class="nb-cell program prolog" data-background="true">
+new_coupon(0,_CP,T,_N,T).
+</div>
+<div class="nb-cell markdown">
+If X>0, the particle makes a move.
+</div>
+<div class="nb-cell program prolog" data-background="true">
+new_coupon(N0,CP0,T0,N,T):-
+  N0>0,
+  collect(CP0,N,T0,I,T1),
+  N1 is N0-1,
+  new_coupon(N1,[I|CP0],T1,N,T).
+</div>
+<div class="nb-cell markdown">
+The move is either one step to the left or to the right with equal probability.
+</div>
+<div class="nb-cell program prolog" data-background="true">
+collect(CP,N,T0,I,T):-
+  pick_a_box(T0,N,I0),
+  T1 is T0+1,
+  (member(I0,CP)->
+    collect(CP,N,T1,I,T)
+  ;
+    I=I0,
+    T=T1
+  ).
+
+pick_a_box(_,N,I):uniform(I,L):-numlist(1, N, L).
+
+dist(N,Samples,Chart):-
+  mc_sample_arg_first(coupons(N,T),Samples,T,L),
+  density(L,10,Chart).
+
+boxes_vs_N(MaxN,Step,Chart):-
+  cycle_N(MaxN,Step,V,N,NLN),
+  Chart=c3{data:_{x:x, columns:[[x|N],[exp|V],[nlgn|NLN]]}}.
+
+cycle_N(N,_Step,[],[],[]):-
+  N<1.
+
+cycle_N(N0,Step,[E|RestE],[N0|RestN],[NLN0|RestNLN]):-
+  N0>0,
+  mc_expectation(coupons(N0,T),10,T,E),
+  N is N0-Step,
+  NLN0 is N0*log(N0),
+  cycle_N(N,Step,RestE,RestN,RestNLN).
+  
+
+</div>
+<div class="nb-cell markdown">
+Epilogue:
+</div>
+<div class="nb-cell program prolog" data-background="true">
+:-end_lpad.
+</div>
+<div class="nb-cell markdown">
+## References
+
+[1] Kaminski, B. L., Katoen, J.-P., Matheja, C., Olmedo, F., Weakest precondition reasoning for expected run-times of probabilistic programs. Programming languages and systems, LNCS, vol. 9632, pp. 364-389, 
+Springer, Heidelberg (2016)
+
+[2] Hurd, J.: A formal approach to probabilistic termination. In: Carreno, V.A.,
+Munoz, C.A., Tahar, S. (eds.) TPHOLs 2002. LNCS, vol. 2410, pp. 230-245,
+Springer, Heidelberg (2002)
+</div>
+</div>
