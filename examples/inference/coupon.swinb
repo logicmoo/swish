@@ -89,7 +89,9 @@ Given the number of coupons N, T is the number of boxes to get all coupons.
 </div>
 <div class="nb-cell program prolog" data-background="true">
 coupons(N,T):-
-  new_coupon(N,[],0,N,T).
+  length(CP,N),
+  CPTerm=..[cp|CP],
+  new_coupon(N,CPTerm,0,N,T).
 </div>
 <div class="nb-cell markdown">
 If 0 coupons remain to be collected, the collection ends.
@@ -98,28 +100,29 @@ If 0 coupons remain to be collected, the collection ends.
 new_coupon(0,_CP,T,_N,T).
 </div>
 <div class="nb-cell markdown">
-If N0 coupons remain to be collected, collect one and add it to the list
-of coupons.
+If N0 coupons remain to be collected, collect one and set to 1
+the cell of the CP array (stored as a term with arity N).
 </div>
 <div class="nb-cell program prolog" data-background="true">
-new_coupon(N0,CP0,T0,N,T):-
+new_coupon(N0,CP,T0,N,T):-
   N0>0,
-  collect(CP0,N,T0,I,T1),
+  collect(CP,N,T0,T1),
   N1 is N0-1,
-  new_coupon(N1,[I|CP0],T1,N,T).
+  new_coupon(N1,CP,T1,N,T).
 </div>
 <div class="nb-cell markdown">
 Collect one new coupon and update the number of boxes bought.
 </div>
 <div class="nb-cell program prolog" data-background="true">
-collect(CP,N,T0,I,T):-
-  pick_a_box(T0,N,I0),
+collect(CP,N,T0,T):-
+  pick_a_box(T0,N,I),
   T1 is T0+1,
-  (member(I0,CP)->
-    collect(CP,N,T1,I,T)
-  ;
-    I=I0,
+  arg(I,CP,CPI),
+  (var(CPI)->
+    CPI=1,
     T=T1
+  ;
+    collect(CP,N,T1,T)
   ).
 
 pick_a_box(_,N,I):uniform(I,L):-numlist(1, N, L).
