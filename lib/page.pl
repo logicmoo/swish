@@ -317,14 +317,14 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
 	p([span([style('color:red')],['New']),': ',
+	a([href('/example/inference/coupon.swinb')],['coupon collector problem']),', ',
+	a([href('/example/inference/random_walk.swinb')],['random walk']),', ',
 	a([href('/example/inference/mln.swinb')],['Markov Logic Networks']),
         ', BDD drawing: ',
 	a([href('/example/inference/coin.swinb')],['coin']),', ',
 	a([href('/example/inference/path.swinb')],['path']),', ',
 	a([href('/example/inference/dice.swinb')],['dice']),', ',
-	a([href('/example/inference/epidemic.pl')],['epidemic']),'; ',
-	a([href('/example/inference/gpr.pl')],['Gaussian Process regression']),', ',
-	a([href('/example/inference/kalman_filter.swinb')],['Particle filtering'])
+	a([href('/example/inference/epidemic.pl')],['epidemic'])
 %	a([href('/help/help-cplint.html#cont'),target('_blank')],
 %	['continuous random variables']),' and ',
 %	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
