@@ -32,12 +32,19 @@ boxes I have to buy to get the prize?
 <div class="nb-cell query">
 mc_expectation(coupons(5,T),100,T,Exp).
 </div>
-<div class="nb-cell query">
-boxes_vs_N(6,1,Chart).
-</div>
 <div class="nb-cell markdown">
+Plot the dependency of the expected number of boxes from the number of coupons.
+</div>
+<div class="nb-cell query">
+boxes_vs_N(12,1,Chart).
+</div>
+<div class="nb-cell html">
+<script type="text/javascript">
+$.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",function() {MathJax.Hub.Queue(["Typeset",MathJax.Hub]);});
+</script>
+As indicated in [1], the number of boxes grows as \(O(N\log N)\) where \(N\) is the number of coupons. The graphs shows the accordance of the two curves.
 
-## Code
+<h3>Code</h3>
 
 Preamble:
 </div>
@@ -53,20 +60,21 @@ Preamble:
 :- begin_lpad.
 </div>
 <div class="nb-cell markdown">
-The walk starts at time=0 and X=0.
+Given the number of coupons N, T is the number of boxes to get all coupons.
 </div>
 <div class="nb-cell program prolog" data-background="true">
 coupons(N,T):-
   new_coupon(N,[],0,N,T).
 </div>
 <div class="nb-cell markdown">
-If X is 0, the walk ends.
+If 0 coupons remain to be collected, the collection ends.
 </div>
 <div class="nb-cell program prolog" data-background="true">
 new_coupon(0,_CP,T,_N,T).
 </div>
 <div class="nb-cell markdown">
-If X>0, the particle makes a move.
+If N0 coupons remain to be collected, collect one and add it to the list
+of coupons.
 </div>
 <div class="nb-cell program prolog" data-background="true">
 new_coupon(N0,CP0,T0,N,T):-
@@ -76,7 +84,7 @@ new_coupon(N0,CP0,T0,N,T):-
   new_coupon(N1,[I|CP0],T1,N,T).
 </div>
 <div class="nb-cell markdown">
-The move is either one step to the left or to the right with equal probability.
+Collect one new coupon and update the number of boxes bought.
 </div>
 <div class="nb-cell program prolog" data-background="true">
 collect(CP,N,T0,I,T):-
@@ -91,13 +99,24 @@ collect(CP,N,T0,I,T):-
 
 pick_a_box(_,N,I):uniform(I,L):-numlist(1, N, L).
 
+:-end_lpad.
+</div>
+<div class="nb-cell markdown">
+Plot the distribution of the number of boxes to collect N coupons by taking
+Samples samples.
+</div>
+<div class="nb-cell program prolog" data-background="true">
 dist(N,Samples,Chart):-
   mc_sample_arg_first(coupons(N,T),Samples,T,L),
   density(L,10,Chart).
-
+</div>
+<div class="nb-cell markdown">
+Plot the dependency of the number of boxes from the number of coupons.
+</div>
+<div class="nb-cell program prolog" data-background="true">
 boxes_vs_N(MaxN,Step,Chart):-
   cycle_N(MaxN,Step,V,N,NLN),
-  Chart=c3{data:_{x:x, columns:[[x|N],[exp|V],[nlgn|NLN]]}}.
+  Chart=c3{data:_{x:x, columns:[[x|N],['Expected number of boxes'|V],['1+1.2NlogN'|NLN]]}}.
 
 cycle_N(N,_Step,[],[],[]):-
   N<1.
@@ -106,25 +125,13 @@ cycle_N(N0,Step,[E|RestE],[N0|RestN],[NLN0|RestNLN]):-
   N0>0,
   mc_expectation(coupons(N0,T),10,T,E),
   N is N0-Step,
-  NLN0 is 1+N0*log(N0),
+  NLN0 is 1+1.2*N0*log(N0),
   cycle_N(N,Step,RestE,RestN,RestNLN).
-  
-
-</div>
-<div class="nb-cell markdown">
-Epilogue:
-</div>
-<div class="nb-cell program prolog" data-background="true">
-:-end_lpad.
 </div>
 <div class="nb-cell markdown">
 ## References
 
 [1] Kaminski, B. L., Katoen, J.-P., Matheja, C., Olmedo, F., Weakest precondition reasoning for expected run-times of probabilistic programs. Programming languages and systems, LNCS, vol. 9632, pp. 364-389, 
 Springer, Heidelberg (2016)
-
-[2] Hurd, J.: A formal approach to probabilistic termination. In: Carreno, V.A.,
-Munoz, C.A., Tahar, S. (eds.) TPHOLs 2002. LNCS, vol. 2410, pp. 230-245,
-Springer, Heidelberg (2002)
 </div>
 </div>

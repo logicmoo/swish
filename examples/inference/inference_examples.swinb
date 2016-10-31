@@ -51,6 +51,8 @@ Examples divided by features:
   [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), [widget.pl](example/inference/widget.pl),
   [widgetmsw.pl](example/inference/widgetmsw.pl)
   - argument sampling: 
+  [random_walk.swinb](example/inference/random_walk.swinb),
+  [coupon.swinb](example/inference/coupon.swinb),
   [gpr.pl](example/inference/gpr.pl),
   [dirichlet_process.pl](example/inference/dirichlet_process.pl),
   [dp_chinese.pl](example/inference/dp_chinese.pl),
@@ -80,10 +82,13 @@ Examples divided by features:
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
   - computation of expectations: 
+  [coupon.swinb](example/inference/coupon.swinb),
   [gpr.pl](example/inference/gpr.pl),
   [arithm.pl](example/inference/arithm.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl), 
   - infinite number of explanations:
+  [random_walk.swinb](example/inference/random_walk.swinb),
+  [coupon.swinb](example/inference/coupon.swinb),
   [pcfglrdb.pl](example/inference/pcfglrdb.pl),
   [pcfglr.pl](example/inference/pcfglr.pl), [markov_chaindb.pl](example/inference/markov_chaindb.pl), [slp_pcfg.pl](example/inference/slp_pcfg.pl)
   [markov_chain.pl](example/inference/markov_chain.pl),
@@ -101,6 +106,7 @@ Examples divided by features:
   [metacomb.pl](example/inference/metacomb.pl)
   - combining rules: [metacomb.pl](example/inference/metacomb.pl)
   - graphics: 
+  [coupon.swinb](example/inference/coupon.swinb),
   [gpr.pl](example/inference/gpr.pl),
   [path.swinb](example/inference/path.swinb),
   [path.pl](example/inference/path.pl),
@@ -118,7 +124,10 @@ Examples divided by features:
   [dirichlet_process.pl](example/inference/dirichlet_process.pl),
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
-  - Monte Carlo unconditional inference: [coinmc.pl](example/inference/coinmc.pl), 
+  - Monte Carlo unconditional inference:
+  [random_walk.swinb](example/inference/random_walk.swinb),
+  [coupon.swinb](example/inference/coupon.swinb),
+  [coinmc.pl](example/inference/coinmc.pl), 
   [pcfglr.pl](example/inference/pcfglr.pl), 
   [markov_chain.pl](example/inference/markov_chain.pl),
   [prefix.pl](example/inference/prefix.pl),
@@ -142,7 +151,8 @@ Examples divided by features:
   [seven_scientists.pl](example/inference/seven_scientists.pl), [widget.pl](example/inference/widget.pl),
   [widgetmsw.pl](example/inference/widgetmsw.pl),
   [gpr.pl](example/inference/gpr.pl)
-  - unconditional inference: [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
+  - unconditional inference: 
+  [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
   [sneezing.pl](example/inference/sneezing.pl), [eruption.pl](example/inference/eruption.pl), [mendel.pl](example/inference/mendel.pl), [bloodtype.pl](example/inference/bloodtype.pl),
   [path.swinb](example/inference/path.swinb),
   [path.pl](example/inference/path.pl), [alarm.pl](example/inference/alarm.pl), [hmm.pl](example/inference/hmm.pl), [pcfg.pl](example/inference/pcfg.pl),
@@ -174,6 +184,10 @@ Examples divided by features:
   [nballsdc.pl](example/inference/nballsdc.pl)
 
 <a name="#app">Examples divided by application domain:</a>
+  - random walks:
+  [random_walk.swinb](example/inference/random_walk.swinb),
+  - marketing:
+  [coupon.swinb](example/inference/coupon.swinb),
   - natural language:
   [pcfg.pl](example/inference/pcfg.pl),
   [cora.pl](example/inference/cora.pl),
@@ -514,5 +528,12 @@ is done.
   Pattern Recognition and Machine Learning, Springer, 2006, section 6.4
   - Markov Logic Networks ([mln.swinb](example/inference/mln.swinb)): how to 
   represent MLNs with probabilistic logic programming
+  - Coupon Collector Problem
+  ([coupon.swinb](example/inference/coupon.swinb)) see
+  Kaminski, B. L., Katoen, J.-P., Matheja, C., Olmedo, F., Weakest precondition reasoning for expected run-times of probabilistic programs. Programming languages and systems, LNCS, vol. 9632, pp. 364-389, Springer, Heidelberg (2016)
+  - Random Walk 
+  ([random_walk.swinb](example/inference/random_walk.swinb)) see
+  Kaminski, B. L., Katoen, J.-P., Matheja, C., Olmedo, F., Weakest precondition reasoning for expected run-times of probabilistic programs. Programming languages and systems, LNCS, vol. 9632, pp. 364-389, Springer, Heidelberg (2016)
+  
 </div>
 </div>
