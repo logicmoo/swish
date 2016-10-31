@@ -153,7 +153,7 @@ boxes_vs_N(MaxN,Step,Chart):-
   Chart=c3{data:_{x:x, columns:[[x|N],['Expected number of boxes'|V],['1+1.2NlogN'|NLN]]}}.
 
 cycle_N(N,_Step,[],[],[]):-
-  N<1.
+  N<1,!.
 
 cycle_N(N0,Step,[E|RestE],[N0|RestN],[NLN0|RestNLN]):-
   N0>0,
