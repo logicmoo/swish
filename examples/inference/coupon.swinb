@@ -152,18 +152,13 @@ Plot the dependency of the number of boxes from the number of coupons.
 </div>
 <div class="nb-cell program prolog" data-background="true">
 boxes_vs_N(MaxN,Step,Chart):-
-  cycle_N(MaxN,Step,V,N,NLN),
-  Chart=c3{data:_{x:x, columns:[[x|N],['Expected number of boxes'|V],['1+1.2NlogN'|NLN]]}}.
-
-cycle_N(N,_Step,[],[],[]):-
-  N<1,!.
-
-cycle_N(N0,Step,[E|RestE],[N0|RestN],[NLN0|RestNLN]):-
-  N0>0,
-  mc_expectation(coupons(N0,T),10,T,E),
-  N is N0-Step,
-  NLN0 is 1+1.2*N0*log(N0),
-  cycle_N(N,Step,RestE,RestN,RestNLN).
+  NSteps is ceil((MaxN-1)/Step),
+  findall(E,(
+    between(0,NSteps,N0),N is 1+N0*Step,mc_expectation(coupons(N,T),10,T,E)
+  ),V),
+  findall(N,(between(0,NSteps,N0),N is 1+N0*Step),X),
+  findall(NlogN,(between(0,NSteps,N0),N is 1+N0*Step,NlogN is 1+1.2*N*log(N)),NLN),
+  Chart=c3{data:_{x:x, columns:[[x|X],['Expected number of boxes'|V],['1+1.2NlogN'|NLN]]}}.
 </div>
 <div class="nb-cell markdown">
 ## References
