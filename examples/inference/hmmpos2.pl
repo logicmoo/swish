@@ -52,12 +52,12 @@ Original program by Joakim Nivre and Torbjorn Lager, adapted to MCINTYRE by Fabr
 % sequence of states S
 
 hmm(O):-hmm(_,O).
-% O is an output sequence if there is a state seuqnece S such that hmm1(S,O) 
+% O is an output sequence if there is a state seuqnece S such that hmm(S,O) 
 % holds
 
 hmm(S,O):-trans(start,Q0,[]),hmm(Q0,[],S0,O),reverse(S0,S).
 % O is an output sequence and S a state sequence if the chain stats at state
-% q1 and ends generating state sequence S and output sequence O
+% start and ends generating state sequence S and output sequence O
 
 hmm(Q,S0,S,[L|O]):-
 	trans(Q,Q1,S0),

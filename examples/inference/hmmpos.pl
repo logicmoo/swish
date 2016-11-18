@@ -17,17 +17,17 @@ Original program by Torbjorn Lager, adapted to MCINTYRE by Fabrizio Riguzzi
 :- begin_lpad.
 
 % hmm(O): O is the output sequence 
-% hmm1(S,O): O is the output sequence and S is the sequence of states
+% hmm(S,O): O is the output sequence and S is the sequence of states
 % hmm(Q,S0,S,O):  from state Q and previous state S0, generates output O and
 % sequence of states S
 
 hmm(O):-hmm(_,O).
-% O is an output sequence if there is a state seuqnece S such that hmm1(S,O) 
+% O is an output sequence if there is a state seuqnece S such that hmm(S,O) 
 % holds
 
 hmm(S,O):-trans(start,Q0,[]),hmm(Q0,[],S0,O),reverse(S0,S).
 % O is an output sequence and S a state sequence if the chain stats at state
-% q1 and ends generating state sequence S and output sequence O
+% start and ends generating state sequence S and output sequence O
 
 hmm(Q,S0,S,[L|O]):-
 	trans(Q,Q1,S0),

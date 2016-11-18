@@ -53,7 +53,7 @@ hmm(S,O): =O= is the output sequence and =S= is the sequence of states.
 hmm(Q,S0,S,O):  from state =Q= and previous state =S0=, generates output =O= and
 sequence of states =S=.
 
-=O= is an output sequence if there is a state seuqnece =S= such that hmm1(S,O) 
+=O= is an output sequence if there is a state seuqnece =S= such that hmm(S,O) 
 holds:
 </div>
 <div class="nb-cell program prolog" data-background="true">
