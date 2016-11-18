@@ -7,9 +7,9 @@
 :- endif.
 
 :- pita.
-:- dynamic drug/2.
 
 :- begin_lpad.
+:- actions drug/0.
 female:0.5.
 
 recovery:0.6:- drug,male.
@@ -55,7 +55,6 @@ nodrug_female:- nodrug,female.
 ?- prob(recovery,female,P).
 %P = 0.2.
 
-?- prob(recovery,P).
-%P = 0.4.
-
+?- prob(recovery,do(drug),P).
+%P = 0.5.
 */
