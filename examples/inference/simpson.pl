@@ -9,7 +9,7 @@
 :- pita.
 
 :- begin_lpad.
-:- actions drug/0.
+:- action drug/0,nodrug/0,female/0.
 female:0.5.
 
 recovery:0.6:- drug,male.
@@ -24,37 +24,46 @@ drug:10/40:-female.
 nodrug:- \+ drug.
 male:- \+ female.
 
-drug_male:- drug, male.
-nodrug_male:- nodrug, male.
-drug_female:- drug,female.
-nodrug_female:- nodrug,female.
 :-end_lpad.
 
 /** <examples>
+
+
+
 ?- prob(recovery,drug,P).
 %P = 0.49999999999999994.
 
-?- prob(recovery,nodrug,P).
+?- prob(recovery,\+ drug,P).
 %P = 0.39999999999999997.
 
-?- prob(recovery,drug_male,P).
-%P = 0.6.
-
-?- prob(recovery,nodrug_male,P).
-%P = 0.7.
-
-?- prob(recovery,drug_female,P).
+?- prob(recovery,(drug,female),P).
 %P = 0.2.
 
-?- prob(recovery,nodrug_female,P).
+?- prob(recovery,(\+drug,female),P).
 %P = 0.3.
 
-?- prob(recovery,male,P).
+?- prob(recovery,(drug,\+female),P).
 %P = 0.6.
 
-?- prob(recovery,female,P).
-%P = 0.2.
+?- prob(recovery,(\+ drug,\+female),P).
+%P = 0.7.
 
 ?- prob(recovery,do(drug),P).
+%P = 0.4.
+
+?- prob(recovery,do(\+ drug),P).
 %P = 0.5.
+
+?- prob(recovery,(do(drug),female),P).
+%P = 0.2.
+
+?- prob(recovery,(do(\+drug),female),P).
+%P = 0.3.
+
+?- prob(recovery,(do(drug),\+ female),P).
+%P = 0.6.
+
+?- prob(recovery,(do(\+ drug),\+ female),P).
+%P = 0.7.
+
 */
