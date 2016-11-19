@@ -5,10 +5,11 @@ sampled from a Gaussian with mean 5 and variance 2.
 The example illustrates the use of continuous random variables and
 the use of sampling, including
 rejection sampling and Metropolis/Hastings. Moreover the example
-illustrates the use of the predicate histogram/3 for graphing the
+illustrates the use of the predicate histogram/2 for graphing the
 probability density function of continuous random variables.
 */
 :- use_module(library(mcintyre)).
+:- use_module(library(cplint_r)).
 
 :- mc.
 :- begin_lpad.
@@ -30,56 +31,36 @@ mix(X) :- tails, h(X).
 :- end_lpad.
 
 
-extract_samples_list/2.
-
-extract_samples_list([],[]).
-
-extract_samples_list([[Y]-X|In],[Y|Out]) :-
-	X is 1,
-    extract_samples_list(In,Out).
-
-:- <- library("ggplot2").
-
-plot_samples/2.
-
-plot_samples(List,Bins) :-
-  extract_samples_list(List,A),
-  nbins <- Bins,
-  x <- c(A),
-  <- ggplot() + aes(x) + geom_histogram(bins=nbins).
-
-/* --- */
-
 hist_uncond(Samples,NBins):-
   mc_sample_arg(mix(X),Samples,X,L0),
-  plot_samples(L0,NBins).
+  histogram_R(L0,NBins).
 % take SAmples samples of X in mix(X) and draw a histogram with NBins bins representing 
 % the probability density of X 
 
 hist_rej_heads(Samples,NBins):-
   mc_rejection_sample_arg(mix(X),heads,Samples,X,L0),
-  plot_samples(L0,NBins).
+  histogram_R(L0,NBins).
 % take Samples samples of X in mix(X) given that heads was true using 
 % rejection sampling and draw an
 % histogram with NBins bins representing the probability density of X
 
 hist_mh_heads(Samples,Lag,NBins):-
   mc_mh_sample_arg(mix(X),heads,Samples,Lag,X,L0),
-  plot_samples(L0,NBins).
+  histogram_R(L0,NBins).
 % take Samples samples of X in mix(X) given that heads was true using 
 % Metropolis-Hastings and draw an
 % histogram with NBins bins representing the probability density of X
 
 hist_rej_dis(Samples,NBins):-
   mc_rejection_sample_arg(mix(X),(mix(Y),Y>2),Samples,X,L0),
-  plot_samples(L0,NBins).
+  histogram_R(L0,NBins).
 % take Samples samples of X in mix(X) given that X>2 was true using 
 % rejection sampling and draw an
 % histogram with NBins bins representing the probability density of X
 
 hist_mh_dis(Samples,Lag,NBins):-
   mc_mh_sample_arg(mix(X),(mix(Y),Y>2),Samples,Lag,X,L0),
-  plot_samples(L0,NBins).
+  histogram_R(L0,NBins).
 % take Samples samples of X in mix(X) given that X>2 was true using 
 % Metropolis-Hastings and draw an
 % histogram with NBins bins representing the probability density of X
