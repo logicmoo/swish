@@ -32,13 +32,77 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-:- module(cplint_swish_r,[ histogram_r/2
-                         ]).
+:- module(cplint_r,
+          [ histogram_r/2
+          ]).
 
-:- use_module(library(cplint_r)).
+:- use_module(library(r/r_call)).
+:- use_module(library(r/r_data)).
 :- use_module(swish(r_swish)).
 
+
+/*********** 
+ * Helpers *
+ ***********/
+
+
+/* R */
+
+load_r_env :-
+    <- library("ggplot2").
+
+
+/* Lists */
+
+to_pair([E]-W,E-W):- !.
+to_pair(E-W,E-W).
+
+key(K-_,K).
+
+y(_ - Y,Y).
+
+
+/******************* 
+ * Plot predicates *
+ *******************/
+
+
+/**
+ * histogram_r(+List:list,+NBins:int) is det
+ *
+ * Draws a histogram of the samples in List dividing the domain in
+ * NBins bins. List must be a list of couples of the form [V]-W or V-W
+ * where V is a sampled value and W is its weight.
+ */
+/* Input controls. Don't change. */
 histogram_r(L0,NBins) :-
-	histogram_R(L0,NBins),
-	r_download.
+    load_r_env,
+    maplist(to_pair,L0,L1),
+    maplist(key,L1,L2),
+    l2 <- L2,
+    Max <- max(l2),
+    Min <- min(l2),
+    histogram_r(L0,NBins,Min,Max),
+    r_download.
+
+/**
+ * histogram_r(+List:list,+NBins:int,+Min:float,+Max:float) is det
+ *
+ * Draws a histogram of the samples in List dividing the domain in
+ * NBins bins. List must be a list of couples of the form [V]-W or V-W
+ * where V is a sampled value and W is its weight. The minimum and maximum
+ * values of the domains must be provided.
+ */
+histogram_r(L0,NBins,Min,Max) :-
+    maplist(to_pair,L0,L1),
+    keysort(L1,L),
+    maX <- Max,
+    miN <- Min,
+    nbinS <- NBins,
+    BinWidth <- (maX - miN) / nbinS,
+    binwidtH <- BinWidth,
+    maplist(key,L,X),
+/*    maplist(y,L,Y), */
+    x <- c(X),
+    <- ggplot() + aes(x) + geom_histogram(binwidth=binwidtH,bins=nbinS).
 
