@@ -127,13 +127,13 @@ and  query \(P(E)\) on this network.
 
 female:0.5.
 
-recovery:0.6:- drug,male.
-recovery:0.7:- \+ drug,male.
+recovery:0.6:- drug,\+ female.
+recovery:0.7:- \+ drug,\+ female.
 
 recovery:0.2:- drug,female.
 recovery:0.3:- \+ drug,female.
 
-drug:30/40:- male.
+drug:30/40:- \+ female.
 drug:10/40:-female.
 
 
