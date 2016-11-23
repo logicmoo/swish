@@ -397,7 +397,7 @@ var cellTypes = {
       var viewrect;
 
       if ( options.if_visible ) {
-	if ( view.find(".nb-cell").length > 0 )
+	if ( view.find(".nb-content > div.nb-cell").length > 0 )
 	  viewrect = view[0].getBoundingClientRect();
       }
 
