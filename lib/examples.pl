@@ -63,19 +63,6 @@ user:file_search_path(example, swish(examples)).
 user:file_search_path(example, swish(examples/inference)).
 user:file_search_path(example, swish(examples/learning)).
 user:file_search_path(example, swish(examples/aleph)).
-user:file_search_path(example, swish(examples/aleph/contraints)).
-user:file_search_path(example, swish(examples/aleph/features)).
-user:file_search_path(example, swish(examples/aleph/gcws)).
-user:file_search_path(example, swish(examples/aleph/good)).
-user:file_search_path(example, swish(examples/aleph/interactive)).
-user:file_search_path(example, swish(examples/aleph/modes)).
-user:file_search_path(example, swish(examples/aleph/numbers)).
-user:file_search_path(example, swish(examples/aleph/portray)).
-user:file_search_path(example, swish(examples/aleph/posonly)).
-user:file_search_path(example, swish(examples/aleph/recursion)).
-user:file_search_path(example, swish(examples/aleph/refine)).
-user:file_search_path(example, swish(examples/aleph/trains)).
-user:file_search_path(example, swish(examples/aleph/tree)).
 
 
 % make SWISH serve /example/File as example(File).
