@@ -317,7 +317,7 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
 	p([span([style('color:red')],['New']),': ',
-	a([href('https://sites.google.com/a/unife.it/ml/lemur')],['LEMUR']),' (',
+	a([href('https://sites.google.com/a/unife.it/ml/lemur'),target('_blank')],['LEMUR']),' (',
 	a([href('/example/lemur/lemur_examples.swinb')],['examples']),'), ',
 	a([href('/example/inference/coupon.swinb')],['coupon collector problem']),', ',
 	a([href('/example/inference/random_walk.swinb')],['random walk']),', ',
