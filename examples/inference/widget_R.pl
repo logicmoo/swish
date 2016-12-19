@@ -24,7 +24,7 @@ http://arxiv.org/pdf/1112.2681v3.pdf
 */
 :- use_module(library(mcintyre)).
 :- use_module(library(clpr)).
-:- use_module(swish(lib/cplint_r)).
+:- use_module(library(cplint_r)).
 
 :- mc.
 :- begin_lpad.

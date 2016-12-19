@@ -9,7 +9,7 @@ illustrates the use of the predicate histogram/2 for graphing the
 probability density function of continuous random variables.
 */
 :- use_module(library(mcintyre)).
-:- use_module(swish(lib/cplint_r)).
+:- use_module(library(cplint_r)).
 
 :- mc.
 :- begin_lpad.
