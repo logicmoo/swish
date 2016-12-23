@@ -262,10 +262,13 @@ draw_fun_pred_r(Kernel):-
         aes(
             color=group
         )
-    ) + geom_line(
+    ) + geom_smooth(
         aes(
             color=group
-        )
+        ),
+        formula = "y ~ poly(x,degree=9)", 
+        method = "glm",
+        se = 'TRUE'
     /* Define top and bottom of the error bars. */
     ) + geom_errorbar(
         aes(
@@ -277,13 +280,7 @@ draw_fun_pred_r(Kernel):-
     ).
 
 /*
-    ) + stat_smooth(
-        se='TRUE',
-        method="lm",
-        formula="y ~ poly(x,10)",
-        aes(
-            color=group
-        )
+
 
     dfspline <- data.frame(
         spline(
