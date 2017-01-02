@@ -114,11 +114,12 @@ cov_row([H|T],XH,Ker,[KH|KT]):-
 % Given the points described by the lists XT and YT and a Kernel,
 % predict the Y values of points with X values in XP and returns them in YP.
 % Prediction is performed by Gaussian process regression.
-gp_predict(XP,Kernel,Var,XT,YT,YP):-
+gp_predict(XP,Kernel,Var,XT,YT,KStar,YP):-
   compute_cov(XT,Kernel,Var,C),
   matrix_inversion(C,C_1),
   transpose([YT],YST),
   matrix_multiply(C_1,YST,C_1T),
+    gp_predict_cstar(XP,Kernel,XT,KStar),
   gp_predict_single(XP,Kernel,XT,C_1T,YP).
 
 gp_predict_single([],_,_,_,[]).
@@ -127,6 +128,21 @@ gp_predict_single([XH|XT],Kernel,X,C_1T,[YH|YT]):-
   compute_k(X,XH,Kernel,K),
   matrix_multiply([K],C_1T,[[YH]]),
   gp_predict_single(XT,Kernel,X,C_1T,YT).
+
+
+/*
+ *
+ */
+
+gp_predict_cstar([],_,_,[]).
+
+gp_predict_cstar([XStarH|XStarT],Kernel,X,[KStarH|KStarT]) :-
+    compute_k(X,XStarH,Kernel,KStarH),
+    gp_predict_cstar(XStarT,Kernel,X,KStarT).
+
+/*
+ *
+ */
 
 compute_k([],_,_,[]).
 
@@ -222,7 +238,9 @@ draw_fun_pred_r(Kernel):-
     numlist(0,10,X),
     XT=[2.5,6.5,8.5],
     YT=[1,-0.8,0.6],
-    mc_lw_sample_arg(gp_predict(X,Kernel,Sigma,XT,YT,Y),gp(XT,Kernel,YT),5,Y,L),
+    mc_lw_sample_arg(gp_predict(X,Kernel,Sigma,XT,YT,KStar,Y),gp(XT,Kernel,YT),5,Y,L),
+    mc_lw_sample_arg(gp_predict(X,Kernel,Sigma,XT,YT,KStar,Y),gp(XT,Kernel,YT),5,KStar,M),
+    writeln(M),
     keysort(L,LS),
     reverse(LS,[Y1-_,Y2-_,Y3-_|_]),
 
@@ -303,13 +321,6 @@ draw_fun_pred_r(Kernel):-
         )
 */
           
-/*
-  C = c3{data:_{xs:_{y:xt,f1:x,f2:x,f3:x}, 
-  columns:[[y|YT],[xt|XT],[x|X],[f1|Y1],[f2|Y2],[f3|Y3]],
-    types:_{f1: spline,f2:spline,f3:spline,y:scatter}},
-  axis:_{ x:_{ tick:_{fit:false}}}}.
-*/
-
 %! draw_fun_pred_exp(+Kernel:atom,-C:dict) is det
 % Given the three points
 % XT=[2.5,6.5,8.5]
