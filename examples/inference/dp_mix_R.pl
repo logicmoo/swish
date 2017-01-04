@@ -18,7 +18,7 @@ because the weights go rapidly to 0.
 
 */
  :- use_module(library(mcintyre)).
- :- use_module(swish(lib/cplint_r)).
+ :- use_module(library(cplint_r)).
 :- mc.
 :- begin_lpad.
 
