@@ -62,6 +62,7 @@ two sources:
 user:file_search_path(example, swish(examples)).
 user:file_search_path(example, swish(examples/inference)).
 user:file_search_path(example, swish(examples/learning)).
+user:file_search_path(example, swish(examples/lemur)).
 user:file_search_path(example, swish(examples/aleph)).
 
 
