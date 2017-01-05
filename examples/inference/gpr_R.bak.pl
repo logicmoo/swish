@@ -63,9 +63,6 @@ distributed in {1,2,3} and sigma uniformly distributed in [-2,2].
 
 :- use_module(library(r/r_call)).
 :- use_module(library(r/r_data)).
-
-:- use_module(library(cplint_r)).
-
 /*:- use_module(swish(r_swish)).*/
 
 
@@ -113,12 +110,6 @@ cov_row([H|T],XH,Ker,[KH|KT]):-
   call(Ker,H,XH,KH),
   cov_row(T,XH,Ker,KT).
 
-compute_k([],_,_,[]).
-
-compute_k([XH|XT],X,Ker,[HK|TK]):-
-  call(Ker,XH,X,HK),
-  compute_k(XT,X,Ker,TK).
-
 %
 %%
 %
@@ -130,14 +121,31 @@ gp_predict_single([XH|XT],Kernel,X,C_1T,[YH|YT]):-
   matrix_multiply([K],C_1T,[[YH]]),
   gp_predict_single(XT,Kernel,X,C_1T,YT).
 
+compute_k([],_,_,[]).
+
+compute_k([XH|XT],X,Ker,[HK|TK]):-
+  call(Ker,XH,X,HK),
+  compute_k(XT,X,Ker,TK).
+  
+
+/* Get the mean of the distribution. */
+get_mean(XP,Kernel,Var,C_1,XT,YT,YP) :-
+  compute_cov(XT,Kernel,Var,C),
+  matrix_inversion(C,C_1),
+  transpose([YT],YST),
+  matrix_multiply(C_1,YST,C_1T),
+  gp_predict_single(XP,Kernel,XT,C_1T,YP).
+    
+
+
 gp_predict_cstar([],_,_,[]).
 
 gp_predict_cstar([XStarH|XStarT],Kernel,X,[KStarH|KStarT]) :-
     compute_k(X,XStarH,Kernel,KStarH),
     gp_predict_cstar(XStarT,Kernel,X,KStarT).
 
-compute_kstarstar(XP,Kernel,KStarStar):-
-    call(Kernel,XP,XP,KStarStar).
+compute_kstarstar(XP,Ker,K):-
+    call(Ker,XP,XP,K).
 
 gp_predict_cstarstar([],_,[]).
 
@@ -156,49 +164,23 @@ gp_predict_cstarstar([XStarStarH|XStarStarT],Kernel,[KStarStarH|KStarStarT]) :-
  */
     /* Transpose here. TODO. */
     /* Matrix computation here. TODO. */
-
-gp_predict_variance(XP,Kernel,Sigma,XT,Variance) :-
-    /* Find the covariance matrix and its inverse. */
-    compute_cov(XT,Kernel,Sigma,K),
-    matrix_inversion(K,K_1),
-
-   /* Use the kernel function to find the vector (1xn matrix) KStar and the 
-    * scalar (1x1 matrix KStarStar).
-    */
+/*
+get_variance(XP,Kernel,K_1,Variance) :-
     gp_predict_cstar(XP,Kernel,XT,KStar),
-    transpose(KStar,KStar_T),
     gp_predict_cstarstar(XP,Kernel,KStarStar),
-
-    writeln(XP),
-    writeln("KStar"),
-    writeln(KStar),
-    writeln("KStar_T"),
-    writeln(KStar_T),
-    writeln("K_1"),
-    writeln(K_1),
-    writeln("KStarStar"),
-    writeln(KStarStar),
-
-    /*
-     * What follows represents this:
-     * Var is KStarStar - (KStar * K_1 * KStar_T).
-     */
-
-    matrix_multiply(KStar,K_1,M),
-    matrix_multiply(M,KStar_T,N),
-    matrix_diff([KStarStar],N,Variance).
-
+    transpose(KStar,KStar_T),
+    Var is KStarStar - (KStar_T * K_1 * KStar).
+*/
 
 %! gp_predict(+XP:list,+Kernel:atom,+XT:list,+YT:list,-YP:list) is det
 % Given the points described by the lists XT and YT and a Kernel,
 % predict the Y values of points with X values in XP and returns them in YP.
 % Prediction is performed by Gaussian process regression.
-gp_predict_mean(XP,Kernel,Var,XT,YT,YP):-
-  compute_cov(XT,Kernel,Var,C),
-  matrix_inversion(C,C_1),
-  transpose([YT],YST),
-  matrix_multiply(C_1,YST,C_1T),
-  gp_predict_single(XP,Kernel,XT,C_1T,YP).
+gp_predict(XP,Kernel,Var,XT,YT,YP,Variance):-
+    get_mean(XP,Kernel,Var,C_1,XT,YT,YP),
+    C_1,
+    Variance = 1.
+/*    get_variance(XP,Kernel,C_1,Variance).*/
 
 
 % list of kernels
@@ -261,6 +243,20 @@ draw_fun(X,Kernel,C):-
 
 
 
+
+assemble_list([], [], []).
+
+assemble_list([XH|XT], [YH|YT], [XH-YH|Out]) :-
+        assemble_list(XT, YT, Out).
+
+r_row(X,Y,r(X,Y)).
+
+get_set_from_list(L,R) :-
+    maplist(key,L,X),
+    maplist(y,L,Y),
+    maplist(r_row,X,Y,R).
+
+
 %! draw_fun_pred_r(+Kernel:atom) is det
 % Given the three points
 % XT=[2.5,6.5,8.5]
@@ -271,35 +267,33 @@ draw_fun_pred_r(Kernel):-
 
     Sigma is 0.3,
     /* X = 0:10 */
-/*    numlist(0,10,X),*/
-    numlist(0,0,X),
+    numlist(0,10,X),
     XT=[2.5,6.5,8.5],
     YT=[1,-0.8,0.6],
-    
-mc_lw_sample_arg(gp_predict_mean(X,Kernel,Sigma,XT,YT,YMean),gp(XT,Kernel,YT),5,YMean,L),
- 
-mc_lw_sample_arg(gp_predict_variance(X,Kernel,Sigma,XT,YVariance),gp(XT,Kernel,YT),1,YVariance,M),
+    mc_lw_sample_arg(gp_predict(X,Kernel,Sigma,XT,YT,YVariance,YMean),gp(XT,Kernel,YT),5,YMean,L),
+/* 
+mc_lw_sample_arg(gp_predict(X,Kernel,Sigma,XT,YT,YVariance,YMean),gp(XT,Kernel,YT),5,YVariance,M),
     writeln(M),
-
+*/
     keysort(L,LS),
     reverse(LS,[Y1-_,Y2-_,Y3-_|_]),
 
     sigma <- Sigma,
 
     /* L1 = [X1-Y11,X2-Y12,...,Xn-Y1n]. */
-    build_xy_list(X,Y1,L1),
-    build_xy_list(X,Y2,L2),
-    build_xy_list(X,Y3,L3),
+    assemble_list(X,Y1,L1),
+    assemble_list(X,Y2,L2),
+    assemble_list(X,Y3,L3),
 
-    get_set_from_xy_list(L1,R1),
+    get_set_from_list(L1,R1),
     r_data_frame_from_rows(df1, R1),
     colnames(df1) <- c("x", "y"),
 
-    get_set_from_xy_list(L2,R2),
+    get_set_from_list(L2,R2),
     r_data_frame_from_rows(df2, R2),
     colnames(df2) <- c("x", "y"),
 
-    get_set_from_xy_list(L3,R3),
+    get_set_from_list(L3,R3),
     r_data_frame_from_rows(df3, R3),
     colnames(df3) <- c("x", "y"),
 
