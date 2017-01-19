@@ -113,15 +113,14 @@ cov_row([H|T],XH,Ker,[KH|KT]):-
   call(Ker,H,XH,KH),
   cov_row(T,XH,Ker,KT).
 
+
+
+
 compute_k([],_,_,[]).
 
 compute_k([XH|XT],X,Ker,[HK|TK]):-
   call(Ker,XH,X,HK),
   compute_k(XT,X,Ker,TK).
-
-%
-%%
-%
 
 gp_predict_single([],_,_,_,[]).
 
@@ -130,20 +129,32 @@ gp_predict_single([XH|XT],Kernel,X,C_1T,[YH|YT]):-
   matrix_multiply([K],C_1T,[[YH]]),
   gp_predict_single(XT,Kernel,X,C_1T,YT).
 
+
+
+
 gp_predict_cstar([],_,_,[]).
 
 gp_predict_cstar([XStarH|XStarT],Kernel,X,[KStarH|KStarT]) :-
     compute_k(X,XStarH,Kernel,KStarH),
     gp_predict_cstar(XStarT,Kernel,X,KStarT).
 
-compute_kstarstar(XP,Kernel,KStarStar):-
-    call(Kernel,XP,XP,KStarStar).
+
+
+
+compute_kstarstar([],_,[]).
+
+compute_kstarstar([XPH|XPT],Kernel,[KStarStarH|KStarStarT]):-
+    call(Kernel,XPH,XPH,KStarStarH),
+    compute_kstarstar(XPT,Kernel,KStarStarT).
 
 gp_predict_cstarstar([],_,[]).
 
 gp_predict_cstarstar([XStarStarH|XStarStarT],Kernel,[KStarStarH|KStarStarT]) :-
-    compute_kstarstar(XStarStarH,Kernel,KStarStarH),
+    compute_kstarstar([XStarStarH],Kernel,KStarStarH),
     gp_predict_cstarstar(XStarStarT,Kernel,KStarStarT).
+
+
+
 
 /* K = covariance matrix
  ***
@@ -186,7 +197,7 @@ gp_predict_variance(XP,Kernel,Sigma,XT,Variance) :-
 
     matrix_multiply(KStar,K_1,M),
     matrix_multiply(M,KStar_T,N),
-    matrix_diff([KStarStar],N,Variance).
+    matrix_diff(KStarStar,N,Variance).
 
 
 %! gp_predict(+XP:list,+Kernel:atom,+XT:list,+YT:list,-YP:list) is det
