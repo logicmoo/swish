@@ -82,12 +82,10 @@ post(Samples,NBins):-
   maplist(to_val,O,O1),
   length(O1,N),
   mc_lw_sample_arg_log(dp_value(0,10.0,T),dp_n_values(0,N,10.0,O1),Samples,T,L),
-/*
   maplist(keys,L,LW),
-  min_list(LW,Min),
-  maplist(exp(Min),L,L1),
-*/
-  density_r(L,NBins,-8,15).
+  max_list(LW,Max),
+  maplist(exp(Maxn),L,L1),
+  density_r(L1,NBins,-8,15).
 
 keys(_-W,W).
 
