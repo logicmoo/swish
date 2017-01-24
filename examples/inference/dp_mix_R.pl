@@ -15,6 +15,8 @@ because the weights go rapidly to 0.
 % draw the prior density
 ?- post(200,100).
 % draw the posterior density
+?- post_exp(200,100).
+% draw the posterior density using the exponential function.
 
 */
  :- use_module(library(mcintyre)).
@@ -81,11 +83,19 @@ post(Samples,NBins):-
   obs(O),
   maplist(to_val,O,O1),
   length(O1,N),
+  mc_lw_sample_arg(dp_value(0,10.0,T),dp_n_values(0,N,10.0,O1),Samples,T,L),
+  density_r(L,NBins,-8,15).
+
+post_exp(Samples,NBins):-
+  obs(O),
+  maplist(to_val,O,O1),
+  length(O1,N),
   mc_lw_sample_arg_log(dp_value(0,10.0,T),dp_n_values(0,N,10.0,O1),Samples,T,L),
   maplist(keys,L,LW),
   max_list(LW,Max),
-  maplist(exp(Maxn),L,L1),
+  maplist(exp(Max),L,L1),
   density_r(L1,NBins,-8,15).
+
 
 keys(_-W,W).
 
