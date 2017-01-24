@@ -38,10 +38,10 @@ hist_uncond(Samples,NBins):-
 % observations by taking Samples samples and by dividing the domain
 % in NBins bins
 
-dens_lw(Samples,NBins):-
+dens_lw(Samples):-
   mc_sample_arg(value(0,Y),Samples,Y,L0),
   mc_lw_sample_arg(value(0,X),(value(1,9),value(2,8)),Samples,X,L),
-  densities_r(L0,L,NBins).
+  densities_r(L0,L).
 % plot the densities of the random variable before and after  
 % observing 9 and 8 by taking Samples samples and by dividing the domain
 % % in NBins bins
@@ -49,7 +49,7 @@ dens_lw(Samples,NBins):-
 
 
 /** <examples>
-?- dens_lw(1000,40).
+?- dens_lw(1000).
 % plot the densities of the random variable before and after
 % observing 9 and 8
 ?- hist_uncond(10000,40).

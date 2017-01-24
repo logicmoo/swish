@@ -13,9 +13,9 @@ because the weights go rapidly to 0.
 /** <examples>
 ?- prior(200,100).
 % draw the prior density
-?- post(200,100).
+?- post(200).
 % draw the posterior density
-?- post_exp(200,100).
+?- post_exp(200).
 % draw the posterior density using the exponential function.
 
 */
@@ -79,14 +79,14 @@ prior(Samples,NBins):-
   L=[Vs-_],
   histogram_r(Vs,NBins).
 
-post(Samples,NBins):-
+post(Samples):-
   obs(O),
   maplist(to_val,O,O1),
   length(O1,N),
   mc_lw_sample_arg(dp_value(0,10.0,T),dp_n_values(0,N,10.0,O1),Samples,T,L),
-  density_r(L,NBins,-8,15).
+  density_r(L).
 
-post_exp(Samples,NBins):-
+post_exp(Samples):-
   obs(O),
   maplist(to_val,O,O1),
   length(O1,N),
@@ -94,7 +94,7 @@ post_exp(Samples,NBins):-
   maplist(keys,L,LW),
   max_list(LW,Max),
   maplist(exp(Max),L,L1),
-  density_r(L1,NBins,-8,15).
+  density_r(L1).
 
 
 keys(_-W,W).
