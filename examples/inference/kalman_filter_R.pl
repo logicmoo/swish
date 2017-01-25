@@ -28,10 +28,10 @@ Third Edition, Prentice Hall, Figure 15.10 page 587
 */
 
 /** <examples>
-?- filter_sampled_par(100,C).
-?- filter_par(100,C).
-?- filter_sampled(1000,C).
-?- filter(1000,C).
+?- filter_sampled_par(100).
+?- filter_par(100).
+?- filter_sampled(1000).
+?- filter(1000).
 ?- dens_par(1000).
 ?- dens_lw(1000).
 % plot the density of the state at time 1 in case of no observation (prior)
@@ -117,79 +117,171 @@ dens_par(Samples):-
   densities_r(L0,L).
 
 
-%! filter_par(+S:int,-C:dict) is det
+%! filter_par(+S:int) is det
 % Draws a sample trajectory for 4 time points and performs particle filtering
-filter_par(Samples,C):-
+filter_par(Samples):-
   sample_trajectory(4,O,St),
-  filter_par(Samples,O,St,C).
+  filter_par(Samples,O,St).
 
-%! filter_sampled_par(+S:int,-C:dict) is det
+%! filter_sampled_par(+S:int) is det
 % Considers a sampled trajectory for 4 time points and performs particle filtering
-filter_sampled_par(Samples,C):-
+filter_sampled_par(Samples):-
   o(O),
   st(St),
-  filter_par(Samples,O,St,C).
+  filter_par(Samples,O,St).
 
-%! filter_par(+S:int,+O:list,+St:list,-C:dict) is det
-% Takes observations O and true states St for 4 time points 
-% and performs filtering on the trajectory: given O, computes the
-% distribution of the state for each time point.
-% It uses particle filtering with S particles.
-% Returns a graph C with the distributions of the state variable 
-% at time 1, 2, 3 and 4 
-% (S1, S2, S3, S4, density on the left y axis) 
-% and with O and St (time on the right y axis).
-filter_par(Samples,O,St,C):-
-  O=[O1,O2,O3,O4],
-  NBins=20,
-  mc_particle_sample_arg([kf_fin(1,T1),kf_fin(2,T2),kf_fin(3,T3),kf_fin(4,T4)],
-  [kf_o(1,O1),kf_o(2,O2),kf_o(3,O3),kf_o(4,O4)],Samples,[T1,T2,T3,T4],[F1,F2,F3,F4]),
-  density(F1,NBins,C1),
-  density(F2,NBins,C2),
-  density(F3,NBins,C3),
-  density(F4,NBins,C4),
-  [[x|X1],[dens|S1]]=C1.data.columns,
-  [[x|X2],[dens|S2]]=C2.data.columns,
-  [[x|X3],[dens|S3]]=C3.data.columns,
-  [[x|X4],[dens|S4]]=C4.data.columns,
-  Y=[1,2,3,4],
-  C = c3{data:_{xs:_{'True State':xt,'Obs':xo,'S1':x1,'S2':x2,'S3':x3,'S4':x4},
-  columns:[[xt|St],['True State'|Y],
-    [xo|O],['Obs'|Y],
-    [x1|X1],['S1'|S1],
-    [x2|X2],['S2'|S2],
-    [x3|X3],['S3'|S3],
-    [x4|X4],['S4'|S4]],
-    types:_{'S1': spline,'S2': spline,'S3': spline,'S4': spline,'True State':scatter,'Obs':scatter},
-    axes:_{'S1':y,'S2':y,'S3':y,'S4':y,'True State':y2,'Obs':y2}},
-    axis:_{ x:_{ tick:_{fit:false}},
-      y2:_{
-            show: 'true',
-                label: 'Time',
-                min: -6
-       },
-       y:_{label:'Density'}}
-  }.
-
-%! filter(+S:int,-C:dict) is det
+%! filter(+S:int) is det
 % Draws a sample trajectory for 4 time points and performs filtering with
 % likelihood weighting
-filter(Samples,C):-
+filter(Samples):-
   sample_trajectory(4,O,St),
-  filter(Samples,O,St,C).
+  filter(Samples,O,St).
 
-%! filter_sampled(+S:int,-C:dict) is det
+%! filter_sampled(+S:int) is det
 % Considers a sampled trajectory for 4 time points and performs filtering
 % with likelihood weighting
-filter_sampled(Samples,C):-
+filter_sampled(Samples):-
   o(O),
   st(St),
-  filter(Samples,O,St,C).
+  filter(Samples,O,St).
 
 o([-0.13382010096024688, -1.1832019975321675, -3.2127809027386567, -4.586259511038596]).
 st([-0.18721387460211258, -2.187978176930458, -1.5472275345566668, -2.9840114021132713]).
 
-%! filter(+S:int,+O:list,+St:list,-C:dict) is det
+geom_densities(L1,L2,L3,L4,O,St,Y):-
+    <- library("ggplot2"),
+    <- library("gridExtra"),
+    <- library("grid"),
+
+    build_xy_list(O,Y,Obs),
+    build_xy_list(St,Y,State),
+
+    get_set_from_xy_list(L1,R1),
+    get_set_from_xy_list(L2,R2),
+    get_set_from_xy_list(L3,R3),
+    get_set_from_xy_list(L4,R4),
+    get_set_from_xy_list(Obs,R5),
+    get_set_from_xy_list(State,R6),
+    
+    r_data_frame_from_rows(df1, R1),
+    r_data_frame_from_rows(df2, R2),
+    r_data_frame_from_rows(df3, R3),
+    r_data_frame_from_rows(df4, R4),
+    r_data_frame_from_rows(df5, R5),
+    r_data_frame_from_rows(df6, R6),
+
+    colnames(df1) <- c("x1", "y1"),
+    colnames(df2) <- c("x2", "y2"),
+    colnames(df3) <- c("x3", "y3"),
+    colnames(df4) <- c("x4", "y4"),
+    colnames(df5) <- c("x5", "y5"),
+    colnames(df6) <- c("x6", "y6"),
+    df <- data.frame(
+        x1=df1$x1,
+        x2=df2$x2,
+        x3=df3$x3,
+        x4=df4$x4,
+        y1=df1$y1,
+        y2=df2$y2,
+        y3=df3$y3,
+        y4=df4$y4
+    ),
+    dfp <- data.frame(
+        x5=df5$x5,
+        x6=df6$x6,
+        y5=df5$y5,
+        y6=df6$y6
+    ),
+    alphA <- 0.5,
+    xmiN <- -8,
+    xmaX <- 8,
+
+    g.top <- ggplot(
+        data=dfp
+    ) + geom_point(
+        aes(
+            x=x5,
+            y=y5,
+            color="Obs"
+        )
+    ) + geom_point(
+        aes(
+            x=x6,
+            y=y6,
+            color="True State"
+        )
+    ) + scale_x_continuous(
+        limits=c(
+            xmiN,
+            xmaX
+        ),
+        breaks=seq(
+            xmiN,
+            xmaX,
+            2
+        )
+    ) + theme(
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        legend.position="top",
+        axis.title.y = element_text(
+            margin = margin(
+                r=8
+            )
+        )
+    ) + ylab("time"),
+
+    g.bottom <- ggplot(
+        data=df
+    ) + geom_density(
+        aes(
+            x=x1,
+            fill="S1",
+            weights=y1
+        ),
+        alpha=alphA
+    ) + geom_density(
+        aes(
+            x=x2,
+            fill="S2",
+            weights=y2
+        ),
+        alpha=alphA
+    ) + geom_density(
+        aes(
+            x=x3,
+            fill="S3",
+            weights=y3
+        ),
+        alpha=alphA
+    ) + geom_density(
+        aes(
+            x=x4,
+            fill="S4",
+            weights=y4
+        ),
+        alpha=alphA
+    ) + scale_x_continuous(
+        limits=c(
+            xmiN,
+            xmaX
+        ),
+        breaks=seq(
+            xmiN,
+            xmaX,
+            2
+        )
+    ) + xlab("x") + theme(
+        legend.position="bottom",
+        axis.title.y = element_text(
+            margin = margin(b=10)
+        )
+    ),
+    <- grid.arrange(g.top,g.bottom, heights = c(1/5, 4/5)).
+
+
+%! filter(+S:int,+O:list,+St:list) is det
 % Takes observations O and true states St for 4 time points 
 % and performs filtering on the trajectory: given O, computes the
 % distribution of the state for each time point by taking S samples
@@ -198,37 +290,27 @@ st([-0.18721387460211258, -2.187978176930458, -1.5472275345566668, -2.9840114021
 % at time 1, 2, 3 and 4 
 % (S1, S2, S3, S4, density on the left y axis) 
 % and with O and St (time on the right y axis).
-filter(Samples,O,St,C):-
-  mc_lw_sample_arg(kf(4,_O,T),kf_fin(4,O,_T),Samples,T,L),
-  maplist(separate,L,T1,T2,T3,T4),
-  NBins=20,
-  density(T1,NBins,C1),
-  density(T2,NBins,C2),
-  density(T3,NBins,C3),
-  density(T4,NBins,C4),
-  [[x|X1],[dens|S1]]=C1.data.columns,
-  [[x|X2],[dens|S2]]=C2.data.columns,
-  [[x|X3],[dens|S3]]=C3.data.columns,
-  [[x|X4],[dens|S4]]=C4.data.columns,
+filter(Samples,O,St):-
+    mc_lw_sample_arg(kf(4,_O,T),kf_fin(4,O,_T),Samples,T,L),
+    maplist(separate,L,T1,T2,T3,T4),
+    Y=[1,2,3,4],
+    geom_densities(T1,T2,T3,T4,O,St,Y).
+
+%! filter_par(+S:int,+O:list,+St:list) is det
+% Takes observations O and true states St for 4 time points 
+% and performs filtering on the trajectory: given O, computes the
+% distribution of the state for each time point.
+% It uses particle filtering with S particles.
+% Returns a graph C with the distributions of the state variable 
+% at time 1, 2, 3 and 4 
+% (S1, S2, S3, S4, density on the left y axis) 
+% and with O and St (time on the right y axis).
+filter_par(Samples,O,St):-
+  O=[O1,O2,O3,O4],
+  mc_particle_sample_arg([kf_fin(1,T1),kf_fin(2,T2),kf_fin(3,T3),kf_fin(4,T4)],
+  [kf_o(1,O1),kf_o(2,O2),kf_o(3,O3),kf_o(4,O4)],Samples,[T1,T2,T3,T4],[F1,F2,F3,F4]),
   Y=[1,2,3,4],
-  C = c3{data:_{xs:_{'True State':xt,'Obs':xo,'S1':x1,'S2':x2,'S3':x3,'S4':x4},
-  columns:[[xt|St],['True State'|Y],
-    [xo|O],['Obs'|Y],
-    [x1|X1],['S1'|S1],
-    [x2|X2],['S2'|S2],
-    [x3|X3],['S3'|S3],
-    [x4|X4],['S4'|S4]],
-    types:_{'S1': spline,'S2': spline,'S3': spline,'S4': spline,'True State':scatter,'Obs':scatter},
-    axes:_{'S1':y,'S2':y,'S3':y,'S4':y,'True State':y2,'Obs':y2}},
- % legend:_{show: false},
-    axis:_{ x:_{ tick:_{fit:false}},
-      y2:_{
-            show: 'true',
-                label: 'Time',
-                min: -6
-       },
-       y:_{label:'Density'}}
-  }.
+  geom_densities(F1,F2,F3,F4,O,St,Y).
 
 separate([S1,S2,S3,S4]-W,S1-W,S2-W,S3-W,S4-W).
 
