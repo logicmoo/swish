@@ -45,9 +45,6 @@ Third Edition, Prentice Hall, Figure 15.10 page 587
 :- use_module(library(mcintyre)).
 :- use_module(library(clpr)).
 :- use_module(library(cplint_r)).
-:- if(current_predicate(use_rendering/1)).
-:- use_rendering(c3).
-:- endif.
 :- mc.
 :- begin_lpad.
 

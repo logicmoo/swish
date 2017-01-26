@@ -20,9 +20,6 @@ http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=gaussian-p
 :- use_module(library(mcintyre)).
 :- use_module(library(cplint_r)).
 
-:- if(current_predicate(use_rendering/1)).
-:- use_rendering(c3).
-:- endif.
 :- mc.
 :- begin_lpad.
 
@@ -63,15 +60,39 @@ dens_lw(Samples,E):-
 % having observed the scientists' measurements and draw curves of the 
 % densities using NBins bins
 
-chart_lw_noise(Samples,Chart,E):-
+geom_bar(E) :-
+    <- library("ggplot2"),
+    numlist(1,7,X),
+    build_xy_list(X,E,L),
+    get_set_from_xy_list(L,R),
+    r_data_frame_from_rows(df, R),
+    colnames(df) <- c("e","val"),
+    <- ggplot(
+        data=df,
+        aes_string(
+            x="e"
+        )
+    ) + geom_bar(
+        aes_string(
+            weight="val"
+        )
+    ) + scale_x_continuous(
+        breaks=seq(0,7,1)
+    ) + scale_y_continuous(
+        breaks=seq(0,max(df$val),2)
+    ).
+
+
+
+chart_lw_noise(Samples,E):-
   mc_lw_sample_arg((std_dev(1,Y1),std_dev(2,Y2),std_dev(3,Y3),std_dev(4,Y4),
     std_dev(5,Y5),std_dev(6,Y6),std_dev(7,Y7)),(value(1,-27.020),value(2,3.570),
   value(3,8.191),value(4,9.898),value(5,9.603),value(6,9.945),
   value(7,10.056)),Samples,(Y1,Y2,Y3,Y4,Y5,Y6,Y7),L),
   exp_noise(L,Samples,E),
   E = (E1,E2,E3,E4,E5,E6,E7),
-  Chart = c3{data:_{x:x, rows:[x-e,1-E1,2-E2,3-E3,4-E4,5-E5,6-E6,7-E7],
-                    type: bar}}.
+  Ee=[E1,E2,E3,E4,E5,E6,E7],
+  geom_bar(Ee).
 % take Samples samples of the standard deviation of the measurements of the
 % scientists (Y1,...,Y7 in std_dev(1,Y1),...,std_dev(7,Y7))
 % given the 7 observations and draw a bar chart of the mean of the samples
@@ -103,7 +124,7 @@ agg(V-W,S,S+V*W).
 % having observed the scientists' measurements and draw curves of the 
 % densities.
 
-?- chart_lw_noise(1000,Chart,E).
+?- chart_lw_noise(1000,E).
 % take Samples samples of the standard deviation of the measurements of the
 % scientists (Y1,...,Y7 in std_dev(1,Y1),...,std_dev(7,Y7))
 % given the 7 observations and draw a bar chart of the mean of the samples
