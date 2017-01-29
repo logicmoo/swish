@@ -218,10 +218,11 @@ geom_densities(L1,L2,L3,L4,O,St,Y):-
             2
         )
     ) + theme(
+        legend.position = "top",
+        legend.title = element_blank(),
         axis.ticks.x = element_blank(),
         axis.text.x = element_blank(),
         axis.title.x = element_blank(),
-        legend.position="top",
         axis.title.y = element_text(
             margin = margin(
                 r=8
@@ -269,8 +270,10 @@ geom_densities(L1,L2,L3,L4,O,St,Y):-
             xmaX,
             2
         )
-    ) + xlab("x") + theme(
+    ) + theme(
         legend.position="bottom",
+        legend.title=element_blank(),
+        axis.title.x=element_blank(),
         axis.title.y = element_text(
             margin = margin(b=10)
         )
