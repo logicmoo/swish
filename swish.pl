@@ -167,6 +167,7 @@ swish_config:config(notebook,		_{eval_script: true}).
 :- use_module(swish:library(pengines_io)).
 :- use_module(swish:library(solution_sequences)).
 :- use_module(swish:library(aggregate)).
+:- use_module(swish:lib/r_swish).
 :- if(exists_source(library(tabling))).
 :- use_module(swish:library(tabling)).
 :- endif.
@@ -198,8 +199,8 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(swish(lib/render/url),	  []).
 :- use_module(swish(lib/render/lpad),	  []).
 :- use_module(swish(lib/render/prolog),	  []).
+:- use_module(library(r/r_sandbox)).
 
-%:- use_module(lib/pita).
 :- use_module(library(pita)).
 :- use_module(library(mcintyre)).
 :- use_module(library(slipcover)).
@@ -208,6 +209,7 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(library(matrix)).
 :- use_module(library(clpr)).
 :- use_module(library(real)).
+:- use_module(library(cplint_r)).
 :- multifile sandbox:safe_primitive/1.
 
 sandbox:safe_primitive(nf_r:{_}).
