@@ -43,8 +43,7 @@ dens_lw(Samples):-
   mc_lw_sample_arg(value(0,X),(value(1,9),value(2,8)),Samples,X,L),
   densities_r(L0,L).
 % plot the densities of the random variable before and after  
-% observing 9 and 8 by taking Samples samples and by dividing the domain
-% % in NBins bins
+% observing 9 and 8 by taking Samples samples.
 
 
 
