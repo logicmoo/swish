@@ -1,4 +1,4 @@
-# SWISH: A web based SWI-Prolog environment integrated with the Cplint suite
+# SWISH: A web based SWI-Prolog environment integrated with examples from the Cplint suite
 
 ## Online version
 
