@@ -1,0 +1,48 @@
+<div class="notebook">
+<div class="nb-cell html">
+<script type="text/javascript">
+$.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",function() {MathJax.Hub.Queue(["Typeset",MathJax.Hub]);});
+</script>
+<h2>Viral Marketing</h2>
+
+</div>
+<div class="nb-cell query">
+graph(G).
+</div>
+<div class="nb-cell query">
+prob(has(2),do(has(3)),P).
+</div>
+<div class="nb-cell query">
+prob(has(2),has(3),P).
+</div>
+<div class="nb-cell program prolog" data-background="true">
+
+:- use_module(library(pita)).
+
+:- if(current_predicate(use_rendering/1)).
+:- use_rendering(graphviz).
+:- endif.
+graph(digraph(G)):-
+    findall(edge(A -> B,[]),
+      clause(trusts(A,B,_,_),_),
+      G).
+
+:- pita.
+
+:- begin_lpad.
+
+:- action has/1.
+
+has(_):0.1.
+
+has(P) :0.4 :- trusts(P, Q), has(Q).
+
+trusts(2,1).
+trusts(3,1).
+trusts(3,2).
+trusts(4,1).
+trusts(4,3).
+:-end_lpad.
+
+</div>
+</div>
