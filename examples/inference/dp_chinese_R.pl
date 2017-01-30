@@ -24,15 +24,7 @@ http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=nonparamet
 % like row 2 of https://en.wikipedia.org/wiki/Dirichlet_process#/media/File:Dirichlet_process_draws.svg
 
 */
-/** <examples>
-?- hist_val(200,100).
-% show the distribution of values with concentration parameter 10. Should look
-% like row 2 of https://en.wikipedia.org/wiki/Dirichlet_process#/media/File:Dirichlet_process_draws.svg
-?- hist_repeated_indexes(100,40).
-% show the distribution of unique indexes in 100 samples with concentration parameter 10. 
 
-
-*/
 :- use_module(library(mcintyre)).
 :- use_module(library(cplint_r)).
 :- mc.
