@@ -22,7 +22,7 @@ prob(has(2),has(3),P).
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(graphviz).
 :- endif.
-graph(digraph(G)):-
+graph(digraph([rankdir="LR"|G])):-
     findall(edge(A -> B,[]),
       clause(trusts(A,B,_,_),_),
       G).
