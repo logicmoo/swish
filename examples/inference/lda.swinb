@@ -33,6 +33,11 @@ The subscript is often dropped, as in the plate diagrams shown here.
 <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Smoothed_LDA.png"
 width="300" /></a>
 </center>
+<p>Suppose we have two topics, indicated with integers 1 and 2, and 10 words, indicated with integers \(1,\ldots,10\).
+</p>
+<p>We can sample values for word in position 1 of document 1:</p>
+
+We can sample valul
 </div>
 <div class="nb-cell query">
 mc_sample_arg_bar(word(1,1,W),100,W,G).
