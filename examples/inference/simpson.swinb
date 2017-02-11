@@ -7,7 +7,9 @@ $.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MM
 
 <p>From 
 "Pearl, Judea. Causality. Cambridge university press, 2009"
-<blockquote>Simpson's paradox ... refers to the phenomenon whereby an event \(C\) increases the probability
+<blockquote style="font-size: inherit;" cite="Pearl, Judea. Causality. Cambridge university press, 2009">
+<p>
+Simpson's paradox ... refers to the phenomenon whereby an event \(C\) increases the probability
 of \(E\) in a given population \(p\) and, at the same time, decreases the probability of \(E\) in
 every subpopulation of \(p\). In other words, if \(F\) and \(\neg F\) are two complementary properties
 describing two subpopulations, we might well encounter the inequalities
@@ -51,7 +53,8 @@ to both males and females yet beneficial to the population as a whole.
 is not for females and males.
 </p>
 <p> The paradox derives because we must distinguish seeing from doing:
-<blockquote>The conditioning operator
+<blockquote style="font-size: inherit;" cite="Pearl, Judea. Causality. Cambridge university press, 2009">
+The conditioning operator
 in probability calculus stands for the evidential conditional "given that we see,"
  whereas
 the do(.) operator was devised to represent the causal conditional "given that we do."
