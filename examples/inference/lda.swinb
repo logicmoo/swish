@@ -80,7 +80,19 @@ topics gets more probable.
 mc_mh_sample_arg_bar(topic(1,1,T),(word(1,1,1),word(1,2,1)),100,2,T,G).
 </div>
 <div class="nb-cell html">
+<script type="text/javascript">
+$.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",function() {MathJax.Hub.Queue(["Typeset",MathJax.Hub]);});
+</script>
 <h3>Code</h3>
+<p>You can change the number of words in vocabulary and the number
+of topics by modifying the facts for <code>n_words/1</code> and
+<code>n_topics/1</code>.
+</p>
+<p>The distributions for both \(\theta_m\) and \(\varphi_k\) are
+symmetric Dirichlet distributions with scalar concentration parameter \(\eta\)
+set using a fact for the predicate <code>eta/1</code>. In other words
+\(\alpha=\beta=[\eta,\ldots,\eta]\).
+</p>
 </div>
 <div class="nb-cell program prolog" data-background="true">
 
