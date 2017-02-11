@@ -149,6 +149,10 @@ n_words(10).
 
 :-end_lpad.
 
+prob_topic_1(G):-
+  mc_sample_arg(theta(1,[T|_]),100,T),
+  mc_mh_sample_arg_bar(topi,(word(1,1,1),word(1,2,1)),100,2,T,G).
+
 </div>
 <div class="nb-cell html">
 <h3>References</h3>
