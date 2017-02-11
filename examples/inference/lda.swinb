@@ -5,8 +5,10 @@ $.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MM
 </script>
 <h2>Latent Dirichlet Allocation</h2>
 <p>From <a href="https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation">https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation</a>:</p>
-<p>
-The generative process is as follows.  Documents are represented as random mixtures over latent topics, where each topic is characterized by a distribution over words. LDA assumes the following generative process for a corpus \(D\) consisting of \(M\) documents each of length \(N_i\):
+<blockquote cite="https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation" style="font-size: inherit;"><p>
+In natural language processing, latent Dirichlet allocation (LDA) is a generative statistical model that allows sets of observations to be explained by unobserved groups that explain why some parts of the data are similar. For example, if observations are words collected into documents, it posits that each document is a mixture of a small number of topics and that each word's creation is attributable to one of the document's topics. LDA is an example of a topic model...
+</p>
+<p>The generative process is as follows.  Documents are represented as random mixtures over latent topics, where each topic is characterized by a distribution over words. LDA assumes the following generative process for a corpus \(D\) consisting of \(M\) documents each of length \(N_i\):
 <ol>
 <li> Choose \( \theta_i \, \sim \, \mathrm{Dir}(\alpha) \), where \( i \in \{ 1,\dots,M \} \) and
 \( \mathrm{Dir}(\alpha) \) is the <a href="https://en.wikipedia.org/wiki/Dirichlet_distribution" target="_blank">Dirichlet distribution</a> for parameter \(\alpha\)
@@ -17,39 +19,55 @@ Choose \( \varphi_k \, \sim \, \mathrm{Dir}(\beta) \), where \( k \in \{ 1,\dots
 <li>
 For each of the word positions \(i, j\), where \( j \in \{ 1,\dots,N_i \} \), and  \( i \in \{ 1,\dots,M \} \)
 <ol>
-<li> Choose a topic \(z_{i,j} \,\sim\, \mathrm{Multinomial}(\theta_i). \)
+<li> Choose a topic \(z_{i,j} \,\sim\, \mathrm{Categorical}(\theta_i). \)
 </lI>
-<li>Choose a word \(w_{i,j} \,\sim\, \mathrm{Multinomial}( \varphi_{z_{i,j}}) \).
+<li>Choose a word \(w_{i,j} \,\sim\, \mathrm{Categorical}( \varphi_{z_{i,j}}) \).
 </li>
 </ol>
 </li>
 </ol>
 <!-- The lengths \(N_i\) are treated as independent of all the other data generating variables (\(w\) and \(z\)). 
 -->
-The subscript is often dropped, as in the plate diagrams shown here.
+</blockquote>
+This is a smoothed LDA model to be precise. The subscript is often dropped, as in the plate diagrams shown here.
 </p>
 <center>
 <a href="https://en.wikipedia.org/wiki/File:Smoothed_LDA.png">
 <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Smoothed_LDA.png"
 width="300" /></a>
 </center>
+<p>The aim is to  compute the word probabilities of each topic, the topic of 
+each word, and the particular topic mixture of each document. This can be done
+with Bayesian inference: the documents in the dataset represent the 
+observations (evidence) and we want to compute the posterior distibution of
+the above quantities. 
+</p>
 <p>Suppose we have two topics, indicated with integers 1 and 2, and 10 words, indicated with integers \(1,\ldots,10\).
 </p>
-<p>We can sample values for word in position 1 of document 1:</p>
-
-We can sample valul
+<p> Predicate <code>word(Doc,Position,Word)</code> indicates that document 
+<code>Doc</code> in position <code>Position</code> (from 1 to the number of 
+words of
+the document) has word <code>Word</code></p>
+<p> Predicate <code>topic(Doc,Position,Topic)</code> indicates that document 
+<code>Doc</code> associates topic <code>Topic</code> to the word in position <code>Position</code></p>
+<p>We can use the model generatively and sample values for word in position 1 of document 1:</p>
 </div>
 <div class="nb-cell query">
 mc_sample_arg_bar(word(1,1,W),100,W,G).
 </div>
-<div class="nb-cell query">
-mc_sample_arg_bar(word_topic(1,1,WT),100,WT,G).
+<div class="nb-cell html">
+<p>Also generatively, we can sample values for couples (word,topic) in position 1 of document 1:</p>
 </div>
 <div class="nb-cell query">
-mc_mh_sample_arg_bar(word_topic(1,1,WT),word(1,2,1),100,1,WT,G).
+mc_sample_arg_bar((word(1,1,W),topic(1,1,T)),100,(W,T),G).
 </div>
 <div class="nb-cell html">
+<p>We can use the model to classify the words in topics: assigning words to 
+topics. Here we use conditional inference with Metropolis-Hastings.
+</p>
+<p>
 A priori both topics are about equally probable for word 1 of document 1.
+</p>
 </div>
 <div class="nb-cell query">
 mc_sample_arg_bar(topic(1,1,T),100,T,G).
@@ -89,10 +107,6 @@ word(DocumentID,WordID,Word):discrete(Word,Dist):-
   word_list(Words),
   maplist(pair,Words,Beta,Dist).
 
-word_topic(DocumentID,WordID,(Word,Topic)):-
-  topic(DocumentID,WordID,Topic),
-  word(DocumentID,WordID,Word).
-
 beta(_,Beta):dirichlet(Beta,Parameters):-
   n_words(N),
   eta(Eta),
@@ -125,11 +139,11 @@ n_words(10).
 </div>
 <div class="nb-cell html">
 <h3>References</h3>
-<p><a name="lda">[1]</a>
+<p>[1]
 Blei, David M., Andrew Y. Ng, and Michael I. Jordan. "Latent dirichlet allocation." Journal of machine Learning research 3.Jan (2003): 993-1022.
 </p>
 <p>
-<a name="wikipedia">[2]</a>
+[2]
 <a href="https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation">https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation</a>
 </p>
 
