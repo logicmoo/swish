@@ -26,7 +26,7 @@ For each of the word positions \(i, j\), where \( j \in \{ 1,\dots,N_i \} \), an
 </ol>
 </li>
 </ol>
-<!-- The lengths \(N_i\) are treated as independent of all the other data generating variables (\(w\) and \(z\)). 
+<!-- The lengths \(N_i\) are treated as independent of all the other data generating variables (\(w\) and \(z\)).
 -->
 </blockquote>
 <p>This is a smoothed LDA model to be precise. The subscript is often dropped, as in the plate diagrams shown here.
@@ -36,19 +36,19 @@ For each of the word positions \(i, j\), where \( j \in \{ 1,\dots,N_i \} \), an
 <img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Smoothed_LDA.png"
 width="300" /></a>
 </center>
-<p>The aim is to  compute the word probabilities of each topic, the topic of 
+<p>The aim is to  compute the word probabilities of each topic, the topic of
 each word, and the particular topic mixture of each document. This can be done
-with Bayesian inference: the documents in the dataset represent the 
+with Bayesian inference: the documents in the dataset represent the
 observations (evidence) and we want to compute the posterior distibution of
-the above quantities. 
+the above quantities.
 </p>
 <p>Suppose we have two topics, indicated with integers 1 and 2, and 10 words, indicated with integers \(1,\ldots,10\).
 </p>
-<p> Predicate <code>word(Doc,Position,Word)</code> indicates that document 
-<code>Doc</code> in position <code>Position</code> (from 1 to the number of 
+<p> Predicate <code>word(Doc,Position,Word)</code> indicates that document
+<code>Doc</code> in position <code>Position</code> (from 1 to the number of
 words of
 the document) has word <code>Word</code></p>
-<p> Predicate <code>topic(Doc,Position,Topic)</code> indicates that document 
+<p> Predicate <code>topic(Doc,Position,Topic)</code> indicates that document
 <code>Doc</code> associates topic <code>Topic</code> to the word in position <code>Position</code></p>
 <p>We can use the model generatively and sample values for word in position 1 of document 1:</p>
 </div>
@@ -62,7 +62,7 @@ mc_sample_arg_bar(word(1,1,W),100,W,G).
 mc_sample_arg_bar((word(1,1,W),topic(1,1,T)),100,(W,T),G).
 </div>
 <div class="nb-cell html">
-<p>We can use the model to classify the words in topics: assigning words to 
+<p>We can use the model to classify the words in topics: assigning words to
 topics. Here we use conditional inference with Metropolis-Hastings.
 </p>
 <p>
@@ -79,6 +79,15 @@ topics gets more probable.
 </div>
 <div class="nb-cell query">
 mc_mh_sample_arg_bar(topic(1,1,T),(word(1,1,1),word(1,2,1)),100,2,T,G).
+</div>
+<div class="nb-cell html">
+<p>You can also see this if you look at the distribution of the probability
+of topic 1 before and after observing that words 1 and 2 of document 1 are equal:
+the observation makes the distribution less uniform.
+</p>
+</div>
+<div class="nb-cell query">
+prob_topic_1(G).
 </div>
 <div class="nb-cell html">
 <script type="text/javascript">
@@ -150,8 +159,9 @@ n_words(10).
 :-end_lpad.
 
 prob_topic_1(G):-
-  mc_sample_arg(theta(1,[T|_]),100,T),
-  mc_mh_sample_arg_bar(topi,(word(1,1,1),word(1,2,1)),100,2,T,G).
+  mc_sample_arg(theta(1,[T0|_]),200,T0,L0),
+  mc_mh_sample_arg(theta(1,[T1|_]),(word(1,1,1),word(1,2,1)),200,2,T1,L1),
+  densities(L0,L1,10,G).
 
 </div>
 <div class="nb-cell html">
