@@ -4,7 +4,35 @@
 $.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",function() {MathJax.Hub.Queue(["Typeset",MathJax.Hub]);});
 </script>
 <h2>Latent Dirichlet Allocation</h2>
-
+<p>From <a href="https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation">https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation</a>:</p>
+<p>
+The generative process is as follows.  Documents are represented as random mixtures over latent topics, where each topic is characterized by a distribution over words. LDA assumes the following generative process for a corpus \(D\) consisting of \(M\) documents each of length \(N_i\):
+<ol>
+<li> Choose \( \theta_i \, \sim \, \mathrm{Dir}(\alpha) \), where \( i \in \{ 1,\dots,M \} \) and
+\( \mathrm{Dir}(\alpha) \) is the <a href="https://en.wikipedia.org/wiki/Dirichlet_distribution" target="_blank">Dirichlet distribution</a> for parameter \(\alpha\)
+</li>
+<li>
+Choose \( \varphi_k \, \sim \, \mathrm{Dir}(\beta) \), where \( k \in \{ 1,\dots,K \} \)
+</li>
+<li>
+For each of the word positions \(i, j\), where \( j \in \{ 1,\dots,N_i \} \), and  \( i \in \{ 1,\dots,M \} \)
+<ol>
+<li> Choose a topic \(z_{i,j} \,\sim\, \mathrm{Multinomial}(\theta_i). \)
+</lI>
+<li>Choose a word \(w_{i,j} \,\sim\, \mathrm{Multinomial}( \varphi_{z_{i,j}}) \).
+</li>
+</ol>
+</li>
+</ol>
+<!-- The lengths \(N_i\) are treated as independent of all the other data generating variables (\(w\) and \(z\)). 
+-->
+The subscript is often dropped, as in the plate diagrams shown here.
+</p>
+<center>
+<a href="https://en.wikipedia.org/wiki/File:Smoothed_LDA.png">
+<img src="https://upload.wikimedia.org/wikipedia/commons/4/4d/Smoothed_LDA.png"
+width="300" /></a>
+</center>
 </div>
 <div class="nb-cell query">
 mc_sample_arg_bar(word(1,1,W),100,W,G).
@@ -27,6 +55,9 @@ topics gets more probable.
 </div>
 <div class="nb-cell query">
 mc_mh_sample_arg_bar(topic(1,1,T),(word(1,1,1),word(1,2,1)),100,2,T,G).
+</div>
+<div class="nb-cell html">
+<h3>Code</h3>
 </div>
 <div class="nb-cell program prolog" data-background="true">
 
@@ -88,6 +119,14 @@ n_words(10).
 
 </div>
 <div class="nb-cell html">
+<h3>References</h3>
+<p><a name="lda">[1]</a>
 Blei, David M., Andrew Y. Ng, and Michael I. Jordan. "Latent dirichlet allocation." Journal of machine Learning research 3.Jan (2003): 993-1022.
+</p>
+<p>
+<a name="wikipedia">[2]</a>
+<a href="https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation">https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation</a>
+</p>
+
 </div>
 </div>
