@@ -29,7 +29,7 @@ For each of the word positions \(i, j\), where \( j \in \{ 1,\dots,N_i \} \), an
 <!-- The lengths \(N_i\) are treated as independent of all the other data generating variables (\(w\) and \(z\)). 
 -->
 </blockquote>
-This is a smoothed LDA model to be precise. The subscript is often dropped, as in the plate diagrams shown here.
+<p>This is a smoothed LDA model to be precise. The subscript is often dropped, as in the plate diagrams shown here.
 </p>
 <center>
 <a href="https://en.wikipedia.org/wiki/File:Smoothed_LDA.png">
@@ -73,8 +73,9 @@ A priori both topics are about equally probable for word 1 of document 1.
 mc_sample_arg_bar(topic(1,1,T),100,T,G).
 </div>
 <div class="nb-cell html">
-After observing that words 1 and 2 of document 1 are equal, one of the
+<p>After observing that words 1 and 2 of document 1 are equal, one of the
 topics gets more probable.
+</p>
 </div>
 <div class="nb-cell query">
 mc_mh_sample_arg_bar(topic(1,1,T),(word(1,1,1),word(1,2,1)),100,2,T,G).
