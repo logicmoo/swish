@@ -197,6 +197,7 @@ Examples divided by features:
   [random_walk.swinb](example/inference/random_walk.swinb),
   - marketing:
   [coupon.swinb](example/inference/coupon.swinb),
+  [viral.swinb](example/inference/viral.swinb)
   - natural language:
   [lda.swinb](example/inference/lda.swinb),
   [pcfg.pl](example/inference/pcfg.pl),
@@ -219,7 +220,9 @@ Examples divided by features:
   [markov_chain.pl](example/inference/markov_chain.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl),
   [gpl.pl](example/inference/gpl.pl), [rmc.pl](example/inference/rmc.pl),
-  - medicine: [epidemic.pl](example/inference/epidemic.pl),
+  - medicine:
+  [simpson.swinb](example/inference/simpson.swinb),
+  [epidemic.pl](example/inference/epidemic.pl),
   [sneezing.pl](example/inference/sneezing.pl),
   - games: [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl),
   [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [trigger.pl](example/inference/trigger.pl), [coin2.pl](example/inference/coin2.pl), [threesideddice.pl](example/inference/threesideddice.pl),
