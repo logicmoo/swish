@@ -116,7 +116,8 @@ set using a fact for the predicate <code>eta/1</code>. In other words
 
 :- begin_lpad.
 
-theta(_,Theta):dirichlet(Theta,Alpha):-alpha(Alpha).
+theta(_,Theta):dirichlet(Theta,Alpha):-
+  alpha(Alpha).
 
 topic(DocumentID,_,Topic):discrete(Topic,Dist):-
   theta(DocumentID,Theta),

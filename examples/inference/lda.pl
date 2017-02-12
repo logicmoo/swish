@@ -22,7 +22,8 @@ See https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation
 
 :- begin_lpad.
 
-theta(_,Theta):dirichlet(Theta,Alpha):-alpha(Alpha).
+theta(_,Theta):dirichlet(Theta,Alpha):-
+  alpha(Alpha).
 
 topic(DocumentID,_,Topic):discrete(Topic,Dist):-
   theta(DocumentID,Theta),
