@@ -153,8 +153,8 @@ swish_reply3(_, Options) :-
 		   ]),
 	      link([ rel('apple-touch-icon'),
 		     href('/icons/cplint-touch-icon.png')
-		   ]),  
-              meta([name('msvalidate.01'), 
+		   ]),
+              meta([name('msvalidate.01'),
                 content('A9C78799EC9EDC7CE041CB7CD8E2D76E')])
 	    ],
 	    \swish_page(Options)).
@@ -346,16 +346,12 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
 	p([span([style('color:red')],['New']),': ',
+  a([href('/help/help-cplint.html#causal'),target('_blank')],['Causal inference']),': ',
+  a([href('/example/inference/simpson.swinb')],['Simpson''s paradox']),', ',
+  a([href('/example/inference/viral.swinb')],['viral marketing']),'; ',
+  a([href('/example/inference/lda.swinb')],['Latent Dirichlet Allocation']),'; ',
 	a([href('https://sites.google.com/a/unife.it/ml/lemur'),target('_blank')],['LEMUR']),' (',
-	a([href('/example/lemur/lemur_examples.swinb')],['examples']),'), ',
-	a([href('/example/inference/coupon.swinb')],['coupon collector problem']),', ',
-	a([href('/example/inference/random_walk.swinb')],['random walk']),', ',
-	a([href('/example/inference/mln.swinb')],['Markov Logic Networks']),
-        ', BDD drawing: ',
-	a([href('/example/inference/coin.swinb')],['coin']),', ',
-	a([href('/example/inference/path.swinb')],['path']),', ',
-	a([href('/example/inference/dice.swinb')],['dice']),', ',
-	a([href('/example/inference/epidemic.pl')],['epidemic'])
+	a([href('/example/lemur/lemur_examples.swinb')],['examples']),')'
 %	a([href('/help/help-cplint.html#cont'),target('_blank')],
 %	['continuous random variables']),' and ',
 %	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
