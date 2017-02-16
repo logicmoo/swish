@@ -211,7 +211,7 @@ Examples divided by features:
   - biology:
   [path.swinb](example/inference/path.swinb),
   [path.pl](example/inference/path.pl),  [hmm.pl](example/inference/hmm.pl),
-  - puzzles: [monty.pl](example/inference/monty.pl), [monty_simple.pl](example/inference/monty_simple.pl), [jail.pl](example/inference/jail.pl),
+  - puzzles: [monty.pl](example/inference/monty.pl), [monty_simple.pl](example/inference/monty_simple.pl), [jail.swinb](example/inference/jail.swinb),
   [indian_gpa.pl](example/inference/indian_gpa.pl),
   [indian_gpadc.pl](example/inference/indian_gpadc.pl)
   - genetics: [mendel.pl](example/inference/mendel.pl), [bloodtype.pl](example/inference/bloodtype.pl), [mendelc.pl](example/inference/mendelc.pl),
@@ -280,7 +280,7 @@ Examples divided by features:
   - UWCSE: link prediction ([uwcse.pl](example/inference/uwcse.pl)) UWCSE university domain. From Wannes Meert, Jan Struyf, Hendrik Blockeel. _CP-Logic Theory Inference with Contextual Variable Elimination and Comparison to BDD Based Inference Methods_. Inductive Logic Programming, pages 96-109. Springer, 2010.
   - Cora: entity resolution ([cora.pl](example/inference/cora.pl)) The task is to compute the probability that two bibliographic citations refer to the same paper. From F. Riguzzi. _Speeding up inference for probabilistic logic programs_. The Computer Journal, 57(3):347-363, 2014 adapted from ([the Cora example in alchemy](http://alchemy.cs.washington.edu/)).
   - Monty Hall puzzle([monty.pl](example/inference/monty.pl) [monty_simple.pl](example/inference/monty_simple.pl)) From Chitta Baral, Michael Gelfond, and Nelson Rushton. _Probabilistic reasoning with answer sets_. Theory and Practice of Logic Programming 9(1), pages 57-144, 2009.
-  - Three-prisoners puzzle ([jail.pl](example/inference/jail.pl)) From Peter D. Grunwald and Joseph Y. Halpern. _Updating Probabilities_. Journal of Artificial Intelligence Research 19, pages 243-278, 2003.
+  - Three-prisoners puzzle ([jail.swinb](example/inference/jail.swinb)) From Peter D. Grunwald and Joseph Y. Halpern. _Updating Probabilities_. Journal of Artificial Intelligence Research 19, pages 243-278, 2003.
   - Russian roulette with two guns ([trigger.pl](example/inference/trigger.pl)) From J. Vennekens, Marc Denecker, and Maurice Bruynooghe. _CP-logic: A language of causal probabilistic events and its relation to logic programming_. Theory and Practice of Logic Programming, 9(3), pages 245-308, 2009.
   - Negation ([light.pl](example/inference/light.pl)) Example showing the use of negation. From J. Vennekens, Marc Denecker, and Maurice Bruynooghe. _CP-logic: A language of causal probabilistic events and its relation to logic programming_. Theory and Practice of Logic Programming, 9(3), pages 245-308, 2009.
   - Coins ([coin2.pl](example/inference/coin2.pl)) Throwing two coins with uncertainty on their fairness. From J. Vennekens, S. Verbaeten, and M. Bruynooghe. _Logic programs with annotated disjunctions_. In International Conference on Logic Programming, volume 3131 of LNCS, pages 195-209. Springer, 2004.
