@@ -1,12 +1,9 @@
 <div class="notebook">
 <div class="nb-cell html">
-<script type="text/javascript">
-$.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",function() {MathJax.Hub.Queue(["Typeset",MathJax.Hub]);});
-</script>
 <h2>
 Three-prisoners Puzzle
 </h2>
-From <a href="https://en.wikipedia.org/wiki/Three_Prisoners_problem">Wikipedia</a>:
+<p>From <a href="https://en.wikipedia.org/wiki/Three_Prisoners_problem">Wikipedia</a>:</p>
 <blockquote cite="https://en.wikipedia.org/wiki/Three_Prisoners_problem" style="font-size: inherit;"><p>
 Three prisoners, A, B and C, are in separate cells and sentenced to death. The governor has selected one of them at random to be pardoned. The warden knows which one is pardoned, but is not allowed to tell. Prisoner A begs the warden to let him know the identity of one of the others who is going to be executed. "If B is to be pardoned, give me C's name. If C is to be pardoned, give me B's name. And if I'm to be pardoned, flip a coin to decide whether to name B or C."
 </p>
@@ -16,10 +13,15 @@ The warden tells A that B is to be executed. Prisoner A is pleased because he be
 </blockquote>
 <h3>Code</h3>
 <p>
-We use the predicate <code>safe/1</code> with <code>safe(i)</code> meaning that prisoner <code>i</code> is not going to be executed, with <code>i</code> in <code>{a,b,c}</code>.
-</p>
-<p>
-Predicate <code>tell_executed/1</code> has the following meaning: <code>tell_executed(i)</code> means that the warden tells A that <code>i</code> is going to be executed, with <code>i</code> in <code>{b,c}</code>.
+We use the predicates <code>safe/1</code> and <code>tell_executed/1</code>:
+<ul>
+<li>
+<code>safe(i)</code> means that prisoner <code>i</code> is not going to be executed, with <code>i</code> in <code>{a,b,c}</code>.
+</li>
+<li>
+<code>tell_executed(i)</code> means that the warden tells A that <code>i</code> is going to be executed, with <code>i</code> in <code>{b,c}</code>.
+</li>
+</ul>
 </p>
 </div>
 <div class="nb-cell program prolog" data-background="true">
@@ -89,6 +91,11 @@ prob(safe(c),tell_executed(b),Prob).
 </div>
 <div class="nb-cell html">
 <p>As you can see, the probability of C being safe increases from 1/2 to 2/3. 
+</p>
+<p>Note that if you change the probability distribution of selecting B or C
+when A is safe, the probability of A being safe after the communication does
+not change, while the one of C being safe changes. You can try it by modifying
+the second clause and rerunning the queries.
 </p>
 <p>You can also visualize these values with:
 </p>
