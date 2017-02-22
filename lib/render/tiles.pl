@@ -58,8 +58,8 @@ Board](http://designindevelopment.com/css/css3-chess-board/)
 %	at row I.
 
 term_rendering(Term, _Vars, _Options) -->
-	{ is_map(Term),
-    Term=..[_|Rows],
+	{ is_map(Term,Tiles),
+    Term=..[_,_|Rows],
 	  length(Rows, N),
 	  LineHeight is ceiling(300/N)
 	},
@@ -67,12 +67,13 @@ term_rendering(Term, _Vars, _Options) -->
 			),
 		   'data-render'('Tile map')
 		 ],
-		 [ table(\tiles(Rows,LineHeight)),
+		 [table(\tiles(Rows,Tiles,LineHeight)),
 		   \tile_map_style
 		 ])).
 
-is_map(Term) :-
-  Term=..[map,R1|Rows],
+is_map(Term,Tiles) :-
+  Term=..[map,Tiles,R1|Rows],
+  is_list(Tiles),
   R1=..[_|Row1],
   length(Row1,W),
   maplist(row_length(W),Rows).
@@ -81,24 +82,18 @@ row_length(W,Row):-
   Row=..[row|R],
   length(R,W).
 
-tiles([],_Width) --> [].
-tiles([H|T],Width) -->
+tiles([],_Tiles,_Width) --> [].
+tiles([H|T],Tiles,Width) -->
   {H=..[_|Row]},
-	html(tr(\nrow(Row,Width))),
-	tiles(T,Width).
+	html(tr(\nrow(Row,Tiles,Width))),
+	tiles(T,Tiles,Width).
 
-nrow([],_Width) --> !.
-nrow([Tile|TTiles],Width) -->
-	{ tile(Tile,URL) },
+nrow([],_Tiles,_Width) --> !.
+nrow([Tile|TTiles],Tiles,Width) -->
+	{ member(tile(Tile,URL),Tiles) },
 	  html(td(img([src(URL),alt(Tile),width(Width)],[]))),
-	nrow(TTiles,Width).
+	nrow(TTiles,Tiles,Width).
 
-tile(grass,'/icons/tiles/grass.png').
-tile(water,'/icons/tiles/water.png').
-
-%%	chess_style//
-%
-%	@see http://designindevelopment.com/css/css3-chess-board/
 
 tile_map_style -->
 	html({|html||
