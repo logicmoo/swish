@@ -34,8 +34,8 @@ with <code>A</code> in {1,2,3}
 </ul>
 </p>
 <p>This is generalized version of 
-program see <a href="monty.swinb">monty.swinb</a>
-because the player can select any door.
+<a href="monty.swinb">monty.swinb</a>
+because the player can here select any door.
 </p>
 </div>
 <div class="nb-cell program prolog" data-background="true">

@@ -33,6 +33,7 @@ with <code>A</code> in {1,2,3}
 </p>
 <p>We assume that the player selected door 1. For a more general version of the
 program see <a href="monty_general.swinb">monty_general.swinb</a>.
+For an even simpler program see <a href="monty_simple.pl">monty_simple.pl</a>.
 </p>
 </div>
 <div class="nb-cell program prolog" data-background="true">
