@@ -146,9 +146,7 @@ gp_predict_variance_handler(XT,[XPH|XPT],K_1,Kernel,Sigma,[VarianceH|VarianceT])
     matrix_multiply(KStar,K_1,M),
     matrix_multiply(M,KStar_T,N),
       
-   
-
-           writeln("XPH"),
+    writeln("XPH"),
     writeln(XPH),
     writeln("XT"),
     writeln(XT),
@@ -260,7 +258,7 @@ draw_fun_pred_r(Kernel):-
     YT=[1,-0.8,0.6],
     
 mc_lw_sample_arg(gp_predict_mean(X,Kernel,Sigma,XT,YT,YMean),gp(XT,Kernel,YT),5,YMean,L),
-mc_lw_sample_arg(gp_predict_variance_handler(X,XT,Kernel,Sigma,YVariance),gp(XT,Kernel,YT),5,YVariance,M),
+mc_lw_sample_arg(gp_predict_variance(X,XT,Kernel,Sigma,YVariance),gp(XT,Kernel,YT),5,YVariance,M),
 
     writeln(M),
 
