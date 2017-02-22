@@ -58,31 +58,33 @@ Board](http://designindevelopment.com/css/css3-chess-board/)
 %	at row I.
 
 term_rendering(Term, _Vars, _Options) -->
-	{ %is_nqueens(Term),
-	  length(Term, N),
-	  LineHeight is 200/N
+	{ is_map(Term),
+    Term=..[_|Rows],
+	  length(Rows, N),
+	  LineHeight is ceiling(300/N)
 	},
-	html(div([ style('display:inline-block;'+
-			 'line-height:'+LineHeight+'px;'+
-			 'font-size:'+LineHeight+'px;'
+	html(div([ style('display:inline-block;'
 			),
 		   'data-render'('Tile map')
 		 ],
-		 [ table(class('tile-map'),
-			 \tiles(Term,LineHeight)),
+		 [ table(\tiles(Rows,LineHeight)),
 		   \tile_map_style
 		 ])).
 
-is_nqueens(Term) :-
-	is_list(Term),
-	maplist(integer, Term),
-	length(Term, N),
-	numlist(1, N, All),
-	sort(Term, All).
+is_map(Term) :-
+  Term=..[map,R1|Rows],
+  R1=..[_|Row1],
+  length(Row1,W),
+  maplist(row_length(W),Rows).
+
+row_length(W,Row):-
+  Row=..[row|R],
+  length(R,W).
 
 tiles([],_Width) --> [].
 tiles([H|T],Width) -->
-	html(tr(\nrow(H,Width))),
+  {H=..[_|Row]},
+	html(tr(\nrow(Row,Width))),
 	tiles(T,Width).
 
 nrow([],_Width) --> !.
@@ -91,8 +93,8 @@ nrow([Tile|TTiles],Width) -->
 	  html(td(img([src(URL),alt(Tile),width(Width)],[]))),
 	nrow(TTiles,Width).
 
-tile(grass,'/icons/grass.png').
-tile(water,'/icons/water.png').
+tile(grass,'/icons/tiles/grass.png').
+tile(water,'/icons/tiles/water.png').
 
 %%	chess_style//
 %
@@ -101,14 +103,7 @@ tile(water,'/icons/water.png').
 tile_map_style -->
 	html({|html||
 <style>
-.tile-map {
-border-collapse: collapse!important;  border:none; height:200px;
-}
-td {border:none!important;
-border-collapse: collapse!important;  border:none; height:200px;
-}
-tr {border:none!important;
-border-collapse: collapse!important;  border:none; height:200px;
-}
+table { border-collapse: collapse; padding: 0px; }
+table tr td { padding: 0px; border-collapse: collapse;}
 </style>
 	     |}).
