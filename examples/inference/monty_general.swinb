@@ -5,21 +5,21 @@ Monty Hall Puzzle
 </h2>
 <p>From [1]:</p>
 <blockquote cite="http://www.public.asu.edu/~cbaral/papers/plogJune20-08.pdf" style="font-size: inherit;"><p>
-<p>the Monty Hall puzzle ... gets its name from the TV game 
+<p>the Monty Hall puzzle ... gets its name from the TV game
 show hosted by Monty Hall... A player is given the opportunity to
-select one of three closed doors, behind one of which there is a prize. 
+select one of three closed doors, behind one of which there is a prize.
 Behind the other two doors are empty rooms.
-Once the player has made a selection, Monty is obligated to open one of the 
-remaining closed doors which does not contain the prize, showing that the room 
+Once the player has made a selection, Monty is obligated to open one of the
+remaining closed doors which does not contain the prize, showing that the room
 behind it is empty. He then asks the player if he would like to switch
-his selection to the other unopened door, or stay with his original choice. 
+his selection to the other unopened door, or stay with his original choice.
 Here is the problem: Does it matter if he switches?</p>
 </blockquote>
 <h3>Code</h3>
 <p>
 We use the predicates:
 <ul>
-<li> <code>prize(A)</code>: the prize is behind door <code>A</code>, 
+<li> <code>prize(A)</code>: the prize is behind door <code>A</code>,
 with <code>A</code> in {1,2,3}
 </li>
 <li><code>selected(A)</code>: the player selects door <code>A</code>
@@ -33,7 +33,7 @@ with <code>A</code> in {1,2,3}
 </li>
 </ul>
 </p>
-<p>This is generalized version of 
+<p>This is generalized version of
 <a href="monty.swinb">monty.swinb</a>
 because the player can here select any door.
 </p>
@@ -55,10 +55,10 @@ prize(1):1/3; prize(2):1/3; prize(3):1/3.
 selected(1).
 % the player selected door 1
 
-open_door(A):0.5; open_door(B):0.5:- 
+open_door(A):0.5; open_door(B):0.5:-
   member(A,[1,2,3]),
   member(B,[1,2,3]),
-  A&lt;B,
+  A < B,
   \+ prize(A),
   \+ prize(B),
   \+ selected(A),
@@ -78,17 +78,17 @@ open_door(A):-
 % not selected by the player and the prize is behind another door A that is
 % not selected
 
-win_keep:- 
-  selected(A), 
+win_keep:-
+  selected(A),
   prize(A).
 % the player keeps his choice and wins if he has selected a door with the prize
 
-win_switch:- 
+win_switch:-
   member(A,[1,2,3]),
-  \+ selected(A), 
-  prize(A), 
+  \+ selected(A),
+  prize(A),
   \+ open_door(A).
-% the player switches and wins if the prize is behind the door that he has 
+% the player switches and wins if the prize is behind the door that he has
 % not selected and that Monty did not open
 
 :- end_lpad.
@@ -98,19 +98,19 @@ win_switch:-
 </p>
 </div>
 <div class="nb-cell query">
-prob(win_keep,Prob). 
+prob(win_keep,Prob).
 </div>
 <div class="nb-cell html">
 <p>What is the probability that the player wins if he switches door?
 </p>
 </div>
 <div class="nb-cell query">
-prob(win_switch,Prob). 
+prob(win_switch,Prob).
 </div>
 <div class="nb-cell html">
 <p>The probability if the player switches grows from 1/3 to 1/2
 </p>
-<p>Note that if you change the probability distribution of Monty selecting 
+<p>Note that if you change the probability distribution of Monty selecting
 a door to open when the prize is behind the door selected by the player,
 then the probability of winning by switching remains the same.
 You can try it by modifying
