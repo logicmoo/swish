@@ -61,7 +61,12 @@ term_rendering(Term, _Vars, _Options) -->
 	{ is_map(Term,Tiles),
     Term=..[_,_|Rows],
 	  length(Rows, N),
-	  LineHeight is ceiling(300/N)
+	  LineHeight0 is ceiling(500/N),
+    (LineHeight0>32->
+      LineHeight=LineHeight0
+    ;
+      LineHeight=32
+    )
 	},
 	html(div([ style('display:inline-block;'
 			),

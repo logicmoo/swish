@@ -1,11 +1,20 @@
+<div class="notebook">
 
+<div class="nb-cell html">
+<h2>Tile Map Generator</h2>
 
-/** <examples>
-
-?- Height=10,Width=10,mc_mh_sample_arg(map(Height,Width,M),constraints(Height,Width),1,1,M,[[Map] - _]).
-?- Height=10,Width=10,mc_sample_arg_first(map(Height,Width,M),1,M,[ Map- _ ]).
-
-*/
+Draw a 10x10 map with a tendency to have a lake in the center:
+</div>
+<div class="nb-cell query">
+Height=10,Width=10,mc_mh_sample_arg(map(Height,Width,M),constraints(Height,Width),1,1,M,[[Map] - _]).
+</div>
+<div class="nb-cell html">
+Draw a 10x10 map at random:
+</div>
+<div class="nb-cell query">
+Height=10,Width=10,mc_sample_arg_first(map(Height,Width,M),1,M,[ Map- _ ]).
+</div>
+<div class="nb-cell program prolog" data-background="true">
 
 :- use_module(library(mcintyre)).
 :- if(current_predicate(use_rendering/1)).
@@ -149,3 +158,6 @@ tile(grass,'/icons/tiles/grass.png').
 tile(water,'/icons/tiles/water.png').
 tile(rock,'/icons/tiles/rock.png').
 tile(tree,'/icons/tiles/tree.png').
+
+</div>
+</div>
