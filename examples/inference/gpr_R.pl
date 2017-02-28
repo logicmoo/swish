@@ -130,57 +130,26 @@ gp_predict_single([XH|XT],Kernel,X,C_1T,[YH|YT]):-
   gp_predict_single(XT,Kernel,X,C_1T,YT).
 
 
+compute_KStar(XP,XT,Kernel,[KStar]) :-
+    compute_k(XT,XP,Kernel,KStar).
+    
+compute_KStarStar(XP,Kernel,KStarStar) :-
+    call(Kernel,XP,XP,KStarStar).
 
-
-gp_predict_cstar([],_,_,[]).
-
-gp_predict_cstar([XStarH|XStarT],Kernel,X,[KStarH|KStarT]) :-
-    compute_k(X,XStarH,Kernel,KStarH),
-    gp_predict_cstar(XStarT,Kernel,X,KStarT).
-
-
-
-
-compute_kstarstar([],_,[]).
-
-compute_kstarstar([XPH|XPT],Kernel,[KStarStarH|KStarStarT]):-
-    call(Kernel,XPH,XPH,KStarStarH),
-    compute_kstarstar(XPT,Kernel,KStarStarT).
-
-gp_predict_cstarstar([],_,[]).
-
-gp_predict_cstarstar([XStarStarH|XStarStarT],Kernel,[KStarStarH|KStarStarT]) :-
-    compute_kstarstar([XStarStarH],Kernel,KStarStarH),
-    gp_predict_cstarstar(XStarStarT,Kernel,KStarStarT).
-
-
-
-
-/* K = covariance matrix
- ***
- * XP = X points where to predict Y values.
- * Kernel = kernel function to be used.
- * K_1 = K^-1
- *
- *
- * Var = computed variance.
- */
-    /* Transpose here. TODO. */
-    /* Matrix computation here. TODO. */
-
-gp_predict_variance(XP,Kernel,Sigma,XT,Variance) :-
-    /* Find the covariance matrix and its inverse. */
-    compute_cov(XT,Kernel,Sigma,K),
-    matrix_inversion(K,K_1),
-
-   /* Use the kernel function to find the vector (1xn matrix) KStar and the 
-    * scalar (1x1 matrix KStarStar).
-    */
-    gp_predict_cstar(XP,Kernel,XT,KStar),
+gp_predict_variance_handler(_,[],_,_,_,[]).
+    
+gp_predict_variance_handler(XT,[XPH|XPT],K_1,Kernel,Sigma,[VarianceH|VarianceT]):-
+    compute_KStar(XPH,XT,Kernel,KStar),
     transpose(KStar,KStar_T),
-    gp_predict_cstarstar(XP,Kernel,KStarStar),
-
-    writeln(XP),
+    compute_KStarStar(XPH,Kernel,KStarStar),
+    
+    matrix_multiply(KStar,K_1,M),
+    matrix_multiply(M,KStar_T,N),
+      
+    writeln("XPH"),
+    writeln(XPH),
+    writeln("XT"),
+    writeln(XT),
     writeln("KStar"),
     writeln(KStar),
     writeln("KStar_T"),
@@ -189,18 +158,20 @@ gp_predict_variance(XP,Kernel,Sigma,XT,Variance) :-
     writeln(K_1),
     writeln("KStarStar"),
     writeln(KStarStar),
-
-    /*
-     * What follows represents this:
-     * Var is KStarStar - (KStar * K_1 * KStar_T).
-     */
-
-    matrix_multiply(KStar,K_1,M),
-    matrix_multiply(M,KStar_T,N),
-    matrix_diff(KStarStar,N,Variance).
+    writeln("N"),
+    writeln(N),
+    
+    matrix_diff([[KStarStar]],N,VarianceH),
+    
+    gp_predict_variance_handler(XT,XPT,K_1,Kernel,Sigma,VarianceT).
 
 
-%! gp_predict(+XP:list,+Kernel:atom,+XT:list,+YT:list,-YP:list) is det
+gp_predict_variance(XP,XT,Kernel,Sigma,Variance) :-
+    compute_cov(XT,Kernel,Sigma,K),
+    matrix_inversion(K,K_1),
+    gp_predict_variance_handler(XT,XP,K_1,Kernel,Sigma,Variance).
+
+%! gp_predict_mean(+XP:list,+Kernel:atom,+XT:list,+YT:list,-YP:list) is det
 % Given the points described by the lists XT and YT and a Kernel,
 % predict the Y values of points with X values in XP and returns them in YP.
 % Prediction is performed by Gaussian process regression.
@@ -282,14 +253,13 @@ draw_fun_pred_r(Kernel):-
 
     Sigma is 0.3,
     /* X = 0:10 */
-/*    numlist(0,10,X),*/
-    numlist(0,0,X),
+    numlist(0,10,X),
     XT=[2.5,6.5,8.5],
     YT=[1,-0.8,0.6],
     
 mc_lw_sample_arg(gp_predict_mean(X,Kernel,Sigma,XT,YT,YMean),gp(XT,Kernel,YT),5,YMean,L),
- 
-mc_lw_sample_arg(gp_predict_variance(X,Kernel,Sigma,XT,YVariance),gp(XT,Kernel,YT),1,YVariance,M),
+mc_lw_sample_arg(gp_predict_variance(X,XT,Kernel,Sigma,YVariance),gp(XT,Kernel,YT),5,YVariance,M),
+
     writeln(M),
 
     keysort(L,LS),
