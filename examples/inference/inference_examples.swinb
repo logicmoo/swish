@@ -132,6 +132,7 @@ Examples divided by features:
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
   - Monte Carlo unconditional inference:
+  [tiny_event_calculusmc.pl](example/inference/tiny_event_calculusmc.pl),
   [random_walk.swinb](example/inference/random_walk.swinb),
   [coupon.swinb](example/inference/coupon.swinb),
   [coinmc.pl](example/inference/coinmc.pl),
@@ -161,6 +162,7 @@ Examples divided by features:
   [widgetmsw.pl](example/inference/widgetmsw.pl),
   [gpr.pl](example/inference/gpr.pl)
   - unconditional inference:
+  [tiny_event_calculus.pl](example/inference/tiny_event_calculus.pl),
   [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
   [sneezing.pl](example/inference/sneezing.pl), [eruption.pl](example/inference/eruption.pl), [mendel.pl](example/inference/mendel.pl), [bloodtype.pl](example/inference/bloodtype.pl),
   [path.swinb](example/inference/path.swinb),
@@ -193,6 +195,9 @@ Examples divided by features:
   [nballsdc.pl](example/inference/nballsdc.pl)
 
 <a name="#app">Examples divided by application domain:</a>
+  - reasoning about actions:
+  [tiny_event_calculus.pl](example/inference/tiny_event_calculus.pl),
+  [tiny_event_calculusmc.pl](example/inference/tiny_event_calculusmc.pl)
   - random walks:
   [random_walk.swinb](example/inference/random_walk.swinb),
   - marketing:
@@ -553,5 +558,9 @@ is done.
   Pearl, Judea. Causality. Cambridge university press, 2009
   - Viral marketing ([viral.swinb](example/inference/viral.swinb)). Computing the
   effects of marketing actions.
+  - Reasoning about uncertain actions with the Event Calculus
+  ([tiny_event_calculus.pl](example/inference/tiny_event_calculus.pl),
+  [tiny_event_calculusmc.pl](example/inference/tiny_event_calculusmc.pl))
+
 </div>
 </div>
