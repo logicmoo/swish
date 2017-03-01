@@ -27,7 +27,7 @@
 
 :- set_sc(max_var, 4).
 :- set_sc(verbosity, 3).
-:- set_sc(megaex_bottom, 3).
+:- set_sc(megaex_bottom, 5).
 :- set_sc(depth_bound, false).
 :- set_sc(neg_ex, given).
 
