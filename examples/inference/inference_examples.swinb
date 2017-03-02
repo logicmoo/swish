@@ -9,7 +9,8 @@ Examples divided by features:
   - Causal inference: [simpson.swinb](example/inference/simpson.swinb),
    [viral.swinb](example/inference/viral.swinb)
   - Latent Dirichlet Allocation  [lda.swinb](example/inference/lda.swinb)
-  - Markov Logic Networks: [mln.swinb](example/inference/mln.swinb)
+  - Markov Logic Networks: [tile_map.pl](example/inference/tile_map.pl),
+    [mln.swinb](example/inference/mln.swinb)
   - Gaussian process regression: [gpr.pl](example/inference/gpr.pl)
   - Dirichlet process: [dirichlet_process.pl](example/inference/dirichlet_process.pl), [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
@@ -52,10 +53,13 @@ Examples divided by features:
   [slp.pl](example/inference/slp.pl), [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl),
   [widget.pl](example/inference/widget.pl)
   [widgetmsw.pl](example/inference/widgetmsw.pl),
-  - rejection sampling: [coinmc.pl](example/inference/coinmc.pl),
+  - rejection sampling:
+  [tile_map.pl](example/inference/tile_map.pl),
+  [coinmc.pl](example/inference/coinmc.pl),
   [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl), [widget.pl](example/inference/widget.pl),
   [widgetmsw.pl](example/inference/widgetmsw.pl)
   - argument sampling:
+  [tile_map.pl](example/inference/tile_map.pl),
   [lda.swinb](example/inference/lda.swinb),
   [random_walk.swinb](example/inference/random_walk.swinb),
   [coupon.swinb](example/inference/coupon.swinb),
@@ -132,6 +136,7 @@ Examples divided by features:
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
   - Monte Carlo unconditional inference:
+  [tile_map.pl](example/inference/tile_map.pl),
   [tiny_event_calculusmc.pl](example/inference/tiny_event_calculusmc.pl),
   [random_walk.swinb](example/inference/random_walk.swinb),
   [coupon.swinb](example/inference/coupon.swinb),
@@ -229,7 +234,9 @@ Examples divided by features:
   [simpson.swinb](example/inference/simpson.swinb),
   [epidemic.pl](example/inference/epidemic.pl),
   [sneezing.pl](example/inference/sneezing.pl),
-  - games: [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl),
+  - games:
+  [tile_map.pl](example/inference/tile_map.pl),
+  [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl),
   [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [trigger.pl](example/inference/trigger.pl), [coin2.pl](example/inference/coin2.pl), [threesideddice.pl](example/inference/threesideddice.pl),
   [truel.pl](example/inference/truel.pl)
   - social networks:
@@ -561,6 +568,8 @@ is done.
   - Reasoning about uncertain actions with the Event Calculus
   ([tiny_event_calculus.pl](example/inference/tiny_event_calculus.pl),
   [tiny_event_calculusmc.pl](example/inference/tiny_event_calculusmc.pl))
+  - Tile map generation ([tile_map.pl](example/inference/tile_map.pl),
+  [tile_mapnocut.pl](example/inference/tile_mapnocut.pl))
 
 </div>
 </div>

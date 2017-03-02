@@ -1,7 +1,10 @@
-/* Tile Map Generation */
+/* Tile Map Generation
+Version without cut
+ */
 
 /** <examples>
 
+?- Height=10,Width=10,mc_mh_sample_arg(map(Height,Width,M),constraints(Height,Width),1,1,M,[[Map] - _]).
 ?- Height=10,Width=10,mc_rejection_sample_arg(map(Height,Width,M),constraints(Height,Width),1,M,[[Map] - _]).
 ?- Height=10,Width=10,mc_sample_arg_first(map(Height,Width,M),1,M,[ Map- _ ]).
 
@@ -38,10 +41,15 @@ pick_row(H,W,N,T,M0,M):-
 % the center tile is water
 pick_tile(HC,WC,H,W,water):-
   HC is H//2,
-  WC is W//2,!.
+  WC is W//2.
 
 % on the other places tiles are chosen at random with this distribution
-pick_tile(_,_,_,_,T):discrete(T,[grass:0.5,water:0.3,tree:0.1,rock:0.1]).
+pick_tile(Y,_,H,_,T):discrete(T,[grass:0.5,water:0.2,tree:0.1,rock:0.1]):-
+  Y =\= H//2.
+
+pick_tile(Y,X,H,W,T):discrete(T,[grass:0.5,water:0.2,tree:0.1,rock:0.1]):-
+  Y is H//2,
+  X =\= W//2.
 
 % constraints after map generation (soft constraints)
 % tiles adjacent to water are more probably water
@@ -51,12 +59,14 @@ pick_tile(_,_,_,_,T):discrete(T,[grass:0.5,water:0.3,tree:0.1,rock:0.1]).
 
 constraint_water(Y,X,_Y1,_X1,H,W):-
   pick_tile(Y,X,H,W,T),
-  T \= water,!.
+  T \= water.
 
 constraint_water(_Y,_X,Y1,X1,H,W):-
-  pick_tile(Y1,X1,H,W,water),!.
+  pick_tile(Y1,X1,H,W,water).
 
-constraint_water(_,_,_,_,_,_):0.1.
+constraint_water(Y,X,Y1,X1,H,W):0.1:-
+  pick_tile(Y,X,H,W,water),
+  \+ pick_tile(Y1,X1,H,W,water).
 
 constraints(H,W):-
   HC is H//2,
@@ -64,7 +74,7 @@ constraints(H,W):-
   H1 is HC,
   H2 is HC,
   W1 is WC,
-  W2 is WC+1,
+  W2 is WC,
   findall((Y,X,Y1,X1),(
     between(H1,H2,Y),between(W1,W2,X),adjacent(Y,X,Y1,X1,H,W)),L),
   maplist(call_const(H,W),L).
