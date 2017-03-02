@@ -568,8 +568,6 @@ is done.
   - Reasoning about uncertain actions with the Event Calculus
   ([tiny_event_calculus.pl](example/inference/tiny_event_calculus.pl),
   [tiny_event_calculusmc.pl](example/inference/tiny_event_calculusmc.pl))
-  - Tile map generation ([tile_map.pl](example/inference/tile_map.pl),
-  [tile_mapnocut.pl](example/inference/tile_mapnocut.pl))
-
+  - Tile map generation ([tile_map.pl](example/inference/tile_map.pl)
 </div>
 </div>
