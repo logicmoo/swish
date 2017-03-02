@@ -64,7 +64,7 @@ constraints(H,W):-
   H1 is HC,
   H2 is HC,
   W1 is WC,
-  W2 is WC+1,
+  W2 is WC,
   findall((Y,X,Y1,X1),(
     between(H1,H2,Y),between(W1,W2,X),adjacent(Y,X,Y1,X1,H,W)),L),
   maplist(call_const(H,W),L).
