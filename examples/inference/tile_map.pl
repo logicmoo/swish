@@ -39,7 +39,8 @@ pick_tile(HC,WC,H,W,water):-
   HC is H//2,
   WC is W//2,!.
 
-% in the central area water is more probable
+% in the central area water is more probable (there tend to be a lake in the
+% center)
 pick_tile(Y,X,H,W,T):discrete(T,[grass:0.05,water:0.9,tree:0.025,rock:0.025]):-
   central_area(Y,X,H,W),!.
 
