@@ -41,10 +41,6 @@ has(_):0.1.
 
 has(P) :0.4 :- mutual_trusts(P, Q), has(Q).
 
-path(A,A):0.3.
-
-path(A,B):0.2:-path(A,C),mutual_trusts(C,B).
-
 
 
 mutual_trusts(A,B):-
