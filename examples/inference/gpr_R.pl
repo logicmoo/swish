@@ -66,9 +66,6 @@ distributed in {1,2,3} and sigma uniformly distributed in [-2,2].
 
 :- use_module(library(cplint_r)).
 
-/*:- use_module(swish(r_swish)).*/
-
-
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(c3).
 :- endif.
@@ -113,9 +110,6 @@ cov_row([H|T],XH,Ker,[KH|KT]):-
   call(Ker,H,XH,KH),
   cov_row(T,XH,Ker,KT).
 
-
-
-
 compute_k([],_,_,[]).
 
 compute_k([XH|XT],X,Ker,[HK|TK]):-
@@ -129,42 +123,25 @@ gp_predict_single([XH|XT],Kernel,X,C_1T,[YH|YT]):-
   matrix_multiply([K],C_1T,[[YH]]),
   gp_predict_single(XT,Kernel,X,C_1T,YT).
 
-
 compute_KStar(XP,XT,Kernel,[KStar]) :-
     compute_k(XT,XP,Kernel,KStar).
     
 compute_KStarStar(XP,Kernel,KStarStar) :-
     call(Kernel,XP,XP,KStarStar).
 
+strip_variance_list([[V]],V).
+
 gp_predict_variance_handler(_,[],_,_,_,[]).
-    
+
 gp_predict_variance_handler(XT,[XPH|XPT],K_1,Kernel,Sigma,[VarianceH|VarianceT]):-
     compute_KStar(XPH,XT,Kernel,KStar),
     transpose(KStar,KStar_T),
     compute_KStarStar(XPH,Kernel,KStarStar),
-    
     matrix_multiply(KStar,K_1,M),
     matrix_multiply(M,KStar_T,N),
-      
-    writeln("XPH"),
-    writeln(XPH),
-    writeln("XT"),
-    writeln(XT),
-    writeln("KStar"),
-    writeln(KStar),
-    writeln("KStar_T"),
-    writeln(KStar_T),
-    writeln("K_1"),
-    writeln(K_1),
-    writeln("KStarStar"),
-    writeln(KStarStar),
-    writeln("N"),
-    writeln(N),
-    
-    matrix_diff([[KStarStar]],N,VarianceH),
-    
+    matrix_diff([[KStarStar]],N,VarianceHTmp),
+    strip_variance_list(VarianceHTmp,VarianceH),
     gp_predict_variance_handler(XT,XPT,K_1,Kernel,Sigma,VarianceT).
-
 
 gp_predict_variance(XP,XT,Kernel,Sigma,Variance) :-
     compute_cov(XT,Kernel,Sigma,K),
@@ -241,8 +218,6 @@ draw_fun(X,Kernel,C):-
   C = c3{data:_{x:x, columns:[[x|X]|L1] ,type:spline},
   axis:_{ x:_{ tick:_{fit:false}}}}.
 
-
-
 %! draw_fun_pred_r(+Kernel:atom) is det
 % Given the three points
 % XT=[2.5,6.5,8.5]
@@ -250,46 +225,70 @@ draw_fun(X,Kernel,C):-
 % draws 5 functions predicting points with X=[0,...,10].
 draw_fun_pred_r(Kernel):-
     <- library("ggplot2"),
-
     Sigma is 0.3,
-    /* X = 0:10 */
     numlist(0,10,X),
+
     XT=[2.5,6.5,8.5],
     YT=[1,-0.8,0.6],
-    
-mc_lw_sample_arg(gp_predict_mean(X,Kernel,Sigma,XT,YT,YMean),gp(XT,Kernel,YT),5,YMean,L),
-mc_lw_sample_arg(gp_predict_variance(X,XT,Kernel,Sigma,YVariance),gp(XT,Kernel,YT),5,YVariance,M),
 
-    writeln(M),
+	mc_lw_sample_arg(gp_predict_mean(X,Kernel,Sigma,XT,YT,YMean),gp(XT,Kernel,YT),5,YMean,L),
+	mc_lw_sample_arg(gp_predict_variance(X,XT,Kernel,Sigma,YVariance),gp(XT,Kernel,YT),5,YVariance,M),
 
     keysort(L,LS),
-    reverse(LS,[Y1-_,Y2-_,Y3-_|_]),
+    keysort(M,MS),
 
+    /* Plot the first three distributions only (instead of 5). */
+    reverse(LS,[Ym1-_,Ym2-_,Ym3-_|_]),
+	reverse(MS,[Yv1-_,Yv2-_,Yv3-_|_]),
+    
     sigma <- Sigma,
 
-    /* L1 = [X1-Y11,X2-Y12,...,Xn-Y1n]. */
-    build_xy_list(X,Y1,L1),
-    build_xy_list(X,Y2,L2),
-    build_xy_list(X,Y3,L3),
-
-    get_set_from_xy_list(L1,R1),
-    r_data_frame_from_rows(df1, R1),
+    /* This is redundant but simple and effective. */
+    build_xy_list(X,Ym1,ML1),
+    build_xy_list(X,Ym2,ML2),
+    build_xy_list(X,Ym3,ML3),
+    
+    build_xy_list(X,Yv1,VL1),
+    build_xy_list(X,Yv2,VL2),
+    build_xy_list(X,Yv3,VL3),
+    
+    build_xy_list(XT,YT,KL),
+    
+    get_set_from_xy_list(ML1,MR1),
+    r_data_frame_from_rows(df1,MR1),
     colnames(df1) <- c("x", "y"),
 
-    get_set_from_xy_list(L2,R2),
-    r_data_frame_from_rows(df2, R2),
+    get_set_from_xy_list(ML2,MR2),
+    r_data_frame_from_rows(df2,MR2),
     colnames(df2) <- c("x", "y"),
 
-    get_set_from_xy_list(L3,R3),
-    r_data_frame_from_rows(df3, R3),
+    get_set_from_xy_list(ML3,MR3),
+    r_data_frame_from_rows(df3,MR3),
     colnames(df3) <- c("x", "y"),
+    
+    get_set_from_xy_list(VL1,VR1),
+    r_data_frame_from_rows(df4,VR1),
+    colnames(df4) <- c("x", "y"),
 
+    get_set_from_xy_list(VL2,VR2),
+    r_data_frame_from_rows(df5,VR2),
+    colnames(df5) <- c("x", "y"),
+
+    get_set_from_xy_list(VL3,VR3),
+    r_data_frame_from_rows(df6,VR3),
+    colnames(df6) <- c("x", "y"),
+
+    get_set_from_xy_list(KL,KR),
+    r_data_frame_from_rows(df7,KR),
+    colnames(df7) <- c("x", "y"),
+    
     df <- data.frame(
         x=df1$x,
         y=c(df1$y,df2$y,df3$y),
+        xN=df7$x,
+        yN=df7$y,
         group=rep(c("f1","f2","f3"))
     ),
-
     <- ggplot(
         data=df,
         aes(
@@ -307,48 +306,57 @@ mc_lw_sample_arg(gp_predict_variance(X,XT,Kernel,Sigma,YVariance),gp(XT,Kernel,Y
         ),
         formula = "y ~ poly(x,degree=9)", 
         method = "glm",
-        se = 'TRUE'
+        se = 'FALSE'
     /* Define top and bottom of the error bars. */
     ) + geom_errorbar(
         aes(
-            ymin=c(df1$y-sigma,df2$y-sigma,df3$y-sigma),
-            ymax=c(df1$y+sigma,df2$y+sigma,df3$y+sigma),
+            ymin=c(
+                df1$y-sigma,
+                df2$y-sigma,
+                df3$y-sigma
+            ),
+            ymax=c(
+                df1$y+sigma,
+                df2$y+sigma,
+                df3$y+sigma
+            ),
             color=group
         ),
         width=0.2
+    ) + geom_ribbon(
+    	aes(
+            ymin=c(
+                df1$y-(1.96*sqrt(df4$y)),
+                df2$y-(1.96*sqrt(df5$y)),
+                df3$y-(1.96*sqrt(df6$y))
+            ),
+            ymax=c(
+                df1$y+(1.96*sqrt(df4$y)),
+                df2$y+(1.96*sqrt(df5$y)),
+                df3$y+(1.96*sqrt(df6$y))
+            ),
+            color=group,
+            fill=group
+        ),
+        alpha=0.2
+ 	) + theme(
+            legend.title=element_blank()
+    ) + geom_point(
+        aes(
+            x=xN,
+            y=yN,
+            color="y",
+            fill="y"
+        )
     ).
 
-/*
-
-
-    dfspline <- data.frame(
-        spline(
-            df$x,
-            df$y
-        ),
-        group=df$group
-    ),
-
-    colnames(dfspline) <- c("x","y","group"),
-
-    <- dfspline,
-
-    ) + geom_line(
-        data=dfspline,
-        aes(
-            x=x,
-            y=y,
-            color=group
-        )
-*/
-          
 %! draw_fun_pred_exp(+Kernel:atom,-C:dict) is det
 % Given the three points
 % XT=[2.5,6.5,8.5]
 % YT=[1,-0.8,0.6]
 % draws the expected prediction for points with X=[0,...,10].
 draw_fun_pred_exp(Kernel,C):-
-  numlist(0,10,X),
+  numlist(0,0,X),
   XT=[2.5,6.5,8.5],
   YT=[1,-0.8,0.6],
   compute_e(X,Kernel,XT,YT,Y),
@@ -364,5 +372,3 @@ compute_e([X|T],Kernel,XT,YT,[YE|TYE]):-
 
 name_s(V-_,N,[ND|V]):-
   atomic_concat(f,N,ND).
-
-
