@@ -122,6 +122,7 @@ tiles(T):-
 
 % available tiles
 % format: tile(name,URL)
+% tiles from https://github.com/silveira/openpixels
 tile(grass,'/icons/tiles/grass.png').
 tile(water,'/icons/tiles/water.png').
 tile(rock,'/icons/tiles/rock.png').
