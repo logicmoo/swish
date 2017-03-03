@@ -348,6 +348,8 @@ swish_navbar(Options) -->
 	p([span([style('color:red')],['New']),': ',
   a([href('/example/inference/tile_map.pl')],['Tile map generation']),
   ', ',
+   a([href('/example/inference/path_tabling.swinb')],['Tabling']),
+  ', ',
    'Event calculus: ',
   a([href('/example/inference/tiny_event_calculus.pl')],['inference']),
   ', ',
