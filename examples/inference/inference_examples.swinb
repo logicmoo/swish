@@ -111,6 +111,7 @@ Examples divided by features:
   [pctl_slep.pl](example/inference/pctl_slep.pl),
   [gpl.pl](example/inference/gpl.pl), [rmc.pl](example/inference/rmc.pl),
   [arithm.pl](example/inference/arithm.pl),
+  [truel.swinb](example/inference/truel.swinb),
   [truel.pl](example/inference/truel.pl)
   - meta probabilities:
   [meta.pl](example/inference/meta.pl)
@@ -192,6 +193,7 @@ Examples divided by features:
   [hmmpos.pl](example/inference/hmmpos.pl),
   [hmmpos2.pl](example/inference/hmmpos2.pl),
   [truel.pl](example/inference/truel.pl),
+  [truel.swinb](example/inference/truel.swinb),
   [dirichlet_process.pl](example/inference/dirichlet_process.pl),
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
@@ -242,6 +244,7 @@ Examples divided by features:
   [tile_map.pl](example/inference/tile_map.pl),
   [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl),
   [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [trigger.pl](example/inference/trigger.pl), [coin2.pl](example/inference/coin2.pl), [threesideddice.pl](example/inference/threesideddice.pl),
+  [truel.swinb](example/inference/truel.swinb),
   [truel.pl](example/inference/truel.pl)
   - social networks:
   [mln.swinb](example/inference/mln.swinb),
@@ -545,7 +548,8 @@ is done.
   See also
   https://github.com/davidenitti/DC/blob/master/examples/tutorial.pl
   - Truel, or duel among three opponents
-  ([truel.pl](example/inference/truel.pl)).
+  ([truel.swinb](example/inference/truel.swinb),
+  [truel.pl](example/inference/truel.pl)).
   See https://en.wikipedia.org/wiki/Truel
   - Dirichlet process (DP) ([dirichlet_process.pl](example/inference/dirichlet_process.pl)) with a stick breaking process, see https://en.wikipedia.org/wiki/Dirichlet_process
   - Dirichlet process (DP) ([dp_chinese.pl](example/inference/dp_chinese.pl)) with a Chinese Restaurant Process, see https://en.wikipedia.org/wiki/Dirichlet_process
