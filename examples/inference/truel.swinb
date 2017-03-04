@@ -124,9 +124,8 @@ survives_action(A,L0,T,S):-
 /**
  * shoot(+H:atom,+S:atom,+L0:list,+T:term,-L:list).
  *
- * When H shoots at S with Rest0 to shoot in round T and L0 still alive,
- * the truelist to shoot in the round become Rest and the truelist still
- * alive L
+ * When H shoots at S in round T and L0 still alive,
+ * the truelist still alive become L
  */
 shoot(H,S,L0,T,L):-
     (S=sky ->
@@ -149,7 +148,7 @@ hit(_,c):1.
 /**
  * survives(+List:list,+Individual:atom,Round:term).
  *
- * Individual survives the truel with List starting at Round
+ * Individual survives the truel with List at Round
  *
  */
 survives([A],A,_):-!.
@@ -159,7 +158,7 @@ survives(L,A,T):-
 /**
  * survives_round(+Rest:list,+List:list,+Individual:atom,+Round:term)
  *
- * Individual survives the truel Round with Rest still to shoot and
+ * Individual survives the truel at Round with Rest still to shoot and
  * List truelist still alive
  */
 survives_round([],L,A,T):-
