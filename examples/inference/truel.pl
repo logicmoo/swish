@@ -1,11 +1,11 @@
 /*
-Truel, or duel among three opponents. 
+Truel, or duel among three opponents.
 There are three truelists, a, b and c, that take turns in shooting with a gun.
 The firing order is a, b and c. Each truelist can shoot at another truelist
-or at the sky (deliberate miss). The truelist have these probabilities of 
+or at the sky (deliberate miss). The truelist have these probabilities of
 hitting the target (if they are not aiming at the sky): a 1/3, b 2/3 and c 1.
 The aim for each truelist is kill all the other truelists.
-The question is: what should a do to maximize his probability of living? 
+The question is: what should a do to maximize his probability of living?
 Aim at b, c or the sky?
 Note that the best strategy for the other truelists and situations is
 easy to find intuitively and corresponds to aim at the best shooter.
@@ -51,7 +51,7 @@ Martin Shubik, Game Theory and Related Approaches to Social Behavior, 1964, page
 /**
  * best_strategy(+A:atom,+L:list,-S:atom).
  *
- * The best strategy for truelist A with 
+ * The best strategy for truelist A with
  * L still alive is to aim at S (with sky for the sky).
  *
  */
@@ -92,12 +92,12 @@ survives_action(A,L0,T,S):-
  * alive L
  */
 shoot(H,S,L0,T,L):-
-    (S=sky ->  
+    (S=sky ->
       L=L0
     ;
       (hit(T,H) ->
         delete(L0,S,L)
-      ;   
+      ;
         L=L0
       )
     ).
@@ -109,9 +109,9 @@ hit(_,b):2/3.
 
 hit(_,c):1.
 
-/** 
+/**
  * survives(+List:list,+Individual:atom,Round:term).
- * 
+ *
  * Individual survives the truel with List starting at Round
  *
  */
@@ -122,13 +122,9 @@ survives(L,A,T):-
 /**
  * survives_round(+Rest:list,+List:list,+Individual:atom,+Round:term)
  *
- * Individual survives the truel Round with Rest still to shoot and 
+ * Individual survives the truel Round with Rest still to shoot and
  * List truelist still alive
  */
-survives_round(_,[A],A,_,[A]):-!.
-
-survives_round(_,[_],_,_,_):-!,fail.
-
 survives_round([],L,A,T):-
   survives(L,A,s(T)).
 
@@ -140,11 +136,11 @@ survives_round([H|_Rest],L0,A,T):-
     survives_round(Rest1,L1,A,T).
 
 
-/** 
+/**
  * base_best_strategy(+A:atom,+T:list,-S:atom).
- *  
- *  the best action for A when 
- *  T is the list of surviving truelist, is S 
+ *
+ *  the best action for A when
+ *  T is the list of surviving truelist, is S
  *
  *  These are the strategies that are easy to find (most intuitive)
  *
@@ -157,14 +153,10 @@ base_best_strategy(a,[a,b],b).
 base_best_strategy(b,[a,b],a).
 base_best_strategy(b,[a,b,c],c).
 base_best_strategy(c,[a,b,c],b).
- 
+
 remaining([A|Rest],A,Rest):-!.
 
 remaining([_|Rest0],A,Rest):-
   remaining(Rest0,A,Rest).
 
 :- end_lpad.
-
-
-
-
