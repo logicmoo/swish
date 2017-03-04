@@ -90,7 +90,7 @@ prob(safe(c),Prob).
 prob(safe(c),tell_executed(b),Prob).
 </div>
 <div class="nb-cell html">
-<p>As you can see, the probability of C being safe increases from 1/2 to 2/3. 
+<p>As you can see, the probability of C being safe increases from 1/2 to 2/3.
 </p>
 <p>Note that if you change the probability distribution of selecting B or C
 when A is safe, the probability of A being safe after the communication does
@@ -113,6 +113,8 @@ prob_bar(safe(c),Prob).
 prob_bar(safe(c),tell_executed(b),Prob).
 </div>
 <div class="nb-cell html">
+<p>The problem is also explained in this nice video:</p>
+<div><iframe src="https://www.youtube.com/embed/5d_3IEofXfY?ecver=2" width="640" height="360" frameborder="0" allowfullscreen></iframe></div>
 <h3>References</h3>
 <p>[1] <a href="https://en.wikipedia.org/wiki/Three_Prisoners_problem">Wikipedia</a> </p>
 <p>[2] <a href="http://www.jair.org/media/1164/live-1164-2177-jair.pdf">
