@@ -579,7 +579,7 @@ is done.
   ([tiny_event_calculus.pl](example/inference/tiny_event_calculus.pl),
   [tiny_event_calculusmc.pl](example/inference/tiny_event_calculusmc.pl))
   - Tile map generation ([tile_map.swinb](example/inference/tile_map.swinb),
-   [tile_map.pl](example/inference/tile_map.pl),    [tile_mapcond.pl](example/inference/tile_mapcond.pl))
-)
+   [tile_map.pl](example/inference/tile_map.pl), [tile_mapcond.pl](example/inference/tile_mapcond.pl))
+   
 </div>
 </div>
