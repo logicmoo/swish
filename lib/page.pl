@@ -346,7 +346,7 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
 	p([span([style('color:red')],['New']),': ',
-  a([href('/example/inference/tile_map.pl')],['Tile map generation']),
+  a([href('/example/inference/tile_map.swinb')],['Tile map generation']),
   ', ',
    a([href('/example/inference/path_tabling.swinb')],['Tabling']),
   ', ',

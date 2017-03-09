@@ -3,7 +3,9 @@
 <div class="nb-cell html">
 <h2>Tile Map Generator</h2>
 
-Draw a 10x10 map with a tendency to have a lake in the center:
+<div><iframe src="https://www.youtube.com/embed/wDr7v94G_MU?ecver=2" width="640" height="360" frameborder="0" allowfullscreen></iframe></div>
+
+<p>Draw a 10x10 map with a tendency to have a lake in the center:</p>
 </div>
 <div class="nb-cell query">
 Height=10,Width=10,mc_sample_arg_first(map(Height,Width,M),1,M,[ Map- _ ]).
@@ -128,6 +130,5 @@ tile(grass,'/icons/tiles/grass.png').
 tile(water,'/icons/tiles/water.png').
 tile(rock,'/icons/tiles/rock.png').
 tile(tree,'/icons/tiles/tree.png').
-
 </div>
 </div>
