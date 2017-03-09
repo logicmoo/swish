@@ -126,9 +126,9 @@ tiles(T):-
 % available tiles
 % format: tile(name,URL)
 % tiles from https://github.com/silveira/openpixels
-tile(grass,'/icons/tiles/grass.png').
-tile(water,'/icons/tiles/water.png').
-tile(rock,'/icons/tiles/rock.png').
-tile(tree,'/icons/tiles/tree.png').
+tile(grass,'http://cplint.lamping.unife.it/icons/tiles/grass.png').
+tile(water,'http://cplint.lamping.unife.it//icons/tiles/water.png').
+tile(rock,'http://cplint.lamping.unife.it//icons/tiles/rock.png').
+tile(tree,'http://cplint.lamping.unife.it//icons/tiles/tree.png').
 </div>
 </div>
