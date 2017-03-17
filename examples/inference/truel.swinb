@@ -37,37 +37,37 @@ best_strategy(a,[a,b,c],S).
 <p>What is the probability that <code>a</code> survives if it aims at <code>b</code>?</p>
 </div>
 <div class="nb-cell query">
-mc_sample(survives_action(a,[a,b,c],0,b),1000,P).
+mc_sample(survives_action(a,[a,b,c],0,b),100,P).
 </div>
 <div class="nb-cell html">
 <p>What is the probability that <code>a</code> survives if it aims at <code>c</code>?</p>
 </div>
 <div class="nb-cell query">
-mc_sample(survives_action(a,[a,b,c],0,c),1000,P).
+mc_sample(survives_action(a,[a,b,c],0,c),100,P).
 </div>
 <div class="nb-cell html">
 <p>What is the probability that <code>a</code> survives if it aims at the sky?</p>
 </div>
 <div class="nb-cell query">
-mc_sample(survives_action(a,[a,b,c],0,sky),1000,P).
+mc_sample(survives_action(a,[a,b,c],0,sky),100,P).
 </div>
 <div class="nb-cell html">
 <p>What is the probability that <code>a</code> survives against <code>c</code>?</p>
 </div>
 <div class="nb-cell query">
-mc_sample(survives([a,c],a,0),1000,P).
+mc_sample(survives([a,c],a,0),100,P).
 </div>
 <div class="nb-cell html">
 <p>What is the probability that <code>a</code> survives against <code>b</code>?</p>
 </div>
 <div class="nb-cell query">
-mc_sample(survives([a,b],a,0),1000,P).
+mc_sample(survives([a,b],a,0),100,P).
 </div>
 <div class="nb-cell html">
 <p>What is the probability that <code>a</code> survives against <code>b</code> when it's <code>b</code>'s turn?</p>
 </div>
 <div class="nb-cell query">
-mc_sample(survives_round([b],[a,b],a,0),1000,P).
+mc_sample(survives_round([b],[a,b],a,0),100,P).
 </div>
 <div class="nb-cell html">
 <h3>Code</h3>
@@ -108,7 +108,7 @@ best_strategy(A,L,S):-
  *
  */
 ev_action(A,L,T,S,P-S):-
-  mc_sample(survives_action(A,L,T,S),1000,P).
+  mc_sample(survives_action(A,L,T,S),100,P).
 
 /**
  * survives_action(+A:atom,+L0:list,+T:term,+S:atom)
