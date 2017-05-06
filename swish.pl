@@ -198,6 +198,7 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(swish(lib/render/url),	  []).
 :- use_module(swish(lib/render/lpad),	  []).
 :- use_module(swish(lib/render/prolog),	  []).
+:- use_module(swish(lib/r_swish),         []).
 
 %:- use_module(lib/pita).
 :- use_module(library(pita)).
@@ -208,6 +209,7 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(library(matrix)).
 :- use_module(library(clpr)).
 :- use_module(library(real)).
+:- use_module(library(cplint_r)).
 :- multifile sandbox:safe_primitive/1.
 
 sandbox:safe_primitive(nf_r:{_}).
