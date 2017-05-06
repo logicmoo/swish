@@ -75,13 +75,13 @@ markov_chain(digraph(G)):-
 ?- mc_sample_arg(reach(s0,0,S),50,S,Values). 
 % take 50 samples of L in findall(S,reach(s0,0,S),L)
 
-?- mc_sample_arg_bar_r(reach(s0,0,S),50,S,Chart). 
+?- mc_sample_arg_bar_r(reach(s0,0,S),50,S). 
 % take 50 samples of L in findall(S,reach(s0,0,S),L)
 
 ?- mc_sample_arg_first(reach(s0,0,S),50,S,Values). 
 % take 50 samples of the first value returned for S in reach(s0,0,S)
 
-?- mc_sample_arg_first_bar_r(reach(s0,0,S),50,S,Chart).
+?- mc_sample_arg_first_bar_r(reach(s0,0,S),50,S).
 % take 50 samples of the first value returned for S in reach(s0,0,S)
 
 ?- markov_chain(G).

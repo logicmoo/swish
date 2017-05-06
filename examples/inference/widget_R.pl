@@ -81,20 +81,20 @@ hist_mh_dis(Samples,Lag,NBins):-
 % Metropolis-Hastings and
 % drawing a histogram_r with NBins bins?
 
-hist_lw(Samples,NBins):-
+hist_lw(Samples):-
   mc_sample_arg(widget(Y),Samples,Y,L0),
   mc_lw_sample_arg(widget(X),pt(2.0),Samples,X,L),
-  densities_r(L0,L,NBins).
+  densities_r(L0,L).
 % What is the distribution of the feature given that the third machine added
 % a quantity of 2.0, computed by taking Samples samples with likelihood weighting
-% and drawing a density with NBins bins?
+% and drawing a density?
 
 
 /** <examples>
-?- hist_lw(1000,40).
+?- hist_lw(1000).
 % What is the distribution of the feature given that the third machine added
 % a quantity of 2.0, computed by taking 1000 samples with likelihood weighting
-% and drawing a density with 40 bins?
+% and drawing a density?
 
 ?- hist_uncond(10000,40).
 % What is the distribution of the feature?

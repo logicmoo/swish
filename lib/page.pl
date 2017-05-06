@@ -101,6 +101,8 @@ http:location(pldoc, swish(pldoc), [priority(100)]).
 %	  of a line.
 %	  - q(Query)
 %	  Use Query as the initial query.
+%	  - show_beware(Boolean)
+%	  Control showing the _beware limited edition_ warning.
 
 swish_reply(Options, Request) :-
 	swish_config:authenticate(Request, User), !, % must throw to deny access
@@ -117,18 +119,20 @@ swish_reply2(_, Request) :-
 swish_reply2(Options, Request) :-
 	swish_reply_config(Request, Options), !.
 swish_reply2(SwishOptions, Request) :-
-	Params = [ code(_,	 [optional(true)]),
-		   background(_, [optional(true)]),
-		   examples(_,   [optional(true)]),
-		   q(_,          [optional(true)]),
-		   format(_,     [oneof([swish,raw,json]), default(swish)])
+	Params = [ code(_,	  [optional(true)]),
+		   show_beware(_, [optional(true)]),
+		   background(_,  [optional(true)]),
+		   examples(_,    [optional(true)]),
+		   q(_,           [optional(true)]),
+		   format(_,      [oneof([swish,raw,json]), default(swish)])
 		 ],
 	http_parameters(Request, Params),
 	params_options(Params, Options0),
 	merge_options(Options0, SwishOptions, Options1),
-	source_option(Request, Options1, Options2),
-	option(format(Format), Options2),
-	swish_reply3(Format, Options2).
+	add_show_beware(Options1, Options2),
+	source_option(Request, Options2, Options3),
+	option(format(Format), Options3),
+	swish_reply3(Format, Options3).
 
 swish_reply3(raw, Options) :-
 	option(code(Code), Options), !,
@@ -149,8 +153,8 @@ swish_reply3(_, Options) :-
 		   ]),
 	      link([ rel('apple-touch-icon'),
 		     href('/icons/cplint-touch-icon.png')
-		   ]),  
-              meta([name('msvalidate.01'), 
+		   ]),
+              meta([name('msvalidate.01'),
                 content('A9C78799EC9EDC7CE041CB7CD8E2D76E')])
 	    ],
 	    \swish_page(Options)).
@@ -163,6 +167,31 @@ params_options([H0|T0], [H|T]) :-
 	params_options(T0, T).
 params_options([_|T0], T) :-
 	params_options(T0, T).
+
+%!	add_show_beware(+Options0, -Option) is det.
+%
+%	Add show_beware(false) when called with code, query or examples.
+%	These are dedicated calls that do not justify this message.
+
+add_show_beware(Options0, Options) :-
+	implicit_no_show_beware(Options0), !,
+	Options = [show_beware(false)|Options0].
+add_show_beware(Options, Options).
+
+implicit_no_show_beware(Options) :-
+	option(show_beware(_), Options), !,
+	fail.
+implicit_no_show_beware(Options) :-
+	\+ option(format(swish), Options), !,
+	fail.
+implicit_no_show_beware(Options) :-
+	option(code(_), Options).
+implicit_no_show_beware(Options) :-
+	option(q(_), Options).
+implicit_no_show_beware(Options) :-
+	option(examples(_), Options).
+implicit_no_show_beware(Options) :-
+	option(background(_), Options).
 
 
 %%	source_option(+Request, +Options0, -Options)
@@ -317,16 +346,21 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
 	p([span([style('color:red')],['New']),': ',
+  a([href('/example/inference/tile_map.swinb')],['Tile map generation']),
+  ', ',
+   a([href('/example/inference/path_tabling.swinb')],['Tabling']),
+  ', ',
+   'Event calculus: ',
+  a([href('/example/inference/tiny_event_calculus.pl')],['inference']),
+  ', ',
+  a([href('/example/learning/learn_effect_axioms.pl')],['learning']),
+  '; ',
+  a([href('/help/help-cplint.html#causal'),target('_blank')],['Causal inference']),': ',
+  a([href('/example/inference/simpson.swinb')],['Simpson''s paradox']),', ',
+  a([href('/example/inference/viral.swinb')],['viral marketing']),'; ',
+  a([href('/example/inference/lda.swinb')],['Latent Dirichlet Allocation']),'; ',
 	a([href('https://sites.google.com/a/unife.it/ml/lemur'),target('_blank')],['LEMUR']),' (',
-	a([href('/example/lemur/lemur_examples.swinb')],['examples']),'), ',
-	a([href('/example/inference/coupon.swinb')],['coupon collector problem']),', ',
-	a([href('/example/inference/random_walk.swinb')],['random walk']),', ',
-	a([href('/example/inference/mln.swinb')],['Markov Logic Networks']),
-        ', BDD drawing: ',
-	a([href('/example/inference/coin.swinb')],['coin']),', ',
-	a([href('/example/inference/path.swinb')],['path']),', ',
-	a([href('/example/inference/dice.swinb')],['dice']),', ',
-	a([href('/example/inference/epidemic.pl')],['epidemic'])
+	a([href('/example/lemur/lemur_examples.swinb')],['examples']),')'
 %	a([href('/help/help-cplint.html#cont'),target('_blank')],
 %	['continuous random variables']),' and ',
 %	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
@@ -402,6 +436,7 @@ swish_content(Options) -->
 	},
 	swish_resources,
 	swish_config_hash(Options),
+	swish_options(Options),
 	html(div([id(content), class([container, swish])],
 		 [ div([class([tile, horizontal]), 'data-split'('50%')],
 		       [ div([ class([editors, tabbed])
@@ -432,6 +467,24 @@ swish_config_hash(Options) -->
 		   window.swish.config_hash = Hash;
 		   |}).
 
+
+%!	swish_options(+Options)//
+%
+%	Emit additional options. This is  similar   to  config,  but the
+%	config object is big and stable   for a particular SWISH server.
+%	The options are set per session.
+
+swish_options(Options) -->
+	{ option(show_beware(Show), Options),
+	  JSShow = @(Show)
+	}, !,
+	js_script({|javascript(JSShow)||
+		   window.swish = window.swish||{};
+		   window.swish.option = window.swish.options||{};
+		   window.swish.option.show_beware = JSShow;
+		   |}).
+swish_options(_Options) -->
+	[].
 
 %%	source(+Type, +Options)//
 %
