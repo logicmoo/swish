@@ -54,6 +54,8 @@
 :- use_module(lib/tutorial).
 :- use_module(library(aleph)).
 
+:- use_module(sldnf_draw).
+
 
 		 /*******************************
 		 *	       PATHS		*
@@ -200,6 +202,7 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(swish(lib/render/lpad),	  []).
 :- use_module(swish(lib/render/prolog),	  []).
 :- use_module(swish(lib/render/tiles),	  []).
+:- use_module(swish(lib/render/sldnf),	  []).
 :- use_module(library(r/r_sandbox)).
 
 :- use_module(library(pita)).
