@@ -162,8 +162,6 @@ svg(SVG, _Options) -->
    if ( $.ajaxScript ) {
      var div  = $.ajaxScript.parent();
      var svg  = div.find("svg");
-     svg.width(svg.width()*1.8);
-     svg.height(svg.height()*1.8);
      var data = { w0: svg.width(),
 		  h0: svg.height()
 		};
@@ -276,7 +274,7 @@ latex_stream(Latex, SVG) :-
   process_create(path(pdfcrop), [FilePdf,FileCroppedPdf], [stdout(null)]),
   delete_file(FilePdf),
   atom_concat(File,'.svg',FileSvg),
-  process_create(path(convert), [FileCroppedPdf,FileSvg], [stdout(null)]),
+  process_create(path(pdf2svg), [FileCroppedPdf,FileSvg], [stdout(null)]),
   delete_file(FileCroppedPdf),
   open(FileSvg,read,StreamSvg),
   read_string(StreamSvg, _Length, SVG),
