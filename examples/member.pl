@@ -8,21 +8,21 @@
 
 :- begin_program.
 
-member1(X ,[X|_T]).
-member1(X ,[_H|T]):-
-member1(X,T).
+member(X ,[X|_T]).
+member(X ,[_H|T]):-
+  member(X,T).
 
 :-end_program.
 
 :-begin_query.
 
-member1(X,[1,2]), \+ member1(X,[1,3]).
+member(X,[1,2]), \+ member(X,[1,3]).
 
 :-end_query.
 
 /** <examples>
 
 ?- draw_goal(Tree).
-
+?- draw_goal(Tree),format("~s",[Tree]).
 
 */

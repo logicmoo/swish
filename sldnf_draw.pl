@@ -19,7 +19,6 @@
 % stop negation when 1st solution found
 % CLP? Minimize?
 
-%:-lib(var_name).
 
 % Note that it does not handle correctly the cut in the resolvent, but only
 % in a clause. Please, do not write ?- p,!. but define e new predicate
@@ -35,10 +34,13 @@
 %   reaching a cut is saved with assert(reached(Cut)).
 %   Each cut has a unique name, given by a counter.
 
-%:- [swi_module].
+% ported to SWI-Prolog by
+% Lorenzo Campioni <lorenzo.campioni@student.unife.it>
+% adapted to SWISH by
+% Fabrizio Riguzzi <fabrizio.riguzzi@unife.it>
 
 :-module(sldnf_draw,
-  [draw_goal/1,draw_goal/3,
+  [draw_goal/1,draw_goal/3,set_depth/1,animate/1,
   op(900,fy,not)]).
 
 :-use_module(library(apply)).
@@ -58,8 +60,9 @@
 :- dynamic my_clause/2.
 :- dynamic animations/1.
 
-:- dynamic sldnf_input_mod/1,prog_module/1,query_module/1,prog_on/0,query_on/0.
+:- dynamic sldnf_input_mod/1.
 
+:-meta_predicate set_depth(:).
 :-meta_predicate draw_goal(:).
 :-meta_predicate draw_goal(:,+).
 :-meta_predicate draw(:,+,+,+).
@@ -73,6 +76,8 @@
 :-meta_predicate count_children(:,-,+).
 :-meta_predicate vanilla(:).
 :-meta_predicate max_subtree_width(:,-).
+:-meta_predicate animate(:).
+
 
 
 sldnf_version(1.6).
@@ -82,15 +87,15 @@ sldnf_version(1.6).
 :- dynamic max_resolvent_length/1.
 max_resolvent_length(25).
 
-set_depth(D):-
-    retract(maxdepth(_)),
-    assert(maxdepth(D)).
+set_depth(M:D):-
+    retract(M:maxdepth(_)),
+    assert(M:maxdepth(D)).
 
 maxdepth(20). % Default max depth: 20
 
 animations(no).
 
-animate:- retract(animations(_)), assert(animations(yes)).
+animate(M:_):- retract(M:animations(_)), assert(M:animations(yes)).
 
 %begin_binding('{\\tt ').
 %end_binding('}').
@@ -117,8 +122,8 @@ draw_goal(M:G,FileName,ListName):-
     term_length_chopped(G,Length),
     conv_sq_list(G,GSq0),
     maplist(normalize_not,GSq0,GSq),
-    init_cuts,
-	reset_slide,
+    init_cuts(M),
+	reset_slide(M),
     (draw(M:GSq,File,Length,ListName) ; true),
     close(File).
 
@@ -130,8 +135,8 @@ draw_goal(M:String):-
     term_length_chopped(G,Length),
     conv_sq_list(G,GSq0),
     maplist(normalize_not,GSq0,GSq),
-    init_cuts,
-	  reset_slide,
+    init_cuts(M),
+	  reset_slide(M),
     (draw(M:GSq,File,Length,ListName) ; true),
     close(File),
     open_memory_file(Handle, read, R, [free_on_close(true)]),
@@ -145,8 +150,8 @@ draw_goal(M:FileName):-
     term_length_chopped(G,Length),
     conv_sq_list(G,GSq0),
     maplist(normalize_not,GSq0,GSq),
-    init_cuts,
-	reset_slide,
+    init_cuts(M),
+	reset_slide(M),
     (draw(M:GSq,File,Length,ListName) ; true),
     close(File).
 
@@ -155,9 +160,9 @@ normalize_not( \+(A),not(A)):-!.
 normalize_not(A,A).
 
 
-draw(R,F,Longest,L):-
-    maxdepth(Depth),
-    draw(R,F,Longest,Depth,[],L).
+draw(M:R,F,Longest,L):-
+    M:maxdepth(Depth),
+    draw(M:R,F,Longest,Depth,[],L).
 
 % draw(+Resolvent,+Stream,MaxLenghtOfResolvent,MaxDepth,OpenCuts)
 
@@ -170,15 +175,15 @@ draw(_,F,Longest,Depth,_,_):- Depth=<0, !,
     fail.
 draw(M:[not(G)|R],F,LongestIn,Depth,OpenCuts,ListName):-
     Depth1 is Depth-1,
-    write_indented(F,Depth,"\\begin{bundle}{"),
-    print_resolvent(F,[not(G)|R],ListName),
+    write_indented(M,F,Depth,"\\begin{bundle}{"),
+    print_resolvent(M,F,[not(G)|R],ListName),
     writeln(F,"}"),
-	write_indented(F,Depth,"\\chunk{"),
+	write_indented(M,F,Depth,"\\chunk{"),
     % NOTA: forse in questo caso non conviene metterlo, cosi` il box diventa giusto.
     %       pero` non si assicura che sia giusto il figlio del box...
     % Compute the maximum length
     term_length_chopped([not(G)|R],ResLen), max(LongestIn,ResLen,Length),
-	write_indented(F,Depth,"\\begin{bundle}{\\framebox{"),
+	write_indented(M,F,Depth,"\\begin{bundle}{\\framebox{"),
     (draw(M:[G],F,0,Depth1,[],ListName) ; true),
     write(F,"}}"),
 	max_subtree_width(M:[G],MaxWidthTemp),
@@ -186,13 +191,13 @@ draw(M:[not(G)|R],F,LongestIn,Depth,OpenCuts,ListName):-
         TMP is 1.3*RES,
 	float_to_integer(TMP,MaxWidth),
     (vanilla(M:G)
-      ->    print_fail(F,Depth,MaxWidth) %MODIFIED: ResLen
-      ;     write_indented(F,Depth,"\\chunk{"), start_pause(F),
-                (draw(M:R,F,MaxWidth,Depth1,OpenCuts,ListName); true), end_pause(F), write(F,"}")
+      ->    print_fail(M,F,Depth,MaxWidth) %MODIFIED: ResLen
+      ;     write_indented(M,F,Depth,"\\chunk{"), start_pause(M,F),
+                (draw(M:R,F,MaxWidth,Depth1,OpenCuts,ListName); true), end_pause(M,F), write(F,"}")
     ),
-    indent(F,Depth),writeln(F,"\\end{bundle}"),
+    indent(M,F,Depth),writeln(F,"\\end{bundle}"),
 	%end_pause(F),
-	indent(F,Depth),writeln(F,"}\\end{bundle}"),
+	indent(M,F,Depth),writeln(F,"}\\end{bundle}"),
 	%end_pause(F),
     fail.
 
@@ -200,11 +205,11 @@ draw(M:[not(G)|R],F,LongestIn,Depth,OpenCuts,ListName):-
 draw(M:[!|R],F,LongestIn,Depth,[LastCut|OpenCuts],ListName):- !,
     Depth1 is Depth-1,
     term_length_chopped([!|R],ResLen), max(LongestIn,ResLen,Length),
-    write_indented(F,Depth,"\\begin{bundle}{"),
-    print_resolvent(F,[!|R],ListName),
+    write_indented(M,F,Depth,"\\begin{bundle}{"),
+    print_resolvent(M,F,[!|R],ListName),
     writeln(F,"}"),
 	current_slide(Slide),
-    assert(reached(LastCut,Slide)),
+    assert(M:reached(LastCut,Slide)),
     (print_builtin_children(true,M:R,F,Length,Depth1,OpenCuts,ListName);     writeln(F,"\\end{bundle}")),
     fail.
 
@@ -219,10 +224,10 @@ draw(M:[G|R],F,LongestIn,Depth,OpenCuts,ListName):-
     not(G=(_,_)),
     built_in(G),
     term_length_chopped([G|R],ResLen), max(LongestIn,ResLen,Length),
-    write_indented(F,Depth,"\\begin{bundle}{"),
-    print_resolvent(F,[G|R],ListName),
+    write_indented(M,F,Depth,"\\begin{bundle}{"),
+    print_resolvent(M,F,[G|R],ListName),
     writeln(F,"}"),
-    (print_builtin_children(M:G,R,F,Length,Depth1,OpenCuts,ListName);     write_indented(F,Depth,"\\end{bundle}")),
+    (print_builtin_children(M:G,R,F,Length,Depth1,OpenCuts,ListName);     write_indented(M,F,Depth,"\\end{bundle}")),
     fail.
 
 % User defined predicate
@@ -233,10 +238,10 @@ draw(M:[G|R],F,LongestIn,Depth,OpenCuts,ListName):-
     not(built_in(G)),
 %	max_subtree_width([G|R],MaxWidthTemp),
     term_length_chopped([G|R],ResLen), max(LongestIn,ResLen,Length),
-	write_indented(F,Depth,"\\begin{bundle}{"),
-    print_resolvent(F,[G|R],ListName),
+	write_indented(M,F,Depth,"\\begin{bundle}{"),
+    print_resolvent(M,F,[G|R],ListName),
     writeln(F,"}"),
-    (print_children(M:G,M:R,F,Length,Depth1,OpenCuts,ListName);     indent(F,Depth), writeln(F,"\\end{bundle}") %,end_pause(F)
+    (print_children(M:G,M:R,F,Length,Depth1,OpenCuts,ListName);     indent(M,F,Depth), writeln(F,"\\end{bundle}") %,end_pause(M,F)
 	),
     fail.
 
@@ -246,10 +251,10 @@ print_children(M:G,M:R,F,Length,Depth,OpenCuts,ListName):-
     vars_names(Vars,VarNames,ListName),
     count_children(M:G,NumChildren,ListName),
     (NumChildren = 1 -> Len = Length ; Len=0),
-    increase_counter, get_counter(C),
+    increase_counter(M), get_counter(M,C),
     % Unique name for the node: if a cut is reached, it will have this name
     % First part: the cut may cut the alternatives for the clause
-    retract_cut_on_backtracking(C),
+    retract_cut_on_backtracking(M,C),
     clausola_list(M:G,B,ListName,NewListName),
 %%% QUI SI POTREBBE:
 % 1. mettere un secondo parametro nel predicato dynamic reached: e` il numero della slide in cui il cut viene incontrato (viene incontrato nella draw([!|...)
@@ -258,7 +263,7 @@ print_children(M:G,M:R,F,Length,Depth,OpenCuts,ListName):-
 % 4. cambiare la start_pause in una pausa effettuata alla slide S
 % 5. sincronizzare anche le slide seguenti (se necessario)
     (clause_is_cut(C,SlideCut)	%ATTENZIONE CHE HO TOLTO UNA NEGAZIONE! CONTROLLARE CHE NON CI SIANO DEI BINDING ...
-        ->   write_indented(F,Depth,"\\chunk{"),start_pause(F,SlideCut), cut_symbol(StringCut), write(F,StringCut),write(F,"}"), end_pause(F), fail
+        ->   write_indented(M,F,Depth,"\\chunk{"),start_pause(M,F,SlideCut), cut_symbol(StringCut), write(F,StringCut),write(F,"}"), end_pause(M,F), fail
 		;    true),
     (check_body_contains_cut(B,OpenCuts,NewCuts,_AddedCut,C)
         ->    % retract_cut_on_backtracking(AddedCut)
@@ -266,19 +271,19 @@ print_children(M:G,M:R,F,Length,Depth,OpenCuts,ListName):-
         ;     NewCuts=OpenCuts),
     % Second part: takes care of the alternatives of the predicates
     % in the body
-    ( (member(Cut,OpenCuts),reached(Cut,SlideCut))
-      ->        write_indented(F,Depth,"\\chunk{"),start_pause(F,SlideCut), cut_symbol(StringCut), write(F,StringCut),write(F,"}"),  end_pause(F), fail
-      ;         write_indented(F,Depth,"\\chunk"),
-                print_binding(F,VarNames,NewListName),
-                write(F,"{"), start_pause(F),
+    ( (member(Cut,OpenCuts),M:reached(Cut,SlideCut))
+      ->        write_indented(M,F,Depth,"\\chunk{"),start_pause(M,F,SlideCut), cut_symbol(StringCut), write(F,StringCut),write(F,"}"),  end_pause(M,F), fail
+      ;         write_indented(M,F,Depth,"\\chunk"),
+                print_binding(M,F,VarNames,NewListName),
+                write(F,"{"), start_pause(M,F),
                 append(B,R,Ris),
-                (draw(M:Ris,F,Len,Depth,NewCuts,NewListName) ; indent(F,Depth), end_pause(F), write(F,"}"), fail)
+                (draw(M:Ris,F,Len,Depth,NewCuts,NewListName) ; indent(M,F,Depth), end_pause(M,F), write(F,"}"), fail)
     )   .
 
-print_children(G,_,F,Length,Depth,_,ListName):-
-    not(clausola_list(G,_,ListName,_)),
+print_children(M:G,_,F,Length,Depth,_,ListName):-
+    not(clausola_list(M:G,_,ListName,_)),
     %not(clausola(G,_)),
-    print_fail(F,Depth,Length),
+    print_fail(M,F,Depth,Length),
     fail.
 
 print_builtin_children(G,M:R,F,Length,Depth,OpenCuts,ListName):-
@@ -288,14 +293,14 @@ print_builtin_children(G,M:R,F,Length,Depth,OpenCuts,ListName):-
     findall(G,call(G),L),length(L,NumChildren),
     (NumChildren = 1 -> Len = Length ; Len=0),
     call(G),
-    write_indented(F,Depth,"\\chunk"),
-    print_binding(F,VarNames,ListName),
-    write(F,"{"),start_pause(F),
-    (draw(M:R,F,Len,Depth,OpenCuts,ListName) ; end_pause(F), write(F,"}"), fail).
+    write_indented(M,F,Depth,"\\chunk"),
+    print_binding(M,F,VarNames,ListName),
+    write(F,"{"),start_pause(M,F),
+    (draw(M:R,F,Len,Depth,OpenCuts,ListName) ; end_pause(M,F), write(F,"}"), fail).
 
-print_builtin_children(G,_,F,Length,Depth,_OpenCuts,_):-
+print_builtin_children(G,M:_,F,Length,Depth,_OpenCuts,_):-
     not(call(G)),
-    print_fail(F,Depth,Length),
+    print_fail(M,F,Depth,Length),
     fail.
 
 %%%%%%%%%%%%%%%% Predicates fot cut handling %%%%%%%%%%%%%%%%%
@@ -316,9 +321,9 @@ push_cut(L,[cut(C)|L],cut(C),C).
 
 % On backtracking, remove the information about the reached cuts
 % that are not open
-retract_cut_on_backtracking(_).
-retract_cut_on_backtracking(C):-
-    retract(reached(C,_)), fail.
+retract_cut_on_backtracking(_,_).
+retract_cut_on_backtracking(M,C):-
+    retract(M:reached(C,_)), fail.
 
 follows(cut(N),cut(N1)):-
     N>N1.
@@ -330,44 +335,44 @@ last_cut([Cut|Cuts],C):-
         ->  C=LastSoFar
         ;   C=Cut).
 
-init_cuts:- retract_all(reached(_,_)),
-    reset_counter.
+init_cuts(M):- retract_all(M:reached(_,_)),
+    reset_counter(M).
 
-increase_counter:-
-    counter(C), retract(counter(C)), C1 is C+1,
-    assert(counter(C1)).
-get_counter(C):- counter(C).
-reset_counter:- retract_all(counter(_)),
-    assert(counter(0)).
+increase_counter(M):-
+    M:counter(C), retract(M:counter(C)), C1 is C+1,
+    assert(M:counter(C1)).
+get_counter(M,C):- M:counter(C).
+reset_counter(M):- retract_all(M:counter(_)),
+    assert(M:counter(0)).
 
 %%%%%%%%%%%%%%% End predicates for cut handling %%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%% Predicates for animations %%%%%%%%%%%%%%%%%%
-start_pause(_):- animations(no),!.
-start_pause(F):-
-	current_slide(S),
-	start_pause(F,S).
-start_pause(_,_):- animations(no),!.
-start_pause(F,S):-
-	write(F,"\\uncover<"),write(F,S),write(F,"->{"),increase_slide.
+start_pause(M,_):- M:animations(no),!.
+start_pause(M,F):-
+	M:current_slide(S),
+	start_pause(M,F,S).
+start_pause(M,_,_):- M:animations(no),!.
+start_pause(M,F,S):-
+	write(F,"\\uncover<"),write(F,S),write(F,"->{"),increase_slide(M).
 
-end_pause(_):- animations(no),!.
-end_pause(F):-
+end_pause(M,_):- M:animations(no),!.
+end_pause(_M,F):-
 	write(F,"}").
 
-increase_slide:-
-    current_slide(C), retract(current_slide(C)), C1 is C+1,
-    assert(current_slide(C1)).
-reset_slide:- retract_all(current_slide(_)),
-    assert(current_slide(2)).
+increase_slide(M):-
+    M:current_slide(C), retract(M:current_slide(C)), C1 is C+1,
+    assert(M:current_slide(C1)).
+reset_slide(M):- retract_all(M:current_slide(_)),
+    assert(M:current_slide(2)).
 %%%%%%%%%%%%%%%% End Predicates for animations %%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%% Utilities %%%%%%%%%%%%%%
 
-write_indented(F,N,S):- indent(F,N), write(F,S).
+write_indented(M,F,N,S):- indent(M,F,N), write(F,S).
 
 % Helpful for indentation, so that the LaTeX code is slightly more readable
-indent(F,N):- nl(F), maxdepth(Max), N1 is Max-N, indentloop(F,N1).
+indent(M,F,N):- nl(F), M:maxdepth(Max), N1 is Max-N, indentloop(F,N1).
 indentloop(_,0):- !.
 indentloop(F,N):- write(F,' '), N1 is N-1, indentloop(F,N1).
 
@@ -384,27 +389,27 @@ vars_names([X|T],[b(X,N)|TN],ListName):-
 
 
 
-print_binding(F,X,ListName):-
+print_binding(M,F,X,ListName):-
     write(F,"["),
     (begin_binding(S) -> write(F,S); true),
-    print_binding1(F,X,ListName),
+    print_binding1(M,F,X,ListName),
     (end_binding(Send) -> write(F,Send) ; true),
     write(F,"]").
 
-print_binding1(_F,[],_).
-print_binding1(F,[b(A,B)|T],ListName):-
+print_binding1(_M,_F,[],_).
+print_binding1(M,F,[b(A,B)|T],ListName):-
     var_name(A,Name,ListName),
     Name = B, !,
     % Avoid writing "X=X" as a binding...
-    print_binding1(F,T,ListName).
-print_binding1(F,[b(A,B)|T],ListName):-
+    print_binding1(M,F,T,ListName).
+print_binding1(M,F,[b(A,B)|T],ListName):-
     write_var(F,B,ListName), write(F,"/"),
     (acyclic_term(A)
       ->    write_term_no_sqbrack(F,A,1000,ListName)
-      ;     maxdepth(D), write_term_no_sqbrack(F,A,D,ListName)
+      ;     M:maxdepth(D), write_term_no_sqbrack(F,A,D,ListName)
     ),
     (T=[] -> true
-        ; write(F,", "), print_binding1(F,T,ListName)).
+        ; write(F,", "), print_binding1(M,F,T,ListName)).
 
 write_var(F,V,ListName):-
     var(V),
@@ -494,23 +499,23 @@ pretty_write_op(F,\=):- !,
 pretty_write_op(F,Op):- !,
     write(F,Op).
 
-print_resolvent(F,X,ListName):-
+print_resolvent(M,F,X,ListName):-
     max_resolvent_length(MaxLength),
-	print_resolvent(F,X,MaxLength,ListName).
-print_resolvent(F,X,MaxLength,ListName):-
+	print_resolvent(M,F,X,MaxLength,ListName).
+print_resolvent(M,F,X,MaxLength,ListName):-
     (begin_resolvent(S) -> write(F,S); true),
     term_length(X,Len),
     (X=[_,_|_], Len>MaxLength
     ->  write(F,"\\begin{tabular}{c}"),
-        print_list_tabular(F,X,ListName),
+        print_list_tabular(M,F,X,ListName),
         write(F,"\\end{tabular}")
-    ;    print_list(F,X,ListName)
+    ;    print_list(M,F,X,ListName)
     ),
     (end_resolvent(Send) -> write(F,Send) ; true).
 
 % Prints a list in a tabular environment, without exceeding max_resolvent_length in each row
-print_list_tabular(F,[A],ListName):-!, print_list(F,[A],ListName).
-print_list_tabular(F,X,ListName):-
+print_list_tabular(M,F,[A],ListName):-!, print_list(M,F,[A],ListName).
+print_list_tabular(M,F,X,ListName):-
     append2(First,Rest,X),
     (First = [_]
      -> true
@@ -518,10 +523,10 @@ print_list_tabular(F,X,ListName):-
         max_resolvent_length(MaxLength),
         Len1<MaxLength
     ),!,
-	print_list(F,First,ListName),
+	print_list(M,F,First,ListName),
     (Rest=[] -> true
      ;  write(F,",\\\\"),
-        print_list_tabular(F,Rest,ListName)
+        print_list_tabular(M,F,Rest,ListName)
     ).
 
 % Like append, but provides the solutions in the opposite order
@@ -532,20 +537,20 @@ append2([H|T],X,[H|S]):-
 append2([],X,X).
 
 
-print_list(F,[H],ListName):- !,
-    maxdepth(D),
+print_list(M,F,[H],ListName):- !,
+    M:maxdepth(D),
     write_term_no_sqbrack(F,H,D,ListName).
-print_list(F,[H1,H2|T],ListName):-
-    maxdepth(D),
+print_list(M,F,[H1,H2|T],ListName):-
+    M:maxdepth(D),
     write_term_no_sqbrack(F,H1,D,ListName),write(F,","),
-    print_list(F,[H2|T],ListName).
+    print_list(M,F,[H2|T],ListName).
 
-print_fail(F,Depth,Longest):-
-    write_indented(F,Depth,"\\chunk{"),
-	start_pause(F),
+print_fail(M,F,Depth,Longest):-
+    write_indented(M,F,Depth,"\\chunk{"),
+	start_pause(M,F),
 	fail_symbol(FailSymb),
 	print_string_spaces(F,Longest,FailSymb),
-	end_pause(F),
+	end_pause(M,F),
     write(F,"}").
 
 % Prints a string adding "Longest" spaces.
@@ -812,17 +817,20 @@ get_var_name(X,Name=X):-
 
 sandbox:safe_meta(sldnf_draw:draw_goal(_),[]).
 
+user:term_expansion(end_of_file, end_of_file) :-!,
+  prolog_load_context(module, M),
+  retractall(sldnf_input_mod(M)),
+  style_check(+singleton).
+
 user:term_expansion((:- sldnf), []) :-!,
   prolog_load_context(module, M),
   assert(sldnf_input_mod(M)),
   M:dynamic((prog_on/0,query_on/0,c/3,query/2)),
+  animations(A),
+  assert(M:animations(A)),
+  maxdepth(MD),
+  assert(M:maxdepth(MD)),
   style_check(-singleton).
-
-user:term_expansion((:- end_sldnf), []) :-!,
-  prolog_load_context(module, M),
-  sldnf_input_mod(M),
-  retrct(sldnf_input_mod(M)),
-  style_check(+singleton).
 
 user:term_expansion((:- begin_program), []) :-
   prolog_load_context(module, M),
@@ -842,7 +850,6 @@ user:term_expansion((:- begin_query), []) :-
 user:term_expansion((:- end_query), []) :-
   prolog_load_context(module, M),
   sldnf_input_mod(M),!,
-  style_check(+singleton),
   retractall(M:query_on).
 
 user:term_expansion(C,c(H,B,VarNames)):-
