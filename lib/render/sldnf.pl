@@ -158,7 +158,9 @@ latex_stream(Latex, SVG) :-
 "\\end{document}
 "),
   close(Stream),
-	process_create(path(pdflatex), ['-output-directory=/tmp/',File], [stdout(null)]),
+  file_directory_name(File, Directory),
+  atom_concat('-output-directory=',Directory,OutDirOp),
+	process_create(path(pdflatex), [OutDirOp,File], [stdout(null)]),
   delete_file(File),
   atom_concat(File,'.aux',FileAux),
   atom_concat(File,'.log',FileLog),
