@@ -160,7 +160,7 @@ latex_stream(Latex, SVG) :-
   close(Stream),
   file_directory_name(File, Directory),
   atom_concat('-output-directory=',Directory,OutDirOp),
-	process_create(path(pdflatex), [OutDirOp,File], [stdout(null)]),
+	process_create(path(pdflatex), [OutDirOp,'-interaction=nonstopmode',File], [stdout(null)]),
   delete_file(File),
   atom_concat(File,'.aux',FileAux),
   atom_concat(File,'.log',FileLog),
