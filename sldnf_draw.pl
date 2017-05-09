@@ -812,17 +812,16 @@ get_var_name(X,Name=X):-
 
 sandbox:safe_meta(sldnf_draw:draw_goal(_),[]).
 
+user:term_expansion(end_of_file, end_of_file) :-!,
+  prolog_load_context(module, M),
+  retractall(sldnf_input_mod(M)),
+  style_check(+singleton).
+
 user:term_expansion((:- sldnf), []) :-!,
   prolog_load_context(module, M),
   assert(sldnf_input_mod(M)),
   M:dynamic((prog_on/0,query_on/0,c/3,query/2)),
   style_check(-singleton).
-
-user:term_expansion((:- end_sldnf), []) :-!,
-  prolog_load_context(module, M),
-  sldnf_input_mod(M),
-  retrct(sldnf_input_mod(M)),
-  style_check(+singleton).
 
 user:term_expansion((:- begin_program), []) :-
   prolog_load_context(module, M),
@@ -842,7 +841,6 @@ user:term_expansion((:- begin_query), []) :-
 user:term_expansion((:- end_query), []) :-
   prolog_load_context(module, M),
   sldnf_input_mod(M),!,
-  style_check(+singleton),
   retractall(M:query_on).
 
 user:term_expansion(C,c(H,B,VarNames)):-
@@ -854,6 +852,7 @@ user:term_expansion(C,c(H,B,VarNames)):-
   mymatch(C,H,B),!.
 
 user:term_expansion(C,query(C,VarNames)):-
+writeln(C),
   prolog_load_context(module, M),
   sldnf_input_mod(M),
   M:query_on,!,
