@@ -168,8 +168,9 @@ latex_stream(Latex, SVG) :-
   delete_file(FileLog),
   atom_concat(File,'.pdf',FilePdf),
   atom_concat(File,'cropped.pdf',FileCroppedPdf),
-
-  process_create(path(pdfcrop), [FilePdf,FileCroppedPdf], [stdout(null)]),
+  atomic_list_concat([pdfcrop,FilePdf,FileCroppedPdf,'>/dev/null'],' ',ShellComm),
+  shell(ShellComm),
+%  process_create(path(pdfcrop), [FilePdf,FileCroppedPdf], [stdout(null)]),
   delete_file(FilePdf),
   atom_concat(File,'.svg',FileSvg),
   process_create(path(pdf2svg), [FileCroppedPdf,FileSvg], [stdout(null)]),
