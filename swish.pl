@@ -3,7 +3,7 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (c)  2014-2016, VU University Amsterdam
+    Copyright (c)  2014-2017, VU University Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -37,10 +37,11 @@
 	  ]).
 :- use_module(library(pengines)).
 :- use_module(library(http/http_dispatch)).
-:- use_module(library(http/http_path)).
 :- use_module(library(option)).
 :- use_module(library(settings)).
 
+:- use_module(lib/messages).
+:- use_module(lib/paths).
 :- use_module(lib/config, []).
 :- use_module(lib/page, []).
 :- use_module(lib/storage).
@@ -50,32 +51,12 @@
 :- use_module(lib/profiles).
 :- use_module(lib/highlight).
 :- use_module(lib/markdown).
+:- use_module(lib/chat, []).
 :- use_module(lib/template_hint, []).
 :- use_module(lib/tutorial).
 :- use_module(library(aleph)).
 
 :- use_module(sldnf_draw).
-
-
-		 /*******************************
-		 *	       PATHS		*
-		 *******************************/
-
-user:file_search_path(swish_web, swish(web)).
-user:file_search_path(js,        swish_web(js)).
-user:file_search_path(css,       swish_web(css)).
-user:file_search_path(icons,     swish_web(icons)).
-
-set_swish_path :-
-	absolute_file_name(swish('swish.pl'), _,
-			   [file_errors(fail), access(read)]), !.
-set_swish_path :-
-	prolog_load_context(directory, Dir),
-	asserta(user:file_search_path(swish, Dir)).
-
-:- set_swish_path.
-
-http:location(swish, root(.), [priority(-100)]).
 
 
 		 /*******************************
@@ -85,6 +66,23 @@ http:location(swish, root(.), [priority(-100)]).
 % By default, enable CORS
 
 :- set_setting_default(http:cors, [*]).
+
+
+		 /*******************************
+		 *         LOCAL CONFIG		*
+		 *******************************/
+
+%!	load_config
+%
+%	Load files from config-enabled if present.
+
+load_config :-
+	exists_directory('config-enabled'), !,
+	expand_file_name('config-enabled/*.pl', Files),
+	maplist(ensure_loaded, Files).
+load_config.
+
+:- initialization(load_config, now).
 
 
 		 /*******************************
@@ -122,11 +120,15 @@ http:location(swish, root(.), [priority(-100)]).
 %	  only running queries and saving files is restricted. Note
 %	  that this flag has no effect if no authentication module is
 %	  loaded.
+%	  - include_alias
+%	  Alias for searching files for `:- include(Alias(Name)).`
 %	  - ping
 %	  Ping pengine status every N seconds.  Updates sparkline
 %	  chart with stack usage.
-%	  - nb_eval_script
-%	  Evaluate scripts in HTML cells of notebooks?
+%	  - notebook
+%	  Dict holding options for notebooks.
+%	  - chat
+%	  Activate the chat interface
 
 % Allow other code to overrule the defaults from this file.
 term_expansion(swish_config:config(Config, _Value), []) :-
@@ -139,8 +141,10 @@ swish_config:config(application,        swish).
 swish_config:config(csv_formats,        [prolog]).
 swish_config:config(community_examples, false).
 swish_config:config(public_access,      false).
+swish_config:config(include_alias,	example).
 swish_config:config(ping,		10).
 swish_config:config(notebook,		_{eval_script: true}).
+swish_config:config(chat,		true).
 
 %%	swish_config:source_alias(Alias, Options) is nondet.
 %
@@ -154,6 +158,10 @@ swish_config:config(notebook,		_{eval_script: true}).
 %	    Only provide access to the file if it is loaded.
 
 
+% setup HTTP session management
+:- use_module(lib/session).
+
+
                  /*******************************
                  *   CREATE SWISH APPLICATION   *
                  *******************************/
@@ -164,7 +172,9 @@ swish_config:config(notebook,		_{eval_script: true}).
 :- pengine_application(swish).
 :- use_module(swish:lib/render).
 :- use_module(swish:lib/trace).
+:- use_module(swish:lib/projection).
 :- use_module(swish:lib/jquery).
+:- use_module(swish:lib/dashboard).
 :- use_module(swish:lib/swish_debug).
 :- use_module(swish:library(pengines_io)).
 :- use_module(swish:library(solution_sequences)).
