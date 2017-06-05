@@ -55,8 +55,7 @@
 :- use_module(lib/template_hint, []).
 :- use_module(lib/tutorial).
 :- use_module(library(aleph)).
-
-:- use_module(sldnf_draw).
+:- use_module(library(sldnfdraw)).
 
 
 		 /*******************************
