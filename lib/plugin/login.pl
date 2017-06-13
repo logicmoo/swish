@@ -54,6 +54,8 @@
 :- use_module('../config', []).
 
 :- multifile
+    swish_config:login/2,
+    swish_config:login_item/2,
     swish_config:li_login_button//1,    % +Options
     swish_config:reply_logged_in/1,     % +Options
     swish_config:reply_logged_out/1,    % +Options
@@ -254,8 +256,12 @@ reply_logged_out(Options) :-
 reply_logged_out(Options) :-
     reply_logged_out_page(Options).
 
-reply_logged_out_page(_) :-
-    reply_json_dict(true).
+reply_logged_out_page(Options) :-
+    option(reply(Format), Options, json),
+    (   Format == json
+    ->  reply_json_dict(true)
+    ;   true
+    ).
 
 
 		 /*******************************

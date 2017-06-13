@@ -1,4 +1,4 @@
-# SWISH: A web based SWI-Prolog environment integrated with examples from the Cplint suite
+# SWISH: A web based SWI-Prolog environment
 
 ## Online version
 
@@ -15,24 +15,13 @@ your programs online for at least multiple years.
 
 ### Get submodules
 
-cd to your swish root directory and
+`cd` to your swish root directory and
 
     git submodule update --init
 
 ### Get JavaScript requirements
 
-### Using the packages
-
-If you are under the GNU/Linux distribution
-of Arch Linux (or a derivative one) AUR packages
-are available. Please have a look
-[here](https://frnmst.github.io/swish-installer/)
-
-### Without using the packages: building
-
-#### Get JavaScript requirements
-
-##### Using bower
+#### Using bower
 
 Install [bower](http://bower.io) for your  platform.   On  Ubuntu,  this
 implies getting `node` and `npm` by installing two packages and next use
@@ -47,7 +36,7 @@ get the dependencies:
     bower install
     make src
 
-##### Download as zip
+#### Download as zip
 
 As installing node and bower is not a pleasure on all operating systems,
 you can also download  the  dependencies  as   a  single  zip  file from
@@ -60,7 +49,7 @@ backward compatible and you need SWISH with commit
 042d93a66409ef6460052c46394e4f83dcab3d90 (April 7, 2017) together with
 this zip file.
 
-#### Get the latest SWI-Prolog
+### Get the latest SWI-Prolog
 
 Install the latest  [SWI-Prolog](http://www.swi-prolog.org) _development
 version_. As SWISH is very  much  in   flux  and  depends  on the recent
@@ -72,7 +61,15 @@ system    from    the     current      git     development    repository
 
 Apr 8, 2017: SWI-Prolog 7.5.3 works fine.
 
-#### Running SWISH
+### Other dependencies
+
+The   avatar   system   requires    the     `convert`    utility    from
+[ImageMagic](http://www.imagemagick.org). This is available as a package
+for virtually any Linux system, e.g., on Debian based systems do
+
+    sudo apt-get install imagemagick
+
+## Running SWISH
 
 With a sufficiently recent Prolog installed, start the system by opening
 `run.pl` either by running `swipl  run.pl`   (Unix)  or opening `run.pl`
@@ -104,7 +101,7 @@ config-available](https://github.com/SWI-Prolog/swish/tree/master/config-availab
 for details.
 
 
-#### Running SWISH without sandbox limitations
+### Running SWISH without sandbox limitations
 
 By default, SWISH does not require the user   to  login but lets you run
 only _safe_ commands.  If  you  want   to  use  SWISH  for  unrestricted
@@ -164,6 +161,7 @@ line, start SWISH from service managers   such as `upstart` or `systemd`
 and    simplifies    running    as     an      HTTPS     server.     See
 https://github.com/triska/letswicrypt.
 
+
 ## Design
 
 Most of the application is realised  using client-side JavaScript, which
@@ -213,7 +211,3 @@ using this command and reloading the page:
 
 The JavaScript is documented   using  [JsDoc](http://usejsdoc.org/). The
 generated documentation is available in `web/js/doc/index.html`.
-
-cplint and cplint_r related documentation is availble respectively
-[here](https://github.com/friguzzi/cplint/blob/master/doc/help-cplint.pdf)
-and [here](https://frnmst.github.io/cplint_r/)
