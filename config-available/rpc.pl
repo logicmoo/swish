@@ -3,8 +3,8 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2014-2017, VU University Amsterdam
-			      CWI Amsterdam
+    Copyright (C): 2017, VU University Amsterdam
+			 CWI Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -33,23 +33,15 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-:- use_module(library(main)).
-:- use_module(library(option)).
-:- use_module(server).
+:- module(swish_config_rpc, []).
 
-% Usage:
-%
-%   swipl run.pl [--port=Port]
+/** <module> Configure Pengine RPC
 
-% Using `localhost:Port`, we only bind to localhost interface!
-% Use plain `3050` (or any port number you like) to make the server
-% accessible from all network interfaces.
+This module configures the Pengines library to   allow  for RPC to other
+Pengine servers.
+*/
 
-:- initialization run_swish.
-
-run_swish :-
-    current_prolog_flag(argv, Argv),
-    argv_options(Argv, _, Options),
-    option(port(Port), Options, 3050),
-    server(localhost:Port).
-
+% Declare remote pengine routines sandbox-safe
+:- use_module(library(pengines_sandbox)).
+% Make pengines API available by default.
+:- use_module(swish:library(pengines)).

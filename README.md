@@ -15,7 +15,7 @@ your programs online for at least multiple years.
 
 ### Get submodules
 
-cd to your swish root directory and
+`cd` to your swish root directory and
 
     git submodule update --init
 
@@ -72,7 +72,15 @@ system    from    the     current      git     development    repository
 
 Apr 8, 2017: SWI-Prolog 7.5.3 works fine.
 
-#### Running SWISH
+### Other dependencies
+
+The   avatar   system   requires    the     `convert`    utility    from
+[ImageMagic](http://www.imagemagick.org). This is available as a package
+for virtually any Linux system, e.g., on Debian based systems do
+
+    sudo apt-get install imagemagick
+
+## Running SWISH
 
 With a sufficiently recent Prolog installed, start the system by opening
 `run.pl` either by running `swipl  run.pl`   (Unix)  or opening `run.pl`
