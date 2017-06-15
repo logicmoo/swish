@@ -30,7 +30,7 @@ arc(c,d):0.4.
 arc(d,e):0.4.
 arc(a,e):0.1.
 :- end_lpad.
-graph(digraph(G)):-
+graph(digraph([rankdir='LR'|G])):-
     findall(edge(A - B,[label=P,dir=none]),
       clause(arc(A,B,_,_),(get_var_n(_,_,_,[P|_],_),_)),
       G).
