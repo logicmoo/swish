@@ -103,7 +103,7 @@ Clause for drawing the graph using the integration with Graphviz:
 </div>
 <div class="nb-cell program prolog" data-background="true">
 
-graph(digraph(G)):-
+graph(digraph([rankdir='LR'|G])):-
     findall(edge(A - B,[label=P,dir=none]),
       clause(arc(A,B,_,_),(get_var_n(_,_,_,[P|_],_),_)),
       G).
