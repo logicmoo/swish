@@ -355,7 +355,7 @@ swish_navbar(Options) -->
   a([href('/example/inference/inference_examples_R.swinb')],['inference examples']),
   ', ',
   a([href('/example/learning/exauc.swinb')],['ROC and PR curves']),
-  ', ',
+  '; ',
   a([href('/example/inference/tile_map.swinb')],['Tile map generation']),
   ', ',
    a([href('/example/inference/path_tabling.swinb')],['Tabling']),
