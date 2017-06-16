@@ -11,7 +11,9 @@ updated. Less observations are considered with respect to http://www.robots.ox.a
 because the weights go rapidly to 0.
 */
 /** <examples>
-?- prior(200,100).
+?- dens(200).
+% draw the prior and posterior densities
+?- prior(200).
 % draw the prior density
 ?- post(200).
 % draw the posterior density
@@ -71,13 +73,21 @@ pick_portion(_,_,P):P;neg_pick_portion(_,_,P):1-P.
 
 :- end_lpad.
 
+dens(Samples):-
+  mc_sample_arg_first(dp_n_values(0,Samples,10.0,V),1,V,L),
+  L=[Vs-_],
+  obs(O),
+  maplist(to_val,O,O1),
+  length(O1,N),
+  mc_lw_sample_arg(dp_value(0,10.0,T),dp_n_values(0,N,10.0,O1),Samples,T,LP),
+  densities_r(Vs,LP).
 
 obs([-1,7,3]).
 
-prior(Samples,NBins):-
+prior(Samples):-
   mc_sample_arg_first(dp_n_values(0,Samples,10.0,V),1,V,L),
   L=[Vs-_],
-  histogram_r(Vs,NBins).
+  density_r(Vs).
 
 post(Samples):-
   obs(O),

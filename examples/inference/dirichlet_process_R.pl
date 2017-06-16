@@ -19,9 +19,9 @@ Moreover, they show the distribution of unique indexes as in
 http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=nonparametrics/dp-mixture-model
 */
 /** <examples>
-?- hist(200,100).
+?- hist(200,20).
 % show the distribution of indexes with concentration parameter 10. 
-?- hist_val(200,100).
+?- hist_val(200,20).
 % show the distribution of values with concentration parameter 10. Should look
 % like row 2 of https://en.wikipedia.org/wiki/Dirichlet_process#/media/File:Dirichlet_process_draws.svg
 ?- hist_repeated_indexes(100,40).
