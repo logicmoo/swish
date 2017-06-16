@@ -3,10 +3,10 @@
 <div class="nb-cell markdown">
 # Drawing an SLDNF tree
 
-This examples shows how to draw an SLDNF tree using pack <code>sldnfdraw</code>.
+This examples shows how to draw an SLDNF tree using pack =sldnfdraw=.
 
-See the pack <a href="http://www.swi-prolog.org/pack/list?p=sldnfdraw">page</a>
-or <a href="https://github.com/gavanelli/sldnfdraw">github</a> for instructions.
+See the pack [page](http://www.swi-prolog.org/pack/list?p=sldnfdraw)
+or [github](https://github.com/gavanelli/sldnfdraw) for instructions.
 
 Draw the tree:
 </div>
