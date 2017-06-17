@@ -235,4 +235,3 @@ pengines:prepare_module(Module, swish, _Options) :-
 sandbox:safe_primitive(nf_r:{_}).
 
 
-:- use_module(swish(lib/render/bdd),	  []).
