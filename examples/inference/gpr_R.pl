@@ -110,11 +110,16 @@ cov_row([H|T],XH,Ker,[KH|KT]):-
   call(Ker,H,XH,KH),
   cov_row(T,XH,Ker,KT).
 
-compute_k([],_,_,[]).
-
-compute_k([XH|XT],X,Ker,[HK|TK]):-
-  call(Ker,XH,X,HK),
-  compute_k(XT,X,Ker,TK).
+%! gp_predict(+XP:list,+Kernel:atom,+XT:list,+YT:list,-YP:list) is det
+% Given the points described by the lists XT and YT and a Kernel,
+% predict the Y values of points with X values in XP and returns them in YP.
+% Prediction is performed by Gaussian process regression.
+gp_predict(XP,Kernel,Var,XT,YT,YP):-
+  compute_cov(XT,Kernel,Var,C),
+  matrix_inversion(C,C_1),
+  transpose([YT],YST),
+  matrix_multiply(C_1,YST,C_1T),
+  gp_predict_single(XP,Kernel,XT,C_1T,YP).
 
 gp_predict_single([],_,_,_,[]).
 
@@ -122,6 +127,12 @@ gp_predict_single([XH|XT],Kernel,X,C_1T,[YH|YT]):-
   compute_k(X,XH,Kernel,K),
   matrix_multiply([K],C_1T,[[YH]]),
   gp_predict_single(XT,Kernel,X,C_1T,YT).
+
+compute_k([],_,_,[]).
+
+compute_k([XH|XT],X,Ker,[HK|TK]):-
+  call(Ker,XH,X,HK),
+  compute_k(XT,X,Ker,TK).
 
 compute_KStar(XP,XT,Kernel,[KStar]) :-
     compute_k(XT,XP,Kernel,KStar).
@@ -357,7 +368,7 @@ draw_fun_pred_r(Kernel):-
 % YT=[1,-0.8,0.6]
 % draws the expected prediction for points with X=[0,...,10].
 draw_fun_pred_exp(Kernel,C):-
-  numlist(0,0,X),
+  numlist(0,10,X),
   XT=[2.5,6.5,8.5],
   YT=[1,-0.8,0.6],
   compute_e(X,Kernel,XT,YT,Y),
