@@ -28,6 +28,18 @@ distributed in {1,2,3} and sigma uniformly distributed in [-2,2].
 */
 
 /** <examples>
+?- draw_fun_pred_r(sq_exp_p).
+% Given the three points
+% XT=[2.5,6.5,8.5]
+% YT=[1,-0.8,0.6]
+% draws 5 functions predicting points with X=[0,...,10] with a 
+% squared exponential kernel. The graphs shows as dots the given points.
+?- draw_fun_pred_exp(sq_exp_p,C).
+% Given the three points
+% XT=[2.5,6.5,8.5]
+% YT=[1,-0.8,0.6]
+% draws the expected prediction for points with X=[0,...,10] with a
+% squared exponential kernel. The graphs shows as dots the given points.
 ?- draw_fun(sq_exp_p,C).
 % draw 5 functions from a GP with a squared exponential kernel with a prior 
 % over the parameters sigma and l
@@ -43,18 +55,6 @@ distributed in {1,2,3} and sigma uniformly distributed in [-2,2].
 % draw 5 functions from a GP with a linear kernel 
 ?- draw_fun([1,2,3,4,5,6],min,C).
 % draw 5 functions from a GP with a min kernel 
-?- draw_fun_pred_r(sq_exp_p).
-% Given the three points
-% XT=[2.5,6.5,8.5]
-% YT=[1,-0.8,0.6]
-% draws 5 functions predicting points with X=[0,...,10] with a 
-% squared exponential kernel. The graphs shows as dots the given points.
-?- draw_fun_pred_exp(sq_exp_p,C).
-% Given the three points
-% XT=[2.5,6.5,8.5]
-% YT=[1,-0.8,0.6]
-% draws the expected prediction for points with X=[0,...,10] with a
-% squared exponential kernel. The graphs shows as dots the given points.
 */
 
 :- use_module(library(mcintyre)).
@@ -348,7 +348,8 @@ draw_fun_pred_r(Kernel):-
             color="y",
             fill="y"
         )
-    ).
+    ),
+    r_download.
 
 %! draw_fun_pred_exp(+Kernel:atom,-C:dict) is det
 % Given the three points
