@@ -88,7 +88,7 @@ pick_portion(_,_,P):P;neg_pick_portion(_,_,P):1-P.
 :- end_lpad.
 
 hist(Samples,NBins):-
-  mc_sample_arg(dp_stick_index(1,10.0,V),Samples,V,L),
+  mc_sample_arg_first(dp_stick_index(1,10.0,V),Samples,V,L),
   histogram_r(L,NBins).
 
 hist_repeated_indexes(Samples,NBins):-
