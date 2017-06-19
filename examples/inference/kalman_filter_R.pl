@@ -279,7 +279,7 @@ geom_densities(L1,L2,L3,L4,O,St,Y):-
         )
     ),
     <- grid.arrange(g.top,g.bottom, heights = c(1/5, 4/5)),
-    r_download..
+    r_download.
 
 
 %! filter(+S:int,+O:list,+St:list) is det
