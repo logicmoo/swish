@@ -83,7 +83,8 @@ Examples divided by features:
   [seven_scientists.pl](example/inference/seven_scientists.pl),
   [widget.pl](example/inference/widget.pl),
   [widgetmsw.pl](example/inference/widgetmsw.pl),
-  [slp_pcfg.pl](example/inference/slp_pcfg.pl), [slp_pdcg.pl](example/inference/slp_pdcg.pl)
+  [slp_pcfg.pl](example/inference/slp_pcfg.pl), [slp_pdcg.pl](example/inference/slp_pdcg.pl),
+  [binomial.pl](example/inference/binomial.pl)
   - variable number of objects:
   [var_objdb.pl](example/inference/var_objdb.pl),
   [var_obj.pl](example/inference/var_obj.pl),
@@ -596,6 +597,7 @@ is done.
   [tiny_event_calculusmc.pl](example/inference/tiny_event_calculusmc.pl))
   - Tile map generation ([tile_map.swinb](example/inference/tile_map.swinb),
    [tile_map.pl](example/inference/tile_map.pl), [tile_mapcond.pl](example/inference/tile_mapcond.pl))
-
+  - Binomial distribution 
+  ([binomial.pl](example/inference/binomial.pl))
 </div>
 </div>
