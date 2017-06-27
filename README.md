@@ -1,5 +1,14 @@
 # SWISH: A web based SWI-Prolog environment
 
+## integrated with content and examples from:
+   
+   The Cplint suite
+   Trill-on-Swish
+   Logtalk
+   PFC/LogicMOO/PrologMUD
+   ClioPatria Integration
+
+
 ## Online version
 
 SWISH can be used to access [SWI-Prolog](http://www.swi-prolog.org) at
@@ -27,6 +36,14 @@ configure those that need to be configured.
 
 ### Get JavaScript requirements
 
+### Using the packages
+
+If you are under the GNU/Linux distribution
+of Arch Linux (or a derivative one) AUR packages
+are available. Please have a look
+[here](https://frnmst.github.io/swish-installer/)
+
+### Without using the packages: building
 #### Using bower
 
 Install [bower](http://bower.io) for your  platform.   On  Ubuntu,  this
@@ -220,3 +237,7 @@ using this command and reloading the page:
 
 The JavaScript is documented   using  [JsDoc](http://usejsdoc.org/). The
 generated documentation is available in `web/js/doc/index.html`.
+
+cplint and cplint_r related documentation is availble respectively
+[here](https://github.com/friguzzi/cplint/blob/master/doc/help-cplint.pdf)
+and [here](https://frnmst.github.io/cplint_r/)
