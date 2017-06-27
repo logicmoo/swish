@@ -67,8 +67,9 @@ define([ "jquery",
 	 "svg-pan-zoom"
        ], function($, config, preferences, history, modal) {
 
-preferences.setDefault("semantic-highlighting", false);
+preferences.setDefault("semantic-highlighting", true);
 preferences.setDefault("emacs-keybinding", false);
+preferences.setDefault("reuse-editor", false);
 
 (function($) {
   var pluginName = 'swish';
@@ -155,7 +156,12 @@ preferences.setDefault("emacs-keybinding", false);
 	  preference: "emacs-keybinding",
 	  type: "checkbox",
 	  value: "false"
-	}
+	},
+	"Reuse Editors": {
+	  preference: "reuse-editor",
+	  type: "checkbox",
+	  value: "false"
+	},
       },
       "Examples": function(navbar, dropdown) {
 	$("body").swish('populateExamples', navbar, dropdown);
@@ -163,6 +169,29 @@ preferences.setDefault("emacs-keybinding", false);
       "Help": function(navbar, dropdown) {
 	$("body").swish('populateHelp', navbar, dropdown);
       }
+     ,
+     "Extensions Menu":
+      { 
+      	"Help on cplint...": function() {
+      	  menuBroadcast("help", {file:"help-cplint.html"});
+      	},
+		"Pldoc on cplint...": function() {
+		  var win = window.open("http://cplint.lamping.unife.it/pldoc/doc/home/trill/lib/swipl/pack/cplint/prolog/", '_blank');
+		  win.focus();
+		 },
+		"Help on aleph...": function(){
+		  menuBroadcast("help", {file:"help-aleph.html"});
+		},
+        "PLP Tutorial":      
+          function() {
+            var win = window.open("http://ds.ing.unife.it/~gcota/plptutorial/", '_blank');
+            win.focus();
+            //console.log("click on tutorial");
+            //methods.playURL.call($("body"), {url:"/tutorial/tutorial.swinb"});
+          }       
+         ,
+	}
+
     }
   }; // defaults;
 
@@ -268,10 +297,11 @@ preferences.setDefault("emacs-keybinding", false);
       if ( typeof(options) == "string" )
 	options = {file:options};
 
-      /*var existing = this.find(".storage").storage('match', options);
+    if(preferences.getVal("reuse-editor")) { 
+      var existing = this.find(".storage").storage('match', options);
       if ( existing && existing.storage('expose', "Already open") )
-	return this;				/* FIXME: go to line */
-
+		return this;				/* FIXME: go to line */
+    }
       var url = config.http.locations.web_storage + options.file;
       $.ajax({ url: url,
 	       type: "GET",
