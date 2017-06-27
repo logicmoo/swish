@@ -55,6 +55,7 @@ user:file_search_path(swish_pack,     swish(pack)).
 user:file_search_path(js,             swish_web(js)).
 user:file_search_path(css,            swish_web(css)).
 user:file_search_path(icons,          swish_web(icons)).
+user:file_search_path(bower_components,   swish_web(bower_components)).
 
 %!  set_swish_path
 %
