@@ -28,6 +28,18 @@ distributed in {1,2,3} and sigma uniformly distributed in [-2,2].
 */
 
 /** <examples>
+?- draw_fun_pred_r(sq_exp_p).
+% Given the three points
+% XT=[2.5,6.5,8.5]
+% YT=[1,-0.8,0.6]
+% draws 5 functions predicting points with X=[0,...,10] with a 
+% squared exponential kernel. The graphs shows as dots the given points.
+?- draw_fun_pred_exp(sq_exp_p,C).
+% Given the three points
+% XT=[2.5,6.5,8.5]
+% YT=[1,-0.8,0.6]
+% draws the expected prediction for points with X=[0,...,10] with a
+% squared exponential kernel. The graphs shows as dots the given points.
 ?- draw_fun(sq_exp_p,C).
 % draw 5 functions from a GP with a squared exponential kernel with a prior 
 % over the parameters sigma and l
@@ -43,18 +55,6 @@ distributed in {1,2,3} and sigma uniformly distributed in [-2,2].
 % draw 5 functions from a GP with a linear kernel 
 ?- draw_fun([1,2,3,4,5,6],min,C).
 % draw 5 functions from a GP with a min kernel 
-?- draw_fun_pred_r(sq_exp_p).
-% Given the three points
-% XT=[2.5,6.5,8.5]
-% YT=[1,-0.8,0.6]
-% draws 5 functions predicting points with X=[0,...,10] with a 
-% squared exponential kernel. The graphs shows as dots the given points.
-?- draw_fun_pred_exp(sq_exp_p,C).
-% Given the three points
-% XT=[2.5,6.5,8.5]
-% YT=[1,-0.8,0.6]
-% draws the expected prediction for points with X=[0,...,10] with a
-% squared exponential kernel. The graphs shows as dots the given points.
 */
 
 :- use_module(library(mcintyre)).
@@ -110,11 +110,16 @@ cov_row([H|T],XH,Ker,[KH|KT]):-
   call(Ker,H,XH,KH),
   cov_row(T,XH,Ker,KT).
 
-compute_k([],_,_,[]).
-
-compute_k([XH|XT],X,Ker,[HK|TK]):-
-  call(Ker,XH,X,HK),
-  compute_k(XT,X,Ker,TK).
+%! gp_predict(+XP:list,+Kernel:atom,+XT:list,+YT:list,-YP:list) is det
+% Given the points described by the lists XT and YT and a Kernel,
+% predict the Y values of points with X values in XP and returns them in YP.
+% Prediction is performed by Gaussian process regression.
+gp_predict(XP,Kernel,Var,XT,YT,YP):-
+  compute_cov(XT,Kernel,Var,C),
+  matrix_inversion(C,C_1),
+  transpose([YT],YST),
+  matrix_multiply(C_1,YST,C_1T),
+  gp_predict_single(XP,Kernel,XT,C_1T,YP).
 
 gp_predict_single([],_,_,_,[]).
 
@@ -122,6 +127,12 @@ gp_predict_single([XH|XT],Kernel,X,C_1T,[YH|YT]):-
   compute_k(X,XH,Kernel,K),
   matrix_multiply([K],C_1T,[[YH]]),
   gp_predict_single(XT,Kernel,X,C_1T,YT).
+
+compute_k([],_,_,[]).
+
+compute_k([XH|XT],X,Ker,[HK|TK]):-
+  call(Ker,XH,X,HK),
+  compute_k(XT,X,Ker,TK).
 
 compute_KStar(XP,XT,Kernel,[KStar]) :-
     compute_k(XT,XP,Kernel,KStar).
@@ -348,7 +359,8 @@ draw_fun_pred_r(Kernel):-
             color="y",
             fill="y"
         )
-    ).
+    ),
+    r_download.
 
 %! draw_fun_pred_exp(+Kernel:atom,-C:dict) is det
 % Given the three points
@@ -356,7 +368,7 @@ draw_fun_pred_r(Kernel):-
 % YT=[1,-0.8,0.6]
 % draws the expected prediction for points with X=[0,...,10].
 draw_fun_pred_exp(Kernel,C):-
-  numlist(0,0,X),
+  numlist(0,10,X),
   XT=[2.5,6.5,8.5],
   YT=[1,-0.8,0.6],
   compute_e(X,Kernel,XT,YT,Y),

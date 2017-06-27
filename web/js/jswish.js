@@ -560,7 +560,7 @@ preferences.setDefault("emacs-keybinding", false);
      * hamburger` class.
      */
     fullscreen: function(node, main) {
-      var content = this.find(".container.swish");
+      var content = this.find(".container.tile-top");
 
       if ( !content.hasClass("fullscreen") ) {
 	var data = this.data("fullscreen");
@@ -587,7 +587,7 @@ preferences.setDefault("emacs-keybinding", false);
      * @return {Boolean} `true` if successful.
      */
     exitFullscreen: function() {
-      var content = this.find(".container.swish");
+      var content = this.find(".container.tile-top");
 
       if ( content.hasClass("fullscreen") ) {
 	var data = this.data("fullscreen");
