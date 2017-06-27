@@ -208,6 +208,10 @@ pengines:prepare_module(Module, swish, _Options) :-
 
 % load rendering modules
 
+:- if(exists_source(swish(lib/render/html))).
+% Dmiles - fav render (only works if unsandboxed)
+:- use_module(swish(lib/render/html),	  []).
+:- endif.
 :- use_module(swish(lib/render/sudoku),	  []).
 :- use_module(swish(lib/render/chess),	  []).
 :- use_module(swish(lib/render/table),	  []).
