@@ -80,6 +80,10 @@ grammer rules. This allows for server-side   generated  pages to include
 swish or parts of swish easily into a page.
 */
 
+
+:- multifile http:location/3.
+:- dynamic http:location/3.
+
 http:location(pldoc, swish(pldoc), [priority(100)]).
 
 :- http_handler(swish(.), swish_reply([]), [id(swish), prefix]).
@@ -330,12 +334,11 @@ swish_page(Options) -->
 	swish_navbar(Options),
 	swish_content(Options).
 
-%%	swish_navbar(+Options)//
+%%	cplint_navbar(+Options)//
 %
 %	Generate the swish navigation bar.
 
-swish_navbar(Options) -->
-	swish_resources,
+cplint_navbar(_Options) -->
 	html(div([id('navbarhelp'),style('height:40px;margin: 10px 5px;text-align:center;')],
         [span([style('color:maroon')],['cplint on ']),
         span([style('color:darkblue')],['SWI']),
@@ -345,7 +348,7 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([href('/help/about.html'),target('_blank')],['About']),
         &(nbsp), &(nbsp),
-        a([href('/help/help-cplint.html'),target('_blank')],['Help']),
+        a([href('/help/help-cplint.html'),target('_blank')],['CPLINT-Help']),
         &(nbsp), &(nbsp),
         a([href('/help/credits.html'),target('_blank')],['Credits']),
         &(nbsp), &(nbsp),
@@ -365,7 +368,6 @@ swish_navbar(Options) -->
    'Event calculus: ',
   a([href('/example/inference/tiny_event_calculus.pl')],['inference']),
   ', ',
-  a([href('/example/learning/learn_effect_axioms.pl')],['learning'])
 %	a([href('/help/help-cplint.html#cont'),target('_blank')],
 %	['continuous random variables']),' and ',
 %	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
@@ -375,10 +377,26 @@ swish_navbar(Options) -->
 %	a([href('/example/inference/kalman_filter.pl')],
 %	['Kalman filter']),', ',
 %	a([href('/example/inference/seven_scientists.pl')],['Bayesian estimation']),', ',
-%	a([href('/example/inference/indian_gpa.pl')],['Indian GPA problem'])
+%	a([href('/example/inference/indian_gpa.pl')],['Indian GPA problem']),
+  a([href('/example/learning/learn_effect_axioms.pl')],['learning'])
        ])])
-        ),
+        ).
 
+%%	swish_navbar(+Options)//
+%
+%	Generate the swish navigation bar.
+
+swish_navbar(Options) -->
+   {current_predicate(cp_menu:cp_menu/2)},
+        cp_menu:cp_menu,
+        was_swish_navbar(Options),!.
+
+swish_navbar(Options) -->
+        was_swish_navbar(Options),!.
+
+was_swish_navbar(Options) -->
+	swish_resources,
+    cplint_navbar(Options),
 	html(nav([ class([navbar, 'navbar-default']),
 		   role(navigation)
 		 ],
