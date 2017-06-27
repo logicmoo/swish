@@ -163,9 +163,11 @@ define([ "jquery", "config", "preferences", "form", "utils" ],
       var data = this.data(pluginName);
 
       this.chat('send', {type: "unload"});
+      if(data.connection != undefined) {     
       data.connection.onclose = function(){};
       data.connection.close();
       data.connection = undefined;
+      }
 
       return this;
     },
