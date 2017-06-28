@@ -1277,7 +1277,7 @@ var cellTypes = {
     }
 
     function runScripts() {
-      if ( config.swish.notebook.eval_script == true &&
+      if ( (config.swish.notebook == undefined || config.swish.notebook.eval_script == true) &&
 	   options.eval_script != false ) {
 	var scripts = [];
 

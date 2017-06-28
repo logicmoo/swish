@@ -43,25 +43,353 @@
  * @requires jquery
  */
 
-define([ "jquery", "form", "config", "preferences", "modal",
-	 "laconic", "search" ],
-       function($, form, config, preferences, modal) {
-var tabbed = {
-  tabTypes: {},
-  type: function(from) {
-    var ext = from.split('.').pop();
+/* ***** BEGIN LICENSE BLOCK *****
+ * Distributed under the BSD license:
+ *
+ * Copyright (c) 2010, Ajax.org B.V.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of Ajax.org B.V. nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL AJAX.ORG B.V. BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * ***** END LICENSE BLOCK ***** */
 
-    for(var k in tabbed.tabTypes) {
-      if ( tabbed.tabTypes.hasOwnProperty(k) &&
-	   tabbed.tabTypes[k].dataType == ext )
-	return tabbed.tabTypes[k];
+define([ "jquery", "form", "config", "preferences", "modal",
+	 "laconic", "search"],
+       function($, form, config, preferences, modal) {
+
+var modes = [];
+/**
+ * Suggests a mode based on the file extension present in the given path
+ * @param {string} path The path to the file
+ * @returns {object} Returns an object containing information about the
+ *  suggested mode.
+ */
+function getModeForPathAlt(path) {
+    var mode = modesByName.text;
+    var fileName = path.split(/[\/\\]/).pop();
+    for (var i = 0; i < modes.length; i++) {
+        if (modes[i].supportsFile(fileName)) {
+            mode = modes[i];
+            break;
+        }
     }
-  }
+    return mode;
+}
+
+var Mode = function(name, caption, extensions) {
+    this.name = name;
+    this.caption = caption;
+    this.mode = "ace/mode/" + name;
+    this.extensions = extensions;
+    var re;
+    if (/\^/.test(extensions)) {
+        re = extensions.replace(/\|(\^)?/g, function(a, b) {
+            return "$|" + (b ? "^" : "^.*\\.");
+        }) + "$";
+    } else {
+        re = "^.*\\.(" + extensions + ")$";
+    }
+
+    this.extRe = new RegExp(re,"gi");
 };
+
+Mode.prototype.supportsFile = function(filename) {
+    return filename.match(this.extRe);
+}
+;
+
+// todo firstlinematch
+var supportedModesAlt = {
+    ABAP: ["abap"],
+    ABC: ["abc"],
+    ActionScript: ["as"],
+    ADA: ["ada|adb"],
+    Apache_Conf: ["^htaccess|^htgroups|^htpasswd|^conf|htaccess|htgroups|htpasswd"],
+    AsciiDoc: ["asciidoc|adoc"],
+    Assembly_x86: ["asm|a"],
+    AutoHotKey: ["ahk"],
+    BatchFile: ["bat|cmd"],
+    Bro: ["bro"],
+    C_Cpp: ["cpp|c|cc|cxx|h|hh|hpp|ino"],
+    C9Search: ["c9search_results"],
+    Cirru: ["cirru|cr"],
+    Clojure: ["clj|cljs"],
+    Cobol: ["CBL|COB"],
+    coffee: ["coffee|cf|cson|^Cakefile"],
+    ColdFusion: ["cfm"],
+    CSharp: ["cs"],
+    CSS: ["css"],
+    Curly: ["curly"],
+    D: ["d|di"],
+    Dart: ["dart"],
+    Diff: ["diff|patch"],
+    Dockerfile: ["^Dockerfile"],
+    Dot: ["dot"],
+    Drools: ["drl"],
+    Dummy: ["dummy"],
+    DummySyntax: ["dummy"],
+    Eiffel: ["e|ge"],
+    EJS: ["ejs"],
+    Elixir: ["ex|exs"],
+    Elm: ["elm"],
+    Erlang: ["erl|hrl"],
+    Forth: ["frt|fs|ldr|fth|4th"],
+    Fortran: ["f|f90"],
+    FTL: ["ftl"],
+    Gcode: ["gcode"],
+    Gherkin: ["feature"],
+    Gitignore: ["^.gitignore"],
+    Glsl: ["glsl|frag|vert"],
+    Gobstones: ["gbs"],
+    golang: ["go"],
+    GraphQLSchema: ["gql"],
+    Groovy: ["groovy"],
+    HAML: ["haml"],
+    Handlebars: ["hbs|handlebars|tpl|mustache"],
+    Haskell: ["hs"],
+    Haskell_Cabal: ["cabal"],
+    haXe: ["hx"],
+    Hjson: ["hjson"],
+    HTML: ["html|htm|xhtml"],
+    HTML_Elixir: ["eex|html.eex"],
+    HTML_Ruby: ["erb|rhtml|html.erb"],
+    INI: ["ini|conf|cfg|prefs"],
+    Io: ["io"],
+    Jack: ["jack"],
+    Jade: ["jade|pug"],
+    Java: ["java"],
+    JavaScript: ["js|jsm|jsx"],
+    JSON: ["json"],
+    JSONiq: ["jq"],
+    JSP: ["jsp"],
+    JSX: ["jsx"],
+    Julia: ["jl"],
+    Kotlin: ["kt|kts"],
+    LaTeX: ["tex|latex|ltx|bib"],
+    LESS: ["less"],
+    Liquid: ["liquid"],
+    Lisp: ["lisp|pddl|clif|lsp|kif|cycl"],
+    // dmiles:  + pddl + clif + lsp + kif + cycl
+    LiveScript: ["ls"],
+    LogiQL: ["logic|lql"],
+    LSL: ["lsl"],
+    Lua: ["lua"],
+    LuaPage: ["lp"],
+    Lucene: ["lucene"],
+    Makefile: ["^Makefile|^GNUmakefile|^makefile|^OCamlMakefile|make"],
+    Markdown: ["md|markdown"],
+    Mask: ["mask"],
+    MATLAB: ["matlab"],
+    Maze: ["mz"],
+    MEL: ["mel"],
+    MUSHCode: ["mc|mush"],
+    MySQL: ["mysql"],
+    Nix: ["nix"],
+    NSIS: ["nsi|nsh"],
+    ObjectiveC: ["m|mm"],
+    OCaml: ["ml|mli"],
+    Pascal: ["pas|p"],
+    Perl: ["perl|pm"],
+    // dmiles pl -> perl
+    pgSQL: ["pgsql"],
+    PHP: ["php|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp|module"],
+    Pig: ["pig"],
+    Powershell: ["ps1"],
+    Praat: ["praat|praatscript|psc|proc"],
+    Prolog: ["plg|pro|pfc|plt|prolog|pl|chr"],
+    Logtalk: ["lgt"],
+    // dmiles: + pl + chr
+    Properties: ["properties"],
+    Protobuf: ["proto"],
+    Python: ["py"],
+    R: ["r"],
+    Razor: ["cshtml|asp"],
+    RDoc: ["Rd"],
+    RHTML: ["Rhtml"],
+    RST: ["rst"],
+    Ruby: ["rb|ru|gemspec|rake|^Guardfile|^Rakefile|^Gemfile"],
+    Rust: ["rs"],
+    SASS: ["sass"],
+    SCAD: ["scad"],
+    Scala: ["scala"],
+    Scheme: ["scm|sm|rkt|oak|scheme"],
+    SCSS: ["scss"],
+    SH: ["sh|bash|^.bashrc"],
+    SJS: ["sjs"],
+    Smarty: ["smarty|tpl"],
+    snippets: ["snippets"],
+    Soy_Template: ["soy"],
+    Space: ["space"],
+    SQL: ["sql"],
+    SQLServer: ["sqlserver"],
+    Stylus: ["styl|stylus"],
+    SVG: ["svg"],
+    Swift: ["swift"],
+    Tcl: ["tcl"],
+    Tex: ["tex"],
+    Text: ["txt"],
+    Textile: ["textile"],
+    Toml: ["toml"],
+    TSX: ["tsx"],
+    Twig: ["twig|swig"],
+    Typescript: ["ts|typescript|str"],
+    Vala: ["vala"],
+    VBScript: ["vbs|vb"],
+    Velocity: ["vm"],
+    Verilog: ["v|vh|sv|svh"],
+    VHDL: ["vhd|vhdl"],
+    Wollok: ["wlk|wpgm|wtest"],
+    XML: ["xml|rdf|rss|wsdl|xslt|atom|mathml|mml|xul|xbl|xaml|owl"],
+    // dmiles: + owl
+    XQuery: ["xq"],
+    YAML: ["yaml|yml"],
+    // Add the missing mode "Django" to ext-modelist
+    Django: ["html"]
+};
+
+var nameOverrides = {
+    ObjectiveC: "Objective-C",
+    CSharp: "C#",
+    golang: "Go",
+    C_Cpp: "C and C++",
+    coffee: "CoffeeScript",
+    HTML_Ruby: "HTML (Ruby)",
+    HTML_Elixir: "HTML (Elixir)",
+    FTL: "FreeMarker"
+};
+
+var modesByName = {};
+for (var name in supportedModesAlt) {
+    var data = supportedModesAlt[name];
+    var displayName = (nameOverrides[name] || name).replace(/_/g, " ");
+    var filename = name.toLowerCase();
+    var mode = new Mode(filename,displayName,data[0]);
+    modesByName[filename] = mode;
+    modes.push(mode);
+}
+
+var recurse = 0;
+
+var tabbed = {
+    tabTypes: {},
+    type: function(from) {
+
+        recurse++;
+        if(recurse>10) {
+            debugger;
+            recurse = 0;
+           // return null;
+        }
+        if(from=="prolog") from="pl";
+        //if(from=="program") from="pl";
+        var ret = null;
+        var ext = from.split('.').pop();
+        
+        for (var k in tabbed.tabTypes) {
+            if (tabbed.tabTypes.hasOwnProperty(k) && tabbed.tabTypes[k].dataType == ext) {
+                ret = tabbed.tabTypes[k];
+                if (ret != undefined)
+                    return ret;
+            }
+        }
+        ret = tabbed.tabTypes[ext];
+        if (ret != undefined)
+            return ret;
+
+        var mode = getModeForPathAlt(from).mode
+        
+        if(! mode.endsWith("/prolog")) {
+            if(true) return undefined;
+
+            if(true) return tabbed.tabTypes.program;
+        }
+        
+        tabbed.tabTypes[ext] = {
+            dataType: ext,
+            typeName: ext,
+            label: (ext + " Program"),
+            contentType: "text/x-prolog",
+            order: false,
+            create: function(dom, options) {
+                 $(dom).addClass("prolog-editor")
+                       .prologEditor({placeholder: "Your "+ext+ " program rules and facts go here ...", 
+                      save:true, codeType: ext}, options)
+                   .prologEditor('makeCurrent');    
+        
+             // $(dom).addClass("prolog-editor")
+              //      .prologEditor($.extend({save:true}, options))
+        	  //  .prologEditor('makeCurrent'); //
+            }  
+          }; 
+
+        
+        return tabbed.tabTypes[ext];
+    }// must soften the blow or it breaks UI 
+};
+
+function clone(obj) {
+    var copy;
+
+    // Handle the 3 simple types, and null or undefined
+    if (null == obj || "object" != typeof obj) return obj;
+
+    // Handle Date
+    if (obj instanceof Date) {
+        copy = new Date();
+        copy.setTime(obj.getTime());
+        return copy;
+    }
+
+    // Handle Array
+    if (obj instanceof Array) {
+        copy = [];
+        for (var i = 0, len = obj.length; i < len; i++) {
+            copy[i] = clone(obj[i]);
+        }
+        return copy;
+    }
+
+    // Handle Object
+    if (obj instanceof Object) {
+        copy = {};
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+        }
+        return copy;
+    }
+
+    throw new Error("Unable to copy obj! Its type isn't supported.");
+}
 
 (function($) {
   var pluginName = 'tabbed';
   var tabid = 0;
+
+    var editorList = {};
+    var openingSrcFile = null;
+    var openingSrcFileTab = null;
+
+    // array containing all the editors we will create
 
   /** @lends $.fn.tabbed */
   var methods = {
@@ -187,9 +515,20 @@ var tabbed = {
 	  dom = data.newTab();
 	} else {
 	  dom = this.tabbed('tabSelect');
-	  $(dom).append(this.tabbed('profileForm'),
-			$.el.hr(),
-			this.tabbed('searchForm'));
+      var ssid = 'ilfs' + new Date().getTime() + "" + Math.floor(Math.random() * 10000);
+
+	  $(dom).append(this.tabbed('profileForm'));
+	  $(dom).append(this.tabbed('searchForm'));
+	  var ss = $('<div><div id="' + ssid + '"></div></div>');
+                    $(ss).css('height', $(window).height() - 20);
+                    $(ss).css('width', "100%");
+      $(dom).append(ss);
+		$.get("/js/filesystems.html?t=" + ssid, {}, function(data2, status, xhr) {
+			if (status == "error") {
+				data2 = status + ": " + xhr + " " + data2;
+			}
+			$("#" + ssid).html(data2);
+		});
 	}
       }
 
@@ -226,21 +565,163 @@ var tabbed = {
      * @return {Boolean} `true` if a suitable type was found
      */
     setSource: function(tab, src) {
-      if ( typeof(src) == "object" &&
-	   ((src.meta && src.meta.name) || src.url) )
-      { var name = (src.meta && src.meta.name) ? src.meta.name : src.url;
-	var tabType = tabbed.type(name);
-	var content = $.el.div();
 
-	tab.html("");
-	tab.tabbed('title', tabType.label, tabType.dataType);
-	tab.append(content);
-	tabType.create(content);
-	$(content).trigger("source", src);
-	return true;
-      }
+         if(openingSrcFileTab!=null) {
+            debugger;
+        	if(openingSrcFile==src.url) {
+                openingSrcFile = null;
+                openingSrcFileTab = null;
+                return true;
+            }
+        }
+        openingSrcFile = src.url;
 
-      return false;
+       if (typeof (src) == "object" && ((src.meta && src.meta.name) || src.url)) {
+
+            var name = (src.meta && src.meta.name) ? src.meta.name : src.url;
+            var tabType = tabbed.type(name);
+        
+            if (tabType == undefined) {
+                openingSrcFile = null;
+                openingSrcFileTab = null;
+                this.tabbed('newAceEditor',tab,name,src);
+                return true;
+            }
+
+            openingSrcFile=src.url;
+            openingSrcFileTab=tab;
+            tab.html("");
+            var content = $.el.div();
+        	tab.append(content);
+        	tabType.create(content);
+            var tital = src.url.split('/').pop();
+        	tab.tabbed('title', tital, tabType.dataType);
+            debugger;
+            $(content).trigger("source", src.data);
+            openingSrcFile = null;
+            openingSrcFileTab = null;
+            return true;
+        }
+        debugger;
+        return false;
+   },
+
+   destroyEditor: function(prompt) {
+
+            console.log('close a tab and destroy the ace editor instance');
+
+            console.log($(this).parent());
+
+            var tabUniqueId = $(this).parent().attr('data-tab-id');
+
+            console.log(tabUniqueId);
+
+            var resultArray = $.grep(editors, function(n, i) {
+                return n.id === tabUniqueId;
+            }, true);
+
+            var editor = resultArray[0].instance;
+
+            // destroy the editor instance
+            editor.destroy();
+
+            // remove the panel and panel nav dom
+            $('#tabs').find('#panel_nav_' + tabUniqueId).remove();
+            $('#tabs').find('#panel_' + tabUniqueId).remove();
+
+    },
+
+  newAceEditor: function(tab,name,src) {
+
+         var tabUniqueId = new Date().getTime() + "" + Math.floor(Math.random() * 10000);
+            var ssid = 'editor' + tabUniqueId;
+            var extra = `
+<form action=''><div id='file_controls' style='white-space: nowrap; color: #4245f4; font-weight: bold; font-size:90%;'>
+<strong> <label><input type='radio' name='runnermode' value='ignore'>Ignore</label>
+<label><input type='radio' name='runnermode' value='pengine' checked>Send</label>
+<label><input type='radio' name='runnermode' value='save_only'>Save</label>
+<label><input type='radio' name='runnermode' value='save_consult'>Reconsult</label>
+<label>(<input type='checkbox' name='even_inactive' value='true'>even if tab inactive)</label>
+&nbsp;&nbsp;Show:
+<label><input type='checkbox' name='show_line_numbers' value='true' CHECKED>line-numbers</label>
+<label><input type='checkbox' name='show_formating' value='true'>formating</label></strong></div><div id='ace_controls' style='white-space: nowrap; font-size:90%; display: none;' >
+<br>
+
+<label>Mode<select id='mode' size='1'></select></label>
+
+<label>Split<select id='split' size='1'>
+<option value='none'>None</option>
+<option value='below'>Below</option>
+<option value='beside'>Beside</option>
+</select></label>
+<label>Theme<select id='theme' size='1'></select></label>
+<label>Text
+<select id='fontsize' size='1'>
+<option value='10px'>10px</option>
+<option value='11px'>11px</option>
+<option value='12px' selected='selected'>12px</option>
+<option value='13px'>13px</option>
+<option value='14px'>14px</option>
+<option value='16px'>16px</option>
+<option value='18px'>18px</option>
+<option value='20px'>20px</option>
+<option value='24px'>24px</option>
+</select></label>
+<label for='folding'>Folding</label>
+
+<select id='folding' size='1'>
+<option value='manual'>manual</option>
+<option value='markbegin' selected='selected'>mark begin</option>
+<option value='markbeginend'>mark begin and end</option>
+</select>
+<label for='keybinding'>Keys</label>
+
+<select id='keybinding' size='1'>
+<option value='ace'>Ace</option>
+<option value='vim'>Vim</option>
+<option value='emacs'>Emacs</option>
+<option value='custom'>Custom</option>
+</select>
+</div></form>
+`;
+
+            tab.html('<div class="myeditor" id="' + ssid + '">' + extra + '</div>');
+            var tital = name.split('/').pop();
+
+            var newEditorElement = $('<div id="editor_' + tabUniqueId + '">' + src.data + '</div>');
+
+            tab.append(newEditorElement);
+
+            var mode = getModeForPathAlt(name).mode
+                if (mode == null) {
+                    // mode = modelist.getModeForPath(name).mode
+                    if (mode == null) {
+                        mode = "ace/mode/lisp";
+                    }
+                }
+
+            // initialize the editor in the tab
+            var editor = ace.edit('editor_' + tabUniqueId);
+            editor.setTheme("ace/theme/chrome");
+            editor.renderer.setOption('showLineNumbers', true);
+            editor.renderer.setShowGutter(true);
+            editor.getSession().setUseWrapMode(false);
+
+            //editorList.push({ id: tabUniqueId, instance: editor });
+
+            if (mode != null) {
+                tital = mode.split('/').pop() + ":" + tital;
+                editor.getSession().setMode(mode);
+                // $("<a href='"+src.url+"'>"+tital+"</a>")
+            }
+            tab.tabbed('title', tital, mode);
+
+            // set the size of the editor
+            newEditorElement.width('100%');
+            newEditorElement.height('100%');
+
+            // resize the editor
+            editor.resize();
     },
 
     /**
@@ -512,7 +993,8 @@ var tabbed = {
       });
 
       for(var i = 0; i<types.length; i++) {
-	var type = data.tabTypes[types[i]];
+
+        var type = data.tabTypes[types[i]];
 
 	$(g).append($.el.button({ type:"button",
 				  class:"btn btn-primary",
@@ -526,13 +1008,13 @@ var tabbed = {
 	var type    = $(ev.target).data('type');
 	var tab     = $(ev.target).closest(".tab-pane");
 	var content = $.el.div();
-	var options = $.extend({}, tabbed.tabTypes[type]);
+    var options = $.extend({}, tabbed.type(type));
 	var profile = tab.find("label.active > input[name=profile]").val();
 
 	if ( profile ) {
 	  options.profile = profile;
 	  options.value   = tab.tabbed('profileValue', profile,
-				       tabbed.tabTypes[type].dataType);
+                             tabbed.type(type).dataType);
 	  if ( options.value != undefined )
 	    preferences.setVal("default-profile", profile);
 	}
@@ -540,7 +1022,7 @@ var tabbed = {
 	tab.html("");
 	tab.tabbed('title', options.label, options.dataType);
 	tab.append(content);
-	tabbed.tabTypes[type].create(content, options);
+	tabbed.type(type).create(content, options);
       });
       $(g).addClass("swish-event-receiver");
       $(g).on("download save fileInfo print", function(ev) {
@@ -593,7 +1075,6 @@ var tabbed = {
     profileForm: function() {
       if ( config.swish.profiles && config.swish.profiles.length > 0 ) {
 	var def;
-
 	for(var i=0; i<config.swish.profiles.length; i++) {
 	  delete config.swish.profiles[i].active;
 	}
@@ -624,6 +1105,7 @@ var tabbed = {
 	});
 
 	return pform;
+
       }
     },
 
@@ -722,3 +1204,13 @@ var tabbed = {
 
   return tabbed;
 });
+
+
+
+
+
+
+
+
+
+

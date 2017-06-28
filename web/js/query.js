@@ -106,7 +106,7 @@ define([ "jquery", "config", "preferences", "cm/lib/codemirror", "modal",
 	if ( !$(qediv).prologEditor('getSource', "query") )
 	{ if ( typeof(data.examples) == "object" ) {
 	    if ( data.examples[0] )
-	      $(qediv).prologEditor('setSource', data.examples[0]);
+	      $(qediv).prologEditor('setEdSource', data.examples[0]);
 	  } else {
 	    elem[pluginName]('setProgramEditor', $(data.editor), true);
 	  }
@@ -284,7 +284,7 @@ define([ "jquery", "config", "preferences", "cm/lib/codemirror", "modal",
 
       data.cleanGen =
 	this.find(".query")
-	    .prologEditor('setSource', query)
+	    .prologEditor('setEdSource', query)
 	    .focus()
 	    .prologEditor('changeGen');
 
@@ -376,7 +376,7 @@ define([ "jquery", "config", "preferences", "cm/lib/codemirror", "modal",
       if ( li.hasClass("add-example") )
 	Q(this).queryEditor('addExample');
       else
-	Q(this).queryEditor('setQuery', $(this).text());
+      Q(this).queryEditor('setQuery', $(this).text());
     });
 
     return dropup;

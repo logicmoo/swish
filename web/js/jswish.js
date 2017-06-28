@@ -188,7 +188,7 @@ preferences.setDefault("reuse-editor", false);
             win.focus();
             //console.log("click on tutorial");
             //methods.playURL.call($("body"), {url:"/tutorial/tutorial.swinb"});
-          }       
+          }
          ,
 	}
 
@@ -300,7 +300,7 @@ preferences.setDefault("reuse-editor", false);
     if(preferences.getVal("reuse-editor")) { 
       var existing = this.find(".storage").storage('match', options);
       if ( existing && existing.storage('expose', "Already open") )
-		return this;				/* FIXME: go to line */
+	return this;				/* FIXME: go to line */
     }
       var url = config.http.locations.web_storage + options.file;
       $.ajax({ url: url,

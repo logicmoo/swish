@@ -67,7 +67,13 @@ user:file_search_path(example, swish(examples/aleph)).
 
 
 % make SWISH serve /example/File as example(File).
-swish_config:source_alias(example, [access(read), search('*.{pl,swinb}')]).
+swish_config:source_alias(example, [access(read), search(What)]):-
+  swish_config:config(edit_any,   true) -> swish_config:config(edit_any,   true) ->
+  What = '*.*' ;
+  What = '*.{pl,swinb}'.
+swish_config:source_alias(example, [access(read), search('*/*.*')]):- swish_config:config(edit_any,   true).
+swish_config:source_alias(example, [access(read), search('*/*/*.*')]):- swish_config:config(edit_any,   true).
+swish_config:source_alias(example, [access(read), search('*/*/*/*.*')]):- swish_config:config(edit_any,   true).
 
 :- http_handler(swish(list_examples),
 		list_examples, [id(swish_examples)]).

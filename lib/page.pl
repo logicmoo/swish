@@ -737,14 +737,14 @@ ext_type(swinb, swinb).
 
 swish_resources -->
 	swish_css,
-	swish_js.
+        swish_js.
 
 swish_js  --> html_post(head, \include_swish_js).
 swish_css --> html_post(head, \include_swish_css).
 
 include_swish_js -->
 	html(script([],[
-      '(function(i,s,o,g,r,a,m){i[''GoogleAnalyticsObject'']=r;i[r]=i[r]||function(){
+      '      (function(i,s,o,g,r,a,m){i[''GoogleAnalyticsObject'']=r;i[r]=i[r]||function(){
        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         })(window,document,''script'',''//www.google-analytics.com/analytics.js'',''ga'');
@@ -755,11 +755,12 @@ include_swish_js -->
 	  swish_resource(rjs, RJS),
 	  http_absolute_location(swish(js/JS), SwishJS, []),
 	  http_absolute_location(swish(RJS),   SwishRJS, [])
-	},
+	},       
 	rjs_timeout(JS),
-	html(script([ src(SwishRJS),
+        html(script([ src(SwishRJS),
 		      'data-main'(SwishJS)
-		    ], [])).
+		    ], [])),
+      filesystems_res.
 
 rjs_timeout('swish-min') --> !,
 	js_script({|javascript||
@@ -783,8 +784,7 @@ swish_resource(Type, ID) :-
 	;   absolute_file_name(File, _P, [file_errors(fail), access(read)])
 	), !.
 
-alt(js,  'swish-min',     swish_web('js/swish-min.js')) :-
-	\+ debugging(nominified).
+% alt(js,  'swish-min',     swish_web('js/swish-min.js')) :- \+ debugging(nominified).
 alt(js,  'swish',         swish_web('js/swish.js')).
 alt(css, 'swish-min.css', swish_web('css/swish-min.css')) :-
 	\+ debugging(nominified).
@@ -792,6 +792,48 @@ alt(css, 'swish.css',     swish_web('css/swish.css')).
 alt(rjs, 'js/require.js', swish_web('js/require.js')) :-
 	\+ debugging(nominified).
 alt(rjs, 'bower_components/requirejs/require.js', -).
+
+
+filesystems_res --> { \+ swish_config:config(filesystem_browser,   true) },!.
+filesystems_res -->
+   html({|html||
+      <script src="/swish/bower_components/ace-builds/src/ace.js" data-ace-base="/swish/bower_components/ace-builds/src" type="text/javascript" charset="utf-8"></script> 
+      <script src="/swish/bower_components/ace-builds/src/keybinding-vim.js"></script>
+      <script src="/swish/bower_components/ace-builds/src/keybinding-emacs.js"></script>
+      
+       <!--
+		<script src="/swish/bower_components/ace-builds/src/keybinding-ace.js"></script>
+		<link rel="stylesheet" href="/swish/bower_components/ace-builds/demo/kitchen-sink/styles.css" type="text/css" media="screen"  />
+		<script src="https://use.edgefonts.net/source-code-pro.js" ></script>
+		<script src="/swish/bower_components/ace-builds/demo/kitchen-sink/demo.js"></script>
+		<script type="text/javascript" charset="utf-8">
+		 require("kitchen-sink/demo");
+		</script>
+       -->
+    
+    <script>
+	window.addEventListener("DOMContentLoaded", 
+	  function(){ //This function is called once the DOM is ready.. so It will be safe to query the DOM and manipulate DOM nodes in this function.
+
+		  // addEventListener support for IE8
+		  function bindEvent(element, eventName, eventHandler) {
+			if (element.addEventListener){
+			  element.addEventListener(eventName, eventHandler, false);
+			} else if (element.attachEvent) {
+			 element.attachEvent('on' + eventName, eventHandler);
+			}
+		  }
+           bindEvent(window, 'message', function (e) {
+                var navto = '/swish/filesystem/home/prologmud_server/lib/elFinder/'+ e.data;
+                if(!navto.endsWith("]")) 
+                    $.fn.swish('playURL', {url: navto});                             
+           });
+
+	}); 
+     </script>
+
+    |}),!.
+
 
 
 		 /*******************************
@@ -822,3 +864,4 @@ read_data(media(Type,_), Request, Data, Meta) :-
 	del_dict(data, Dict, Data, Meta).
 read_data(media(text/_,_), Request, Data, _{}) :-
 	http_read_data(Request, Data, [to(string)]).
+

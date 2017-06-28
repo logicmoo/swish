@@ -192,7 +192,8 @@ define([ "jquery", "config", "modal", "form", "gitty",
       data.cleanData       = src.data;
       data.cleanCheckpoint = src.cleanCheckpoint || "load";
 
-      this.storage('update_tab_title');
+      // Only update title if this is more than plain text
+      if ( src.url       ) this.storage('update_tab_title');
 
       if ( !src.url       ) src.url = config.http.locations.swish;
       if ( !src.noHistory ) history.push(src);
@@ -211,10 +212,13 @@ define([ "jquery", "config", "modal", "form", "gitty",
 	var elem = $(this);
 	var data = elem.data(pluginName);
 	var type = tabbed.tabTypes[data.typeName];
-
+    var tital = pluginName;
+    if(type != undefined) {
+        tital = type.label;
+    }
 	var title = (filebase(data.file) ||
 		     filebase(basename(data.url)) ||
-		     type.label);
+		     tital);
 
 	elem.tabbed('title', title, type.dataType);
 	elem.tabbed('chats', data.chats);

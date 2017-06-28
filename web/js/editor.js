@@ -550,10 +550,10 @@ define([ "cm/lib/codemirror",
      * @param {Boolean} [direct=false] if this parameter is `true`, the
      * message is never delegated to the storage
      */
-    setSource: function(source, direct) {
+    setEdSource: function(source, direct) {
+          debugger;
       if ( typeof(source) == "string" )
 	source = {data:source};
-
       if ( this.data('storage') && direct != true ) {
 	this.storage('setSource', source);
       } else {
@@ -1294,7 +1294,7 @@ define([ "cm/lib/codemirror",
       var elem = this;
 
       storage.setValue = function(source) {
-	elem.prologEditor('setSource', source, true);
+	elem.prologEditor('setEdSource', source, true);
       };
       storage.getValue = function() {
 	return data.cm.getValue();
@@ -1425,13 +1425,13 @@ define([ "cm/lib/codemirror",
       var vars = this.prologEditor('variables', query);
 
       function wrapQuery(pre, post) {
-	that.prologEditor('setSource', pre + "("+query+")" + post + ".")
+	that.prologEditor('setEdSource', pre + "("+query+")" + post + ".")
 	    .focus();
 	return that;
       }
 
       function prefixQuery(pre) {
-	that.prologEditor('setSource', pre + query + ".")
+	that.prologEditor('setEdSource', pre + query + ".")
 	    .focus();
 	return that;
       }

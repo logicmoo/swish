@@ -134,6 +134,8 @@ load_config.
 %	  chart with stack usage.
 %	  - notebook
 %	  Dict holding options for notebooks.
+%        - eval_script
+%        Evaluate scripts in HTML cells of notebooks?
 %	  - chat
 %	  Activate the chat interface
 
@@ -145,8 +147,65 @@ term_expansion(swish_config:config(Config, _Value), []) :-
 swish_config:config(show_beware,        false).
 swish_config:config(tabled_results,     false).
 swish_config:config(application,        swish).
+
+
+:- if(true).
+swish_config:config(csv_formats,    [rdf, prolog]).
+:- else.
 swish_config:config(csv_formats,        [prolog]).
+:- endif.
+
+
+:- if(true).  % non vanilla SWISH
+% Allows users to extend the Examples menu by ticking the Example
+% checkbox.
+swish_config:config(community_examples, true).
+
+% Include elFinder server explorer
+swish_config:config(filesystem_browser,   true).
+% Use ace-editor to edit unknown file types (like .kif files)
+swish_config:config(edit_any,   true).
+
+:- else.
 swish_config:config(community_examples, false).
+:- endif.
+
+:- if(true).
+
+:- use_module(lib/filesystems).
+
+:- if(exists_source(rdfql(sparql_csv_result))).
+:- use_module(rdfql(sparql_csv_result)).
+:- endif.
+
+
+		 /*******************************
+		 *	       PATHS		*
+		 *******************************/
+
+user:file_search_path(swish_web, swish(web)).
+user:file_search_path(js,        swish_web(js)).
+user:file_search_path(css,       swish_web(css)).
+user:file_search_path(icons,     swish_web(icons)).
+
+
+set_swish_path :-
+	absolute_file_name(swish('swish.pl'), _,
+			   [file_errors(fail), access(read)]), !.
+
+% Make this a swish(..) root?
+set_swish_path :-
+	prolog_load_context(directory, Dir),
+	asserta(user:file_search_path(swish, Dir)).
+
+:- set_swish_path.
+
+http:location(swish, root(.), [priority(-100)]).
+
+:- endif.
+
+
+
 swish_config:config(public_access,      false).
 swish_config:config(include_alias,	example).
 swish_config:config(ping,		10).
@@ -168,6 +227,51 @@ swish_config:config(chat,		true).
 % setup HTTP session management
 :- use_module(lib/session).
 
+:- if(true).
+		 /*******************************
+		 *	        CSV		*
+		 *******************************/
+
+:- multifile
+	swish_csv:write_answers/2,
+	swish_csv:write_answers/3.
+
+swish_csv:write_answers(Answers, VarTerm) :-
+        Answers = [H|_],
+        functor(H, rdf, _), !,
+        sparql_write_csv_result(
+            current_output,
+            select(VarTerm, Answers),
+            []).
+
+swish_csv:write_answers(Answers, VarTerm, Options) :-
+        Answers = [H|_],
+        functor(H, rdf, _),
+	option(page(1), Options), !,
+        sparql_write_csv_result(
+            current_output,
+            select(VarTerm, Answers),
+            [ bnode_state(_-BNodes)
+	    ]),
+	nb_setval(rdf_csv_bnodes, BNodes).
+swish_csv:write_answers(Answers, VarTerm, Options) :-
+        Answers = [H|_],
+        functor(H, rdf, _),
+	option(page(Page), Options),
+	Page > 1, !,
+	nb_getval(rdf_csv_bnodes, BNodes0),
+        sparql_write_csv_result(
+            current_output,
+            select(VarTerm, Answers),
+            [ http_header(false),
+	      header_row(false),
+	      bnode_state(BNodes0-BNodes)
+	    ]),
+	nb_setval(rdf_csv_bnodes, BNodes).
+swish_csv:write_answers(Answers, VarTerm, _Options) :-
+	swish_csv:write_answers(Answers, VarTerm).
+
+:- endif.
 
                  /*******************************
                  *   CREATE SWISH APPLICATION   *
@@ -184,6 +288,14 @@ swish_config:config(chat,		true).
 :- use_module(swish:lib/dashboard).
 :- use_module(swish:lib/swish_debug).
 :- use_module(swish:library(pengines_io)).
+
+:- if(true).
+:- use_module(swish:library(semweb/rdf_db)).
+:- use_module(swish:library(semweb/rdfs)).
+% :- use_module(swish:library(semweb/rdf_optimise)).
+:- use_module(swish:library(semweb/rdf_litindex)).
+:- endif.
+
 :- use_module(swish:library(solution_sequences)).
 :- use_module(swish:library(aggregate)).
 :- use_module(swish:lib/r_swish).
@@ -204,6 +316,12 @@ pengines:prepare_module(Module, swish, _Options) :-
 
 :- use_module(library(clpfd), []).
 :- use_module(library(clpb), []).
+
+:- if(true).
+:- if(exists_source(library(semweb/rdf11))).
+:- use_module(library(semweb/rdf11), []).
+:- endif.
+:- endif.
 :- use_module(lib/swish_chr, []).
 
 % load rendering modules
@@ -225,11 +343,12 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(swish(lib/render/prolog),	  []).
 :- use_module(swish(lib/render/tiles),	  []).
 :- use_module(swish(lib/render/sldnf),	  []).
+:- use_module(library(r/r_sandbox)).
 
 :- use_module(library(pita)).
 :- use_module(library(mcintyre)).
 :- use_module(library(slipcover)).
-:- use_module(library(lemur)).
+:- use_module(library(lemur),[]).
 :- use_module(library(auc)).
 :- use_module(library(matrix)).
 :- use_module(library(clpr)).
@@ -239,3 +358,20 @@ pengines:prepare_module(Module, swish, _Options) :-
 sandbox:safe_primitive(nf_r:{_}).
 
 
+
+:- if(exists_source(library(trill))).
+% :- use_module(library(trill)).
+:- endif.
+
+:- if(exists_source(library(must_trace))).
+%:- use_module(library(must_trace)).
+:- endif.
+:- if(exists_source(library(pfc))).
+%:- use_module(library(pfc)).
+:- endif.
+:- if(exists_source(library(logicmoo_user))).
+% :- use_module(library(logicmoo_user)).
+:- endif.
+
+% CLIOPATRIA rendering libraries
+% :- use_module(swish_app:lib/render/cp_rdf,      []).
