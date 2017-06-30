@@ -95,7 +95,9 @@ render_latex(LatexString, _Options) -->	% <svg> rendering
 %	class 'reactive-size'.
 
 svg(SVG, _Options) -->
-	html([  \[SVG],
+	html([ style('svg:not(:root) {
+    overflow: auto;
+  }'),\[SVG],
 	       \js_script({|javascript||
 (function() {
    if ( $.ajaxScript ) {
