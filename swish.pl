@@ -186,7 +186,6 @@ swish_config:config(chat,		true).
 :- use_module(swish:library(pengines_io)).
 :- use_module(swish:library(solution_sequences)).
 :- use_module(swish:library(aggregate)).
-:- use_module(swish:lib/r_swish).
 :- if(exists_source(library(tabling))).
 :- use_module(swish:library(tabling)).
 :- endif.
@@ -229,7 +228,6 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(library(auc)).
 :- use_module(library(matrix)).
 :- use_module(library(clpr)).
-:- use_module(library(cplint_r)).
 :- multifile sandbox:safe_primitive/1.
 
 sandbox:safe_primitive(nf_r:{_}).
