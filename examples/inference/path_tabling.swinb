@@ -105,7 +105,7 @@ Clause for drawing the graph using the integration with Graphviz:
 
 graph(digraph([rankdir='LR'|G])):-
     findall(edge(A - B,[label=P,dir=none]),
-      clause(arc(A,B,_,_),(get_var_n(_,_,_,[P|_],_),_)),
+      clause(arc(A,B,_,_),(get_var_n(_,_,_,_,[P|_],_),_)),
       G).
 </div>
 <div class="nb-cell markdown">
@@ -114,4 +114,5 @@ L. De Raedt, A. Kimmig, and H. Toivonen. ProbLog: A probabilistic Prolog and
 its application in link discovery. In International Joint Conference on
 Artificial Intelligence, pages 2462-2467, 2007.
 </div>
+
 </div>

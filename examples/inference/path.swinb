@@ -3,19 +3,19 @@
 <div class="nb-cell markdown">
 # Computing the probability of a path between two nodes in a probabilistic graph
 
-A probabilistic graph is a graph where each edge has a 
+A probabilistic graph is a graph where each edge has a
 probability of being present.
 
 Consider the probabilistic graph:
 </div>
 <div class="nb-cell query">
-graph(G). 
+graph(G).
 </div>
 <div class="nb-cell markdown">
 What is the probability that =a= and =e= are connected?
 </div>
 <div class="nb-cell query">
-prob(path(a,e),Prob). 
+prob(path(a,e),Prob).
 </div>
 <div class="nb-cell markdown">
 What is the probability that =a= and =e= are connected represented graphically?
@@ -27,11 +27,11 @@ prob_bar(path(a,e),Prob).
 What is the BDD for query path(a,e)?
 </div>
 <div class="nb-cell query">
-bdd_dot_string(path(a,e),BDD,Var).  
+bdd_dot_string(path(a,e),BDD,Var).
 </div>
 <div class="nb-cell markdown">
-A solid edge indicates a 1-child, a dashed edge indicates a 0-child and 
-a dotted 
+A solid edge indicates a 1-child, a dashed edge indicates a 0-child and
+a dotted
 edge indicates a negated 0-child.
 Each level of the BDD is associated to a variable of the form XI_J indicated on the left:
 I indicates the multivalued variable index and J the index of the Boolean variable of I.
@@ -39,7 +39,7 @@ The table =Var= contains the associations between the rule groundings and the
 multivalued variables:
 the first column contains the multivalued variable index,
 the second column contains the rule index, corresponding
-to its position in the program, and the last column contains the list 
+to its position in the program, and the last column contains the list
 of constants grounding the rule, each replacing a variable in the order of appearance in the
 rule.
 
@@ -111,14 +111,14 @@ Clause for drawing the graph using the integration with Graphviz:
 
 graph(digraph([rankdir='LR'|G])):-
     findall(edge(A -> B,[label=P]),
-      clause(edge(A,B,_,_),(get_var_n(_,_,_,[P|_],_),_)),
+      clause(edge(A,B,_,_),(get_var_n(_,_,_,_,[P|_],_),_)),
       G).
 </div>
 <div class="nb-cell markdown">
 ## References
-L. De Raedt, A. Kimmig, and H. Toivonen. ProbLog: A probabilistic Prolog and 
-its application in link discovery. In International Joint Conference on 
+L. De Raedt, A. Kimmig, and H. Toivonen. ProbLog: A probabilistic Prolog and
+its application in link discovery. In International Joint Conference on
 Artificial Intelligence, pages 2462-2467, 2007.
 </div>
-</div>
 
+</div>
