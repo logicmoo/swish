@@ -9,6 +9,7 @@ This notebook gives an overview of example programs for learning with SLIPCOVER:
   learning) 
   The task is to decide whether a machine should be fixed, sent back or is ok. 
   From The ACE Data Mining System User's Manual http://dtai.cs.kuleuven.be/ACE/doc/ACEuser-1.2.16.pdf Downloaded from http://dtai.cs.kuleuven.be/static/ACE/doc/
+[mach_R.pl](example/learning/mach_R.pl) draws the ROC and PR curves with R
   - Registration ([registration.pl](example/learning/registration.pl), 
   parameter and structure learning) The dataset contains information about 
   participants in a recent Seminar on Data Mining.  We would like to find out 
