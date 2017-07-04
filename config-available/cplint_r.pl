@@ -38,4 +38,4 @@
 :- use_module(swish:swish(lib/r_swish)).
 :- use_module(library(r/r_sandbox)).
 
-:- use_module(library(clint_r)).
+:- use_module(library(cplint_r)).
