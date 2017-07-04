@@ -869,7 +869,7 @@ define([ "jquery", "config", "modal", "form", "gitty",
       } else if ( this.hasClass("notebook") ) {
 	return this.notebook('getSelection');
       } else {
-	console.log(sel);
+	console.log("Don't know how to get selection from", this);
       }
     },
 
@@ -891,14 +891,14 @@ define([ "jquery", "config", "modal", "form", "gitty",
 	return label;
       }
 
-      if ( sel[0].cell ) {
+      if ( sel[0].selections ) {
 	var label = "";
 
 	for(var i=0; i<sel.length; i++) {
 	  var ed = sel[i];
 	  if ( label != "" )
 	    label += ",";
-	  label += ed.cell + editorLabel(ed.selections);
+	  label += (ed.cell||"") + editorLabel(ed.selections);
 	}
 	return label;
       } else {
