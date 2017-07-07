@@ -222,7 +222,7 @@ Examples divided by features:
   [indian_gpadc.pl](example/inference/indian_gpadc.pl),
   [nballsdc.pl](example/inference/nballsdc.pl)
 
-<a name="#app">Examples divided by application domain:</a>
+Examples divided by application domain:
   - reasoning about actions:
   [tiny_event_calculus.pl](example/inference/tiny_event_calculus.pl),
   [tiny_event_calculusmc.pl](example/inference/tiny_event_calculusmc.pl)
@@ -288,7 +288,7 @@ Examples divided by features:
   [var_obj_geom.pl](example/inference/var_obj_geom.pl),
   [arithm.pl](example/inference/arithm.pl).
 
-<a name="#list">Complete list of examples with description:</a>
+Complete list of examples with description:
   - Coin ([coin.swinb](example/inference/coin.swinb),
    [coin.pl](example/inference/coin.pl),[coin_R.pl](example/inference/coin_R.pl))
    Throwing a coin with uncertainty on its fairness,
@@ -597,7 +597,8 @@ is done.
   [tiny_event_calculusmc.pl](example/inference/tiny_event_calculusmc.pl))
   - Tile map generation ([tile_map.swinb](example/inference/tile_map.swinb),
    [tile_map.pl](example/inference/tile_map.pl), [tile_mapcond.pl](example/inference/tile_mapcond.pl))
-  - Binomial distribution 
+  - Binomial distribution
   ([binomial.pl](example/inference/binomial.pl))
 </div>
+
 </div>

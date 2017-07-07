@@ -262,4 +262,5 @@ prob(good_marks(anna),evidence_mln_p,P).
 
 :- end_lpad.
 </div>
+
 </div>

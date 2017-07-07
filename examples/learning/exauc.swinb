@@ -49,3 +49,4 @@ main_c3js(AUCROC, ROC, AUCPR, PR):-
     AUCROC, ROC, AUCPR, PR).
 </div>
 
+</div>

@@ -47,4 +47,5 @@ Example programs for inference with  graphics elements produced by R.
   - Cora: entity resolution ([cora_R.pl](example/inference/cora_R.pl))
   - Coins ([coin2_R.pl](example/inference/coin2_R.pl))
 </div>
+
 </div>

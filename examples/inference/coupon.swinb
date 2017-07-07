@@ -166,4 +166,5 @@ boxes_vs_N(MaxN,Step,Chart):-
 [1] Kaminski, B. L., Katoen, J.-P., Matheja, C., Olmedo, F., Weakest precondition reasoning for expected run-times of probabilistic programs. Programming languages and systems, LNCS, vol. 9632, pp. 364-389, 
 Springer, Heidelberg (2016)
 </div>
+
 </div>

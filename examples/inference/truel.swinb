@@ -198,4 +198,5 @@ remaining([_|Rest0],A,Rest):-
 
 :- end_lpad.
 </div>
+
 </div>

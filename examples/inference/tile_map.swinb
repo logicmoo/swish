@@ -131,4 +131,5 @@ tile(water,'http://cplint.lamping.unife.it//icons/tiles/water.png').
 tile(rock,'http://cplint.lamping.unife.it//icons/tiles/rock.png').
 tile(tree,'http://cplint.lamping.unife.it//icons/tiles/tree.png').
 </div>
+
 </div>
