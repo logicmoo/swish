@@ -1,4 +1,5 @@
 <div class="notebook">
+
 <div class="nb-cell html">
 <h2>
 Truel, or duel among three opponents.
@@ -15,9 +16,9 @@ Aim at <code>b</code>, <code>c</code> or the sky?
 </p>
 Note that the best strategy for the other truelists and situations is
 easy to find intuitively and corresponds to aim at the best shooter.
-</p>
+<p></p>
 <p>See
-<ul>
+</p><ul>
 <li>
  <a href="https://en.wikipedia.org/wiki/Truel">https://en.wikipedia.org/wiki/Truel</a>
  </li>
@@ -25,56 +26,73 @@ easy to find intuitively and corresponds to aim at the best shooter.
 Martin Shubik, Game Theory and Related Approaches to Social Behavior, 1964, page 43
 </li>
 </ul>
-</p>
-<div><iframe src="https://www.youtube.com/embed/VQT29lq3UGQ?ecver=2" width="640" height="360" frameborder="0" allowfullscreen></iframe></div>
+<p></p>
+<div><iframe src="https://www.youtube.com/embed/VQT29lq3UGQ?ecver=2" width="640" height="360" frameborder="0" allowfullscreen=""></iframe>
 </div>
+
+</div>
+
 <div class="nb-cell html">
 <p>What is the best action for <code>a</code>?</p>
 </div>
+
 <div class="nb-cell query">
 best_strategy(a,[a,b,c],S).
 </div>
+
 <div class="nb-cell html">
 <p>What is the probability that <code>a</code> survives if it aims at <code>b</code>?</p>
 </div>
+
 <div class="nb-cell query">
 mc_sample(survives_action(a,[a,b,c],0,b),100,P).
 </div>
+
 <div class="nb-cell html">
 <p>What is the probability that <code>a</code> survives if it aims at <code>c</code>?</p>
 </div>
+
 <div class="nb-cell query">
 mc_sample(survives_action(a,[a,b,c],0,c),100,P).
 </div>
+
 <div class="nb-cell html">
 <p>What is the probability that <code>a</code> survives if it aims at the sky?</p>
 </div>
+
 <div class="nb-cell query">
 mc_sample(survives_action(a,[a,b,c],0,sky),100,P).
 </div>
+
 <div class="nb-cell html">
 <p>What is the probability that <code>a</code> survives against <code>c</code>?</p>
 </div>
+
 <div class="nb-cell query">
 mc_sample(survives([a,c],a,0),100,P).
 </div>
+
 <div class="nb-cell html">
 <p>What is the probability that <code>a</code> survives against <code>b</code>?</p>
 </div>
+
 <div class="nb-cell query">
 mc_sample(survives([a,b],a,0),100,P).
 </div>
+
 <div class="nb-cell html">
 <p>What is the probability that <code>a</code> survives against <code>b</code> when it's <code>b</code>'s turn?</p>
 </div>
+
 <div class="nb-cell query">
 mc_sample(survives_round([b],[a,b],a,0),100,P).
 </div>
+
 <div class="nb-cell html">
 <h3>Code</h3>
 </div>
-<div class="nb-cell program prolog" data-background="true">
 
+<div class="nb-cell program" data-background="true">
 :- use_module(library(mcintyre)).
 
 :- if(current_predicate(use_rendering/1)).
@@ -129,10 +147,10 @@ survives_action(A,L0,T,S):-
  * the truelist still alive become L
  */
 shoot(H,S,L0,T,L):-
-    (S=sky ->
+    (S=sky -&gt;
       L=L0
     ;
-      (hit(T,H) ->
+      (hit(T,H) -&gt;
         delete(L0,S,L)
       ;
         L=L0
@@ -198,5 +216,5 @@ remaining([_|Rest0],A,Rest):-
 
 :- end_lpad.
 </div>
-
 </div>
+
