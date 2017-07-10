@@ -143,10 +143,12 @@ define([ "jquery", "form", "cm/lib/codemirror", "utils", "config",
 	} else {
 	  $(text).on('keyup', function() {
 	    var that = $(this);
-	    if ( that.scrollTop() ) {
-	      var newh = that.height() + parseFloat(that.css('line-height'));
+	    var h;
 
-	      that.animate({ height: newh }, 200,
+	    if ( that.scrollTop() != 0 && (h=that.height()) < 500 ) {
+	      h += parseFloat(that.css('line-height'));
+
+	      that.animate({ height: h }, 200,
 			   function() { elem.chatroom('scrollToBottom'); });
 	    }
 	  });
@@ -519,14 +521,14 @@ define([ "jquery", "form", "cm/lib/codemirror", "utils", "config",
 
   var payload_handlers = {
     selection: function(selection) {
-      var storage = this.chatroom('storage');
-      var label   = storage.storage('getSelectionLabel', selection.selection);
+      var label   = $().storage('getSelectionLabel', selection.selection);
       var btn = $($.el.button({ class:"btn btn-xs btn-primary"
 			      },
 			      label + " ",
 			      form.widgets.glyphIcon("eye-open")));
-      btn.on("click", function() {
-	storage.storage('restoreSelection', selection.selection);
+      btn.on("click", function(ev) {
+	$(ev.target).chatroom('storage')
+	            .storage('restoreSelection', selection.selection);
       });
 
       this.append(" ", btn, " ");
