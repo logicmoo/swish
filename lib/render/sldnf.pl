@@ -84,10 +84,11 @@ render_latex(_LatexString,_Options) -->
 render_latex(LatexString, _Options) -->	% <svg> rendering
 	{ latex_stream(LatexString,SVG)
 	},
-  html(div([ class(['render-latex', 'reactive-size']),
+  html(span([class(['output'])],
+     div([ class(['render-latex', 'reactive-size']),
 		       'data-render'('As tree')
 		     ],
-		     \svg(SVG, []))).
+		     \svg(SVG, [])))).
 
 %%	svg(+SVG:string, +Options:list)//
 %
@@ -99,6 +100,7 @@ svg(SVG, _Options) -->
     overflow: auto;
   }'),\[SVG],
 	       \js_script({|javascript||
+
 (function() {
    if ( $.ajaxScript ) {
      var div  = $.ajaxScript.parent();
@@ -108,6 +110,34 @@ svg(SVG, _Options) -->
 		};
      var pan;
 
+function fixIDs(node, prefix1) {
+  var i=0;
+  node.each(function() {
+    var prefix = prefix1+(i++)+"_";
+    var img = $(this);
+    var hprefix = "#"+prefix;
+    var re = /(url\()#([^)]*)(\))/;
+
+    img.find("[id]").each(function() {
+      var elem = $(this);
+      elem.attr("id", prefix+elem.attr("id"));
+    });
+    img.find("use").each(function() {
+      var elem = $(this);
+      var r = elem.attr("xlink:href");
+      if ( r.charAt(0) == "#" )
+	elem.attr("xlink:href", hprefix+r.slice(1));
+    });
+    img.find("[clip-path]").each(function() {
+      var elem = $(this);
+      var r = elem.attr("clip-path").match(re);
+      if ( r.length == 4 )
+	elem.attr("clip-path", r[1]+hprefix+r[2]+r[3]);
+    });
+  });
+}
+
+
      function updateSize() {
        var w = svg.closest("div.answer").innerWidth();
 
@@ -116,8 +146,9 @@ svg(SVG, _Options) -->
 	   data.reactive = true;
 	   div.on("reactive-resize", updateSize);
 	 }
-       }
+ }
 
+fixIDs(svg, "N"+Math.floor((Math.random() * 1000))+"_");
        w = Math.max(w*0.85, 300);
        if ( w < data.w0 ) {
 	 svg.width(w);
