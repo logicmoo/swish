@@ -148,7 +148,7 @@ function fixIDs(node, prefix1) {
 	 }
  }
 
-fixIDs(svg, "N"+Math.floor((Math.random() * 1000))+"_");
+fixIDs(svg, "N"+Math.floor((Math.random() * 100000))+"_");
        w = Math.max(w*0.85, 300);
        if ( w < data.w0 ) {
 	 svg.width(w);
