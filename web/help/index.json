@@ -5,7 +5,7 @@
   { "file":"help.html",	      "title":"Help" },
   { "file":"help-cplint.html","title":"Help on cplint"},
   { "url":"http://ds.ing.unife.it/~gcota/plptutorial/", "title":"Tutorial" },
-  { "url":"http://cplint.lamping.unife.it/pldoc/doc/home/trill/lib/swipl/pack/cplint/prolog/", "title":"Pldoc on cplint"},
+  { "url":"http://cplint.ml.unife.it/pldoc/doc/home/mlunife/lib/swipl/pack/cplint/prolog/", "title":"Pldoc on cplint"},
 
   { "file":"help-aleph.html", "title":"Help on Aleph"},
 
