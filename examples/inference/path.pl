@@ -39,6 +39,12 @@ edge(a,e):0.1.
 
 :- end_lpad.
 
+bdd(dot(B)):-
+    bdd_dot_string(path(a,e),dot(BDD),_Var),
+    atom_concat("digraph \"DD\" {",End,BDD),
+    atomic_list_concat(["digraph \"DD\" {","rankdir=LR, ",
+        End],B).
+
 graph(digraph([rankdir='LR'|G])):-
     findall(edge(A -> B,[label=P]),
       clause(edge(A,B,_,_),(get_var_n(_,_,_,_,[P|_],_),_)),
@@ -52,7 +58,7 @@ graph(digraph([rankdir='LR'|G])):-
 ?- prob_bar(path(a,e),Prob). % what is the probability that a and e are connected?
 % expected result 0.22888
 ?- graph(G). % shows the probabilistic graph
-
+?- bdd(B).
 ?- bdd_dot_string(path(a,e),BDD,Var).
 % What is the BDD for query path(a,e)?
 % A solid edge indicates a 1-child, a dashed edge indicates a 0-child and
