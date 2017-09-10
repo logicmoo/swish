@@ -231,5 +231,60 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- multifile sandbox:safe_primitive/1.
 
 sandbox:safe_primitive(nf_r:{_}).
+:- multifile prolog_colour:directive_colours/2.
 
 
+
+:- multifile prolog_colour:term_colours/2.
+prolog_colour:term_colours((:- begin_lpad),
+             neck(directive)-[directive]):-!.
+
+prolog_colour:term_colours((:- end_lpad),
+             neck(directive)-[directive]):-!.
+
+prolog_colour:term_colours((:- begin_plp),
+             neck(directive)-[directive]):-!.
+
+prolog_colour:term_colours((:- end_plp),
+             neck(directive)-[directive]):-!.
+
+prolog_colour:term_colours((:- pita),
+             neck(directive)-[directive]):-!.
+
+prolog_colour:term_colours((:- mc),
+             neck(directive)-[directive]):-!.
+
+prolog_colour:term_colours((:- begin_lpad),
+             neck(directive)-[directive]):-!.
+
+prolog_colour:term_colours((:- sc),
+             neck(directive)-[directive]):-!.
+
+prolog_colour:term_colours((H:-Body), neck(clause)-
+  [C,body(Body)]):-
+	(H=(_;_);H=(_:P),number(P)),!,
+	build_color(H,C).
+
+prolog_colour:term_colours(H,C):-
+	(H=(_;_);H=(_:P),number(P)),!,
+	build_color(H,C).
+
+
+build_color(H:_P,annotation-[head(head,H),probability]):-!.
+
+build_color((H:_P;Rest),disjunction-[annotation-[head(head,H),probability],RC]):-
+	build_color(Rest,RC).
+
+:- multifile prolog_colour:style/2.
+
+prolog_colour:style(probability,                  [colour(maroon), bold(true)]).
+prolog_colour:style(annotation,                  [colour(dark_red)]).
+prolog_colour:style(disjunction,                  [colour(deep_pink),bold(true)]).
+prolog_colour:style(directive,                  [colour(firebrick),bold(true)]).
+
+:- multifile swish_highlight:style/3.
+
+swish_highlight:style(probability,  probability, [base(number)]).
+swish_highlight:style(annotation,   annotation,  [text, base(symbol)]).
+swish_highlight:style(disjunction,  disjunction, [text, base(symbol)]).
+swish_highlight:style(directive,  directive, [text, base(symbol)]).
