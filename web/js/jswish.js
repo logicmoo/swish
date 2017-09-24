@@ -67,7 +67,7 @@ define([ "jquery",
 	 "svg-pan-zoom"
        ], function($, config, preferences, history, modal) {
 
-preferences.setDefault("semantic-highlighting", false);
+preferences.setDefault("semantic-highlighting", true);
 preferences.setDefault("emacs-keybinding", false);
 
 (function($) {
