@@ -310,7 +310,7 @@ is_annotation(A):-
 
 is_cont_ann(F):-
 	member(F,[
-	  uniform,gaussian,dirichlet,
+	  uniform,gaussian,dirichlet,discrete,
 		gamma,beta,poisson,binomial,geometric]),!.
 
 is_func(F):-
