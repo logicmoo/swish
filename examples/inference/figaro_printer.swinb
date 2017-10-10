@@ -1,7 +1,7 @@
 <div class="notebook">
 
 <div class="nb-cell markdown" name="md18">
-Computer System Diagnosis Model
+Printer Diagnosis Model
 ===============================
 
 In this notebook we translate into Probabilistic Logic Programming the Figaro example from Section 5.3 of [A. Pfeffer, Pratical Probabilistic Programming](https://www.manning.com/books/practical-probabilistic-programming), pages 145-155. 
