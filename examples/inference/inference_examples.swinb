@@ -599,6 +599,11 @@ is done.
    [tile_map.pl](example/inference/tile_map.pl), [tile_mapcond.pl](example/inference/tile_mapcond.pl))
   - Binomial distribution
   ([binomial.pl](example/inference/binomial.pl))
+  - Figaro examples in PLP: 
+    printer diagnosis ([figaro_printer.swinb](example/figaro_printer.swinb)), 
+    predicting product success ([figaro_product.swinb](example/figaro_product.swinb)), 
+    estimating the bias of a coin ([figaro_coin.swinb](example/figaro_coin.swinb)) and 
+    estimating average bias of a bag of coins ([figaro_coin_bag.swinb](example/figaro_coin_bag.swinb))
 </div>
 
 </div>
