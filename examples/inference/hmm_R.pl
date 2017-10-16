@@ -62,8 +62,8 @@ letter(q2,a,S):0.25;letter(q2,c,S):0.25;letter(q2,g,S):0.25;letter(q2,t,S):0.25.
 
 state_diagram(digraph(G)):-
     findall(edge(A -> B,[label=P]),
-      (clause(next_state(A,B,_,_,_),
-        (get_var_n(_,_,_,_,Probs,_),equality(_,_,N,_))),
+      (clause('next_state tabled'(A,B,_,_,_),
+        (get_var_n(_,_,_,_,Probs,_),equalityc(_,_,N,_))),
         nth0(N,Probs,P)),
       G).
 /** <examples>
