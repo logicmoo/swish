@@ -47,7 +47,7 @@ dens_lw(Samples):-
 % and by dividing the domain
 % in NBins bins
 
-dens_part(Samples,NBins,Chart):-
+dens_part(Samples):-
   mc_sample_arg(value(0,Y),Samples,Y,L0),
   mc_particle_sample_arg(value(0,X),[value(1,9),value(2,8)],Samples,X,L),
   densities_r(L0,L).
@@ -60,7 +60,7 @@ dens_part(Samples,NBins,Chart):-
 ?- dens_lw(1000,40,G).
 % plot the densities of the random variable before and after
 % observing 9 and 8 using likelihood weighting
-?- dens_part(1000,40,G).
+?- dens_part(1000).
 % plot the densities of the random variable before and after
 % observing 9 and 8 using particle filtering
 ?- hist_uncond(10000,40).
