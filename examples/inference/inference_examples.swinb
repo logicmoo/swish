@@ -33,7 +33,10 @@ Examples divided by features:
   [nballsdc.pl](example/inference/nballsdc.pl),
   [dirichlet_process.pl](example/inference/dirichlet_process.pl),
   [dp_chinese.pl](example/inference/dp_chinese.pl),
-  [dp_mix.pl](example/inference/dp_mix.pl)
+  [dp_mix.pl](example/inference/dp_mix.pl),
+  [figaro_product.swinb](example/figaro_product.swinb), 
+  [figaro_coin.swinb](example/figaro_coin.swinb),
+  [figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)
   - stochastic logic programs: [slp_pcfg.pl](example/inference/slp_pcfg.pl), [slp_pdcg.pl](example/inference/slp_pdcg.pl)
   - particle filtering:
   [kalman_filter.swinb](example/inference/kalman_filter.swinb),
@@ -49,7 +52,9 @@ Examples divided by features:
   [indian_gpa.pl](example/inference/indian_gpa.pl),
   [indian_gpadc.pl](example/inference/indian_gpadc.pl),
   [nballs.pl](example/inference/nballs.pl),
-  [nballsdc.pl](example/inference/nballsdc.pl)
+  [nballsdc.pl](example/inference/nballsdc.pl),
+  [figaro_coin.swinb](example/figaro_coin.swinb),
+  [figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)
   - Metropolis-Hastings sampling:
   [lda.swinb](example/inference/lda.swinb),
   [slp.pl](example/inference/slp.pl), [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl),
@@ -100,6 +105,9 @@ Examples divided by features:
   [gpr.pl](example/inference/gpr.pl),
   [arithm.pl](example/inference/arithm.pl),
   [pctl_slep.pl](example/inference/pctl_slep.pl),
+  [figaro_product.swinb](example/figaro_product.swinb), 
+  [figaro_coin.swinb](example/figaro_coin.swinb),
+  [figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)
   - infinite number of explanations:
   [random_walk.swinb](example/inference/random_walk.swinb),
   [coupon.swinb](example/inference/coupon.swinb),
@@ -186,7 +194,10 @@ Examples divided by features:
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
   [seven_scientists.pl](example/inference/seven_scientists.pl), [widget.pl](example/inference/widget.pl),
   [widgetmsw.pl](example/inference/widgetmsw.pl),
-  [gpr.pl](example/inference/gpr.pl)
+  [gpr.pl](example/inference/gpr.pl),
+  [figaro_printer.swinb](example/figaro_printer.swinb),
+  [figaro_coin.swinb](example/figaro_coin.swinb),
+  [figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)
   - unconditional inference:
   [tiny_event_calculus.pl](example/inference/tiny_event_calculus.pl),
   [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
@@ -214,7 +225,8 @@ Examples divided by features:
   [truel.swinb](example/inference/truel.swinb),
   [dirichlet_process.pl](example/inference/dirichlet_process.pl),
   [dp_chinese.pl](example/inference/dp_chinese.pl),
-  [dp_mix.pl](example/inference/dp_mix.pl)
+  [dp_mix.pl](example/inference/dp_mix.pl),
+  [figaro_product.swinb](example/figaro_product.swinb)
   - PRISM syntax: [coinmsw.pl](example/inference/coinmsw.pl),
   [widgetmsw.pl](example/inference/widgetmsw.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl)
@@ -267,15 +279,18 @@ Examples divided by application domain:
   - social networks:
   [mln.swinb](example/inference/mln.swinb),
   [uwcse.pl](example/inference/uwcse.pl)
-  - filtering:
+  [figaro_product.swinb](example/figaro_product.swinb), 
+ - filtering:
   [kalman_filter.swinb](example/inference/kalman_filter.swinb),
   [kalman_filter.pl](example/inference/kalman_filter.pl),
   [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
-  - Bayesian estimation:
+ - Bayesian estimation:
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
-  [seven_scientists.pl](example/inference/seven_scientists.pl)
-  - regression: [gpr.pl](example/inference/gpr.pl)
-  - toy: [earthquake.pl](example/inference/earthquake.pl),
+  [seven_scientists.pl](example/inference/seven_scientists.pl),
+  [figaro_coin.swinb](example/figaro_coin.swinb),
+  [figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)
+ - regression: [gpr.pl](example/inference/gpr.pl)
+ - toy: [earthquake.pl](example/inference/earthquake.pl),
    [eruption.pl](example/inference/eruption.pl),
   [alarm.pl](example/inference/alarm.pl),
    [light.pl](example/inference/light.pl),
@@ -286,7 +301,10 @@ Examples divided by application domain:
   [var_objdb.pl](example/inference/var_objdb.pl),
   [var_obj.pl](example/inference/var_obj.pl),
   [var_obj_geom.pl](example/inference/var_obj_geom.pl),
-  [arithm.pl](example/inference/arithm.pl).
+  [arithm.pl](example/inference/arithm.pl)
+ - diagnosis:
+  [figaro_printer.swinb](example/figaro_printer.swinb)
+
 
 Complete list of examples with description:
   - Coin ([coin.swinb](example/inference/coin.swinb),
@@ -599,6 +617,11 @@ is done.
    [tile_map.pl](example/inference/tile_map.pl), [tile_mapcond.pl](example/inference/tile_mapcond.pl))
   - Binomial distribution
   ([binomial.pl](example/inference/binomial.pl))
+  - Figaro examples in PLP: 
+    printer diagnosis ([figaro_printer.swinb](example/figaro_printer.swinb)), 
+    predicting product success ([figaro_product.swinb](example/figaro_product.swinb)), 
+    estimating the bias of a coin ([figaro_coin.swinb](example/figaro_coin.swinb)) and 
+    estimating average bias of a bag of coins ([figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)). From [A. Pfeffer, Pratical Probabilistic Programming](https://www.manning.com/books/practical-probabilistic-programming)
 </div>
 
 </div>
