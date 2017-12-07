@@ -3,8 +3,8 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2014-2016, VU University Amsterdam
-			      CWI Amsterdam
+    Copyright (C): 2017, VU University Amsterdam
+			 CWI Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -33,56 +33,37 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-/**
- * @fileOverview
- *
- * Small utilities
- *
- * @version 0.2.0
- * @author Jan Wielemaker, J.Wielemaker@vu.nl
- */
+:- module(swish_config_repack, []).
+:- use_module(swish(lib/cron)).
+:- use_module(swish(lib/storage)).
 
-define(["jquery"],
-       function($) {
+/** <module> Configure repacking of gitty store
 
-  var utils = {
-    /**
-     * @param   {String} text is the text to be encoded
-     * @returns {String} HTML encoded version of text
-     */
-    htmlEncode: function(text) {
-      if ( !text ) return "";
-      return document.createElement('a')
-                     .appendChild(document.createTextNode(text))
-		     .parentNode
-		     .innerHTML;
-    },
+This config file schedules optimization  of   the  versioned  file store
+(_gitty_). This process combines   files  from `data/storage/XX/YY/SHA1`
+into a pack file in `data/storage/pack`.  Packing reduces disk usage and
+scanning time, typically by a large margin because the average object in
+the store is much smaller than a disk allocation unit.
 
-    /**
-     * @returns {String} (random) UUID
-     */
-    generateUUID: function() {
-      var d = new Date().getTime();
-      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-	.replace(/[xy]/g, function(c) {
-	  var r = (d + Math.random()*16)%16 | 0;
-	  d = Math.floor(d/16);
-	  return (c=='x' ? r : (r&0x7|0x8)).toString(16);
-	});
-      return uuid;
-    },
+The options fine tune the process:
 
-    flash: function(obj) {
-      obj.addClass("flash");
-      setTimeout(function() { obj.removeClass("flash"); }, 1500);
-    }
-  }
+  - min_files(Count)
+  Specifies the minimum amount of file objects that must be
+  present before considering creating a pack.
+  - small_pack(Bytes)
+  Add the new files and possibly other small packs together
+  into a new pack for all packs that are smaller than the
+  given size.
 
-  if (typeof String.prototype.startsWith != 'function') {
-    String.prototype.startsWith = function(str) {
-      return this.lastIndexOf(str, 0) === 0;
-    };
-  }
+@bug Although the repacking can be performed  safely on a life system it
+is currently incompatible with sharing  the   same  gitty  store between
+multiple  SWISH  instances.  If  you  share  a  store  between  multiple
+instances it is possible to use  packing by stopping all-but-one-server,
+repack and restart the other servers.
+*/
 
-  return utils;
-});
+:- initialization
+    http_schedule_maintenance(weekly(sunday, 03:10),
+                              storage_repack([ min_files(1_000),
+                                               small_pack(10_000_000)
+                                             ])).
