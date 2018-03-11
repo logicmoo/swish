@@ -1,10 +1,9 @@
 /*  Part of SWISH
 
     Author:        Jan Wielemaker
-    E-mail:        J.Wielemaker@cs.vu.nl
+    E-mail:        J.Wielemaker@vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2014-2016, VU University Amsterdam
-			      CWI Amsterdam
+    Copyright (c)  2017, VU University Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -33,56 +32,48 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-/**
- * @fileOverview
- *
- * Small utilities
- *
- * @version 0.2.0
- * @author Jan Wielemaker, J.Wielemaker@vu.nl
- */
+:- module(swish_render_wordnet,
+	  [ term_rendering//3			% +Term, +Vars, +Options
+	  ]).
+:- use_module(library(http/html_write)).
+:- use_module('../render').
+:- use_module(library(wn)).			% from wordnet pack
 
-define(["jquery"],
-       function($) {
+:- register_renderer(wordnet, "Show WordNet synsets").
 
-  var utils = {
-    /**
-     * @param   {String} text is the text to be encoded
-     * @returns {String} HTML encoded version of text
-     */
-    htmlEncode: function(text) {
-      if ( !text ) return "";
-      return document.createElement('a')
-                     .appendChild(document.createTextNode(text))
-		     .parentNode
-		     .innerHTML;
-    },
+/** <module> SWISH wordnet renderer
 
-    /**
-     * @returns {String} (random) UUID
-     */
-    generateUUID: function() {
-      var d = new Date().getTime();
-      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-	.replace(/[xy]/g, function(c) {
-	  var r = (d + Math.random()*16)%16 | 0;
-	  d = Math.floor(d/16);
-	  return (c=='x' ? r : (r&0x7|0x8)).toString(16);
-	});
-      return uuid;
-    },
+Renders a WordNet synset-id (integer) as a list of words.
+*/
 
-    flash: function(obj) {
-      obj.addClass("flash");
-      setTimeout(function() { obj.removeClass("flash"); }, 1500);
-    }
-  }
+%%	term_rendering(+Synset, +Vars, +Options)//
+%
+%	Renders  a Synset as a list of words.
 
-  if (typeof String.prototype.startsWith != 'function') {
-    String.prototype.startsWith = function(str) {
-      return this.lastIndexOf(str, 0) === 0;
-    };
-  }
+term_rendering(Synset, _Vars, _Options) -->
+	{   integer(Synset),
+            Synset > 100000000,
+            Synset < 500000000,
+            findall(Word, wn_s(Synset, _, Word, _, _, _), Words),
+            Words \== [],
+            (   wn_g(Synset, Gloss)
+            ->  Attr = [title(Gloss)]
+            ;   Attr = []
+            )
+	},
+        html(span([class(synset)|Attr],
+                  [ span(class('synset-id'), Synset), ' (WN: ',
+                    \words(Words), ')'
+                  ])).
 
-  return utils;
-});
+words([]) --> [].
+words([H|T]) -->
+    word(H),
+    (   {T == []}
+    ->  []
+    ;   html(', '),
+        words(T)
+    ).
+
+word(H) -->
+    html(span(class('wn-word'), H)).

@@ -133,7 +133,11 @@ load_config.
 %	  Ping pengine status every N seconds.  Updates sparkline
 %	  chart with stack usage.
 %	  - notebook
-%	  Dict holding options for notebooks.
+%	  Dict holding options for notebooks:
+%	    - eval_script
+%	    Whether or not to evaluate JavaScript in cells
+%	    - fullscreen
+%	    Whether or not to start in fullscreen mode by default
 %	  - chat
 %	  Activate the chat interface
 
@@ -150,7 +154,9 @@ swish_config:config(community_examples, false).
 swish_config:config(public_access,      false).
 swish_config:config(include_alias,	example).
 swish_config:config(ping,		10).
-swish_config:config(notebook,		_{eval_script: true}).
+swish_config:config(notebook,		_{eval_script: true,
+					  fullscreen: false
+					 }).
 swish_config:config(chat,		true).
 
 %%	swish_config:source_alias(Alias, Options) is nondet.
@@ -180,6 +186,7 @@ swish_config:config(chat,		true).
 :- use_module(swish:lib/render).
 :- use_module(swish:lib/trace).
 :- use_module(swish:lib/projection).
+:- use_module(swish:lib/attvar).
 :- use_module(swish:lib/jquery).
 :- use_module(swish:lib/dashboard).
 :- use_module(swish:lib/swish_debug).

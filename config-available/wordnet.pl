@@ -3,8 +3,8 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2014-2016, VU University Amsterdam
-			      CWI Amsterdam
+    Copyright (C): 2017, VU University Amsterdam
+			 CWI Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -33,56 +33,19 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-/**
- * @fileOverview
- *
- * Small utilities
- *
- * @version 0.2.0
- * @author Jan Wielemaker, J.Wielemaker@vu.nl
- */
+:- module(swish_config_wordnet, []).
 
-define(["jquery"],
-       function($) {
+:- multifile user:file_search_path/2.
 
-  var utils = {
-    /**
-     * @param   {String} text is the text to be encoded
-     * @returns {String} HTML encoded version of text
-     */
-    htmlEncode: function(text) {
-      if ( !text ) return "";
-      return document.createElement('a')
-                     .appendChild(document.createTextNode(text))
-		     .parentNode
-		     .innerHTML;
-    },
+% EDIT: Location of the wordnet files.  Alternatively make sure the
+% environment variable =WNDB= points at this directory.
 
-    /**
-     * @returns {String} (random) UUID
-     */
-    generateUUID: function() {
-      var d = new Date().getTime();
-      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-	.replace(/[xy]/g, function(c) {
-	  var r = (d + Math.random()*16)%16 | 0;
-	  d = Math.floor(d/16);
-	  return (c=='x' ? r : (r&0x7|0x8)).toString(16);
-	});
-      return uuid;
-    },
+% user:file_search_path(wndb, '/usr/local/WordNet-3.0/prolog').
+:- use_module(library(wn)).
+:- use_module(swish(lib/render/wordnet)).
 
-    flash: function(obj) {
-      obj.addClass("flash");
-      setTimeout(function() { obj.removeClass("flash"); }, 1500);
-    }
-  }
+/** <module> Make WordNet available
 
-  if (typeof String.prototype.startsWith != 'function') {
-    String.prototype.startsWith = function(str) {
-      return this.lastIndexOf(str, 0) === 0;
-    };
-  }
-
-  return utils;
-});
+This config depends on the pack `wordnet`.   Note  that the wordnet data
+files must be downloaded and installed seperately.
+*/
