@@ -115,7 +115,7 @@ prob(win_switch,Prob).
 </div>
 
 <div class="nb-cell html">
-<p>The probability if the player switches grows from 1/3 to 1/2
+<p>The probability if the player switches grows from 1/3 to 2/3.
 </p>
 <p>Note that if you change the probability distribution of Monty selecting
 a door to open when the prize is behind the door selected by the player,
