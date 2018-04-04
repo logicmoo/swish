@@ -43,7 +43,7 @@ Third Edition, Prentice Hall, Figure 15.10 page 587
 % in 40 bins
 
 */
- :- use_module(library(mcintyre)).
+:- use_module(library(mcintyre)).
 :- use_module(library(clpr)).
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(c3).
@@ -100,7 +100,7 @@ obs_err(_,E):gaussian(E,0,1).
 % no observation
 hist(Samples,NBins,Chart):-
   mc_sample_arg(kf_fin(1,_O1,Y),Samples,Y,L0),
-  histogram(L0,NBins,Chart).
+  histogram(L0,Chart,[nbins(NBins)]).
 
 %! dens_lw(+S:int,+Bins:int,-C:dict) is det
 % Plots the density of the state at time 1 in case of no observation (prior)
@@ -109,12 +109,12 @@ hist(Samples,NBins,Chart):-
 dens_lw(Samples,NBins,Chart):-
   mc_sample_arg(kf_fin(1,_O1,Y),Samples,Y,L0),
   mc_lw_sample_arg(kf_fin(1,_O2,T),kf_fin(1,[2.5],_T),Samples,T,L),
-  densities(L0,L,NBins,Chart).
+  densities(L0,L,Chart,[nbins(NBins)]).
 
 dens_par(Samples,NBins,Chart):-
   mc_sample_arg(kf_fin(1,_O1,Y),Samples,Y,L0),
   mc_particle_sample_arg(kf_fin(1,_O2,T),[kf_fin(1,[2.5],_T)],Samples,T,L),
-  densities(L0,L,NBins,Chart).
+  densities(L0,L,Chart,[nbins(NBins)]).
 
 
 %! filter_par(+S:int,-C:dict) is det
@@ -144,10 +144,10 @@ filter_par(Samples,O,St,C):-
   NBins=20,
   mc_particle_sample_arg([kf_fin(1,T1),kf_fin(2,T2),kf_fin(3,T3),kf_fin(4,T4)],
   [kf_o(1,O1),kf_o(2,O2),kf_o(3,O3),kf_o(4,O4)],Samples,[T1,T2,T3,T4],[F1,F2,F3,F4]),
-  density(F1,NBins,C1),
-  density(F2,NBins,C2),
-  density(F3,NBins,C3),
-  density(F4,NBins,C4),
+  density(F1,C1,[nbins(NBins)]),
+  density(F2,C2,[nbins(NBins)]),
+  density(F3,C3,[nbins(NBins)]),
+  density(F4,C4,[nbins(NBins)]),
   [[x|X1],[dens|S1]]=C1.data.columns,
   [[x|X2],[dens|S2]]=C2.data.columns,
   [[x|X3],[dens|S3]]=C3.data.columns,
@@ -202,10 +202,10 @@ filter(Samples,O,St,C):-
   mc_lw_sample_arg(kf(4,_O,T),kf_fin(4,O,_T),Samples,T,L),
   maplist(separate,L,T1,T2,T3,T4),
   NBins=20,
-  density(T1,NBins,C1),
-  density(T2,NBins,C2),
-  density(T3,NBins,C3),
-  density(T4,NBins,C4),
+  density(T1,C1,[nbins(NBins)]),
+  density(T2,C2,[nbins(NBins)]),
+  density(T3,C3,[nbins(NBins)]),
+  density(T4,C4,[nbins(NBins)]),
   [[x|X1],[dens|S1]]=C1.data.columns,
   [[x|X2],[dens|S2]]=C2.data.columns,
   [[x|X3],[dens|S3]]=C3.data.columns,
