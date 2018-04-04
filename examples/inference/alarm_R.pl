@@ -32,9 +32,9 @@ alarm(t):0.1 ; alarm(f):0.9:-burg(f),earthq(f).
 % expected result 0.30000000000000004
 ?- prob(alarm(f),Prob).  % what is the probability that the alarm doesn't go off?
 % expected result  0.7000000000000002
-?- prob_bar_r(alarm(t)).  % what is the probability that the alarm goes off?
+?- prob(alarm(t),Prob),bar_r(Prob).  % what is the probability that the alarm goes off?
 % expected result 0.30000000000000004
-?- prob_bar_r(alarm(f)).  % what is the probability that the alarm doesn't go off?
+?- prob(alarm(f),Prob),bar_r(Prob).  % what is the probability that the alarm doesn't go off?
 % expected result  0.7000000000000002
 
 */
