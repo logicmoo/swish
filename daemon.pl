@@ -2,6 +2,7 @@
 
 :- module(swish_daemon, []).
 
+:- use_module(library(rtrace)).
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Run
 

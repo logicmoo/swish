@@ -56,7 +56,7 @@ range of log messages from the log   file  during which the SWISH server
 behaved suspicious, e.g., appears to leak memory or crash. To replay the
 log, perform the following steps:
 
-  - Start a pengine server at http://localhost:3050
+  - Start a pengine server at http://localhost:3020
   - Load this file using =|swipl lib/replay.pl|=
   - Load the log file to be examined using load_log/1.
   - Replay the first pengine interaction using replay/0. Hit
@@ -132,10 +132,10 @@ replay1(P) :-
 
 %%	replay(+Pengine) is det.
 %
-%	Same as replay(Pengine, 'http://localhost:3050/').
+%	Same as replay(Pengine, 'http://localhost:3020/').
 
 replay(Pengine) :-
-	replay(Pengine, 'http://localhost:3050/').
+	replay(Pengine, 'http://localhost:3020/').
 
 %%	replay(+Pengine, +ServerURL) is det.
 %

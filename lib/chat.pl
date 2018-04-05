@@ -93,6 +93,7 @@ browsers which in turn may have multiple SWISH windows opened.
 		 *	ESTABLISH WEBSOCKET	*
 		 *******************************/
 
+:- http_handler(root(chat), start_chat, [ id(swish_chat_root) ]).
 :- http_handler(swish(chat), start_chat, [ id(swish_chat) ]).
 
 :- meta_predicate must_succeed(0).

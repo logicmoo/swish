@@ -473,8 +473,6 @@ swish_logo(_Options) -->
 %	  Indicate the presense of Count chat messages
 
 swish_content(Options) -->
-	{ document_type(Type, Options)
-	},
 	swish_resources,
 	swish_config_hash(Options),
 	swish_options(Options),
@@ -482,9 +480,7 @@ swish_content(Options) -->
 		 [ div([class([tile, horizontal]), 'data-split'('50%')],
 		       [ div([ class([editors, tabbed])
 			     ],
-			     [ \source(Type, Options),
-			       \notebooks(Type, Options)
-			     ]),
+			     [ \editor_content(Options) ]),
 			 div([class([tile, vertical]), 'data-split'('70%')],
 			     [ div(class('prolog-runners'), []),
 			       div(class('prolog-query'), \query(Options))
@@ -493,6 +489,15 @@ swish_content(Options) -->
 		   \background(Options),
 		   \examples(Options)
 		 ])).
+
+editor_content(Options) -->
+       { document_type(Type, Options)
+       },
+       editor_content_typed(Type,Options),!.
+
+editor_content_typed(pl, Options) --> source(pl, Options).
+editor_content_typed(swinb, Options) --> notebooks(swinb, Options).
+editor_content_typed(_, Options) --> source(pl, Options).
 
 
 %%	swish_config_hash(+Options)//
@@ -705,7 +710,7 @@ load_error(E, Source) :-
 %
 %	Determine the type of document.
 %
-%	@arg Type is one of `swinb` or `pl`
+%	@arg Type is one of `notebook` or `prolog`
 
 document_type(Type, Options) :-
 	(   option(type(Type0), Options)
@@ -714,16 +719,8 @@ document_type(Type, Options) :-
 	    file_name_extension(_, Type0, Meta.name),
 	    Type0 \== ''
 	->  Type = Type0
-	;   option(st_type(external), Options),
-	    option(url(URL), Options),
-	    file_name_extension(_, Ext, URL),
-	    ext_type(Ext, Type)
-	->  true
 	;   Type = pl
 	).
-
-ext_type(swinb, swinb).
-
 
 		 /*******************************
 		 *	     RESOURCES		*
@@ -794,7 +791,6 @@ alt(rjs, 'js/require.js', swish_web('js/require.js')) :-
 alt(rjs, 'bower_components/requirejs/require.js', -).
 
 
-filesystems_res --> { \+ swish_config:config(filesystem_browser,   true) },!.
 filesystems_res -->
    html({|html||
       <script src="/swish/bower_components/ace-builds/src/ace.js" data-ace-base="/swish/bower_components/ace-builds/src" type="text/javascript" charset="utf-8"></script> 
@@ -802,32 +798,39 @@ filesystems_res -->
       <script src="/swish/bower_components/ace-builds/src/keybinding-emacs.js"></script>
       
        <!--
-		<script src="/swish/bower_components/ace-builds/src/keybinding-ace.js"></script>
-		<link rel="stylesheet" href="/swish/bower_components/ace-builds/demo/kitchen-sink/styles.css" type="text/css" media="screen"  />
-		<script src="https://use.edgefonts.net/source-code-pro.js" ></script>
-		<script src="/swish/bower_components/ace-builds/demo/kitchen-sink/demo.js"></script>
-		<script type="text/javascript" charset="utf-8">
-		 require("kitchen-sink/demo");
-		</script>
-       -->
+      <script src="/swish/bower_components/ace-builds/src/keybinding-ace.js"></script>
+       <link rel="stylesheet" href="/swish/bower_components/ace-builds/demo/kitchen-sink/styles.css" type="text/css" media="screen"  />
+       <script src="https://use.edgefonts.net/source-code-pro.js" ></script>
+      <script src="/swish/bower_components/ace-builds/demo/kitchen-sink/demo.js"></script>
+      <script type="text/javascript" charset="utf-8">
+         require("kitchen-sink/demo");
+      </script>
+         -->
     
     <script>
 	window.addEventListener("DOMContentLoaded", 
-	  function(){ //This function is called once the DOM is ready.. so It will be safe to query the DOM and manipulate DOM nodes in this function.
-
-		  // addEventListener support for IE8
-		  function bindEvent(element, eventName, eventHandler) {
-			if (element.addEventListener){
-			  element.addEventListener(eventName, eventHandler, false);
-			} else if (element.attachEvent) {
-			 element.attachEvent('on' + eventName, eventHandler);
-			}
-		  }
-           bindEvent(window, 'message', function (e) {
-                var navto = '/swish/filesystem/home/prologmud_server/lib/elFinder/'+ e.data;
-                if(!navto.endsWith("]")) 
-                    $.fn.swish('playURL', {url: navto});                             
-           });
+	  function(){
+            //This function is called once the DOM is ready.. 
+            //It will be safe to query the DOM and manipulate DOM nodes in this function.
+					  // addEventListener support for IE8
+					  function bindEvent(element, eventName, eventHandler) {
+						if (element.addEventListener){
+						  element.addEventListener(eventName, eventHandler, false);
+						} else if (element.attachEvent) {
+						 element.attachEvent('on' + eventName, eventHandler);
+						}
+					  }
+					  // Listen to message from child window
+					  // bindEvent(window, 'edit', function (e) { alert("edit: " + e.data); });
+					  // Listen to message from child window
+                                             bindEvent(window, 'message', function (e) {
+                                                             // results.innerHTML = e.data;                         
+                                                             var navto = '/swish/filesystem/opt/logicmoo_workspace/html/ef/'+ e.data;
+                                                             if(!navto.endsWith("]")) {
+                                                                    // window.document.body.closest(".swish").swish('playURL', {url: navto});
+                                                                    $.fn.swish('playURL', {url: navto});
+                                                             }
+                                            });
 
 	}); 
      </script>

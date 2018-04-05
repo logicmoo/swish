@@ -89,6 +89,9 @@ define([ "cm/lib/codemirror",
 (function($) {
   var pluginName = 'prologEditor';
 
+  var tos_mode = true;
+  var tos_mode_exact = false;
+
   var modeDefaults = {
     prolog: {
       mode: "prolog",
@@ -550,6 +553,11 @@ define([ "cm/lib/codemirror",
      * @param {Boolean} [direct=false] if this parameter is `true`, the
      * message is never delegated to the storage
      */
+    setSource: function(source, direct) {
+        debugger;
+		this.prologEditor('setEdSource', source, direct);
+    },
+
     setEdSource: function(source, direct) {
           debugger;
       if ( typeof(source) == "string" )
@@ -653,7 +661,10 @@ define([ "cm/lib/codemirror",
 	iframe.contentWindow.print();
       }
 
-      $.ajax({ url: "/css/print.css",
+     var cssurl = "css/print.css";
+     if (tos_mode_exact || tos_mode) cssurl = "js/codemirror/theme/prolog.css"; 
+
+      $.ajax({ url: config.http.locations.swish + cssurl,
 	       dataType: "text",
 	       success: function(data) {
 		 printWithIframe($.el.div($.el.style(data),
@@ -748,7 +759,7 @@ define([ "cm/lib/codemirror",
      */
     refreshHighlight: function() {
       var data = this.data(pluginName);
-      data.cm.serverAssistedHighlight(true);
+      if (!tos_mode_exact) data.cm.serverAssistedHighlight(true);
       return this;
     },
 
@@ -1109,6 +1120,10 @@ define([ "cm/lib/codemirror",
 	    for(var j=0; j<exl.length; j++) {
 	      var ex = exl[j].replace(/^ *\?-\s*/, "")
 			     .replace(/\s*$/, "");
+		  if (tos_mode) ex = ex 
+			     .replace(/\\'/g, "'")
+				 .replace(/\\"/g, "'");//esempi in xml
+
 	      exlist.push(ex);
 	    }
 	  }

@@ -241,7 +241,7 @@ define([ "jquery", "config", "form", "modal", "laconic" ],
 		   data.history = data.commit;
 		 },
 		 error: function(jqXHDR) {
-		   modal.ajaxError(jqXHR);
+		   modal.ajaxError(jqXHDR);
 		 }
 	       });
       });

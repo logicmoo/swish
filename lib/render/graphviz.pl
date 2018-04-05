@@ -96,6 +96,8 @@ as follows:
 :- dynamic
 	dot_data/3.				% +Hash, +Data, +Time
 
+:- nodebug.
+
 %%	term_rendering(+Term, +Vars, +Options)//
 %
 %	Renders data using graphviz.  Options:

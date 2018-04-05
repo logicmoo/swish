@@ -208,7 +208,10 @@ strip_stack(Error, Error).
 	residuals(M, Residuals).
 
 swish_call(Goal) :-
-	Goal,
+     (nb_current('$in_swish',Was)->true;Was=[]),
+      setup_call_cleanup(b_setval('$in_swish',t),
+        (Goal,b_setval('$in_swish',Was)),
+           b_setval('$in_swish',Was)),
 	no_lco.
 
 no_lco.

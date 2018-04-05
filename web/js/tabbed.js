@@ -597,6 +597,7 @@ function clone(obj) {
             var tital = src.url.split('/').pop();
         	tab.tabbed('title', tital, tabType.dataType);
             debugger;
+            // @TODO DMiles  Figuire out why .pfc dont work with  $(content).trigger("source", src);
             $(content).trigger("source", src.data);
             openingSrcFile = null;
             openingSrcFileTab = null;

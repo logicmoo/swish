@@ -45,6 +45,7 @@
 :- use_module(library(http/http_parameters)).
 :- use_module(library(http/http_json)).
 
+:- http_handler(root(chat/messages), chat_messages, [ id(chat_messages_at_root) ]).
 :- http_handler(swish(chat/messages), chat_messages, [ id(chat_messages) ]).
 
 :- setting(directory, callable, data(chat),

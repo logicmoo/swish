@@ -78,6 +78,12 @@
 %	a single config-enabled directory, either  found locally or from
 %	the swish directory.
 
+:- meta_predicate
+    ensure_loaded_safely(:).
+
+ensure_loaded_safely(H):- catch(ensure_loaded(H),_,true).
+
+load_config :-!.
 load_config :-
 	absolute_file_name(config_enabled(.), Path,
 			   [ file_type(directory),
@@ -86,8 +92,9 @@ load_config :-
 			   ]), !,
 	atom_concat(Path, '/*.pl', Pattern),
 	expand_file_name(Pattern, Files),
-	maplist(ensure_loaded, Files).
+	maplist(ensure_loaded_safely, Files).
 load_config.
+
 
 :- initialization(load_config, now).
 
@@ -141,10 +148,10 @@ load_config.
 
 % Allow other code to overrule the defaults from this file.
 term_expansion(swish_config:config(Config, _Value), []) :-
-	clause(swish_config:config(Config, _), _).
+	clause(swish_config:config(Config, _), _),!.
 
 
-swish_config:config(show_beware,        false).
+% swish_config:config(show_beware,        false).
 swish_config:config(tabled_results,     false).
 swish_config:config(application,        swish).
 
@@ -159,7 +166,7 @@ swish_config:config(csv_formats,        [prolog]).
 :- if(true).  % non vanilla SWISH
 % Allows users to extend the Examples menu by ticking the Example
 % checkbox.
-swish_config:config(community_examples, true).
+% swish_config:config(community_examples, true).
 
 % Include elFinder server explorer
 swish_config:config(filesystem_browser,   true).

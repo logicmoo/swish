@@ -48,7 +48,7 @@ daemon.pl if to deploy SWISH as a server
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 % Using `localhost:Port`, we only bind to localhost interface!
-% Use plain `3050` (or any port number you like) to make the server
+% Use plain `3020` (or any port number you like) to make the server
 % accessible from all network interfaces.
 
 :- initialization run_swish.
@@ -56,6 +56,6 @@ daemon.pl if to deploy SWISH as a server
 run_swish :-
     current_prolog_flag(argv, Argv),
     argv_options(Argv, _, Options),
-    option(port(Port), Options, 3050),
+    option(port(Port), Options, 3020),
     server(localhost:Port).
 

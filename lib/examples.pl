@@ -64,7 +64,7 @@ user:file_search_path(example, swish(examples/inference)).
 user:file_search_path(example, swish(examples/learning)).
 user:file_search_path(example, swish(examples/lemur)).
 user:file_search_path(example, swish(examples/aleph)).
-
+user:file_search_path(example, swish(examples/trill)).
 
 % make SWISH serve /example/File as example(File).
 swish_config:source_alias(example, [access(read), search(What)]):-
@@ -77,6 +77,8 @@ swish_config:source_alias(example, [access(read), search('*/*/*/*.*')]):- swish_
 
 :- http_handler(swish(list_examples),
 		list_examples, [id(swish_examples)]).
+:- http_handler(root(list_examples),
+		list_examples, [id(swish_examples_from_root)]).
 
 
 %%	list_examples(+Request)
@@ -85,10 +87,10 @@ swish_config:source_alias(example, [access(read), search('*/*/*/*.*')]):- swish_
 %	a file swish_examples('index.json').
 
 list_examples(_Request) :-
-	example_files(FileExamples),
+	must_det_l((example_files(FileExamples),
 	storage_examples(StorageExamples),
 	append(FileExamples, StorageExamples, AllExamples),
-	reply_json(AllExamples).
+	reply_json(AllExamples))).
 
 %%	example_files(JSON:list) is det.
 %

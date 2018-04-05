@@ -668,7 +668,8 @@ preferences.setDefault("reuse-editor", false);
    */
   function swishLogo() {
     $(".swish-logo")
-      .append($.el.b($.el.span({style:"color:maroon"}, "cplint on "),
+      .append($.el.b($.el.span({style:"color:darkblue"}, "cplint + TRILL "),
+                     $.el.span({style:"color:maroon"}, "on "),
       		     $.el.span({style:"color:darkblue"}, "SWI"),
 		     $.el.span({style:"color:maroon"}, "SH")))
       .css("margin-left", "30px")

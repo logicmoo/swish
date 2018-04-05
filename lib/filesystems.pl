@@ -71,7 +71,7 @@
 :- use_module(library(pldoc/doc_htmlsrc)).
 :- use_module(library(prolog_xref)).
 
-:- use_module(pack(plweb/pack_info)).
+% :- use_module(pack(plweb/pack_info)).
 
 
 /** <module> Serve filesystem files
@@ -101,6 +101,17 @@ user:file_search_path(filesystem, '/').
 user:file_search_path(filesystem_files, '/').
 
 
+:- multifile
+    http:status_page/3,             % +Status, +Context, -HTML
+    http:post_data_hook/3.          % +Data, +Out, +HdrExtra
+
+http:status_page(Term, Context, HTML):- wdmsg(http:status_page(Term, Context, HTML)),fail.
+
+% http:status_page(not_found(URL), [], RET):- '/example/inference/inference_examples_R.swinb'
+   
+% handler(swish(help), swish_help:serve_files_in_directory(swish_help), true, [id(help)]).
+
+:- asserta((http_dispatch:handler(root(example), http_server_files:serve_files_in_directory(example), true, [id(example_serv)]))).
 
 
 		 /*******************************

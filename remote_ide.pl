@@ -280,7 +280,7 @@ swish_config:authenticate(Request, User) :-
 :- initialization(swish).
 
 swish :-
-	swish('0.0.0.0':3050).
+	swish('0.0.0.0':3020).
 
 swish(Port) :-
 	http_server_property(Port, goal(swish_ide:http_dispatch)), !,
@@ -324,7 +324,7 @@ host_port(Port,_, Port):-!.
 :- listing(pengines:allowed/2).
 
 
-pet:- pengine_rpc("http://prologmoo.com:3050",
+pet:- pengine_rpc("http://logicmoo.org:3020",
                        sin_table(X,Y),
                        [ src_text(':- dynamic(sin_table/2). sin_table(1,2).'),
                          application(swish)
@@ -379,6 +379,41 @@ user:file_search_path(What, Alias):- % maybe confirm this is not SWISH?
 
 
 % :- initialization(user:ensure_loaded(run_clio)).
+
+
+
+%%	load_swish_modules
+%
+%	Load additional modules into SWISH. These   are  loaded from the
+%	environment variable =SWISH_MODULES=, which is   a `:` separated
+%	list of modules to load of the   form Alias/Local. If the syntax
+%	Module@Context is used, the exports of  Module are imported into
+%	the module Context. For example:
+%
+%	  - =|swish/lib/r_swish@swish|= loads the R connection into the
+%	    swish application context.
+%	  - =|swish/lib/authenticate|= load the authentication module.
+
+load_swish_modules :-
+	getenv('SWISH_MODULES', Atom),
+	Atom \== '', !,
+	atomic_list_concat(Modules, :, Atom),
+	maplist(load_swish_module, Modules).
+load_swish_modules.
+
+load_swish_module(Spec) :-
+	atomic_list_concat([Module,Into], @, Spec), !,
+	module_term(Module, Term),
+	use_module(Into:Term).
+load_swish_module(Module) :-
+	module_term(Module, Term),
+	use_module(Term).
+
+module_term(Spec, Term) :-
+	sub_atom(Spec, B, _, A, /), !,
+	sub_atom(Spec, 0, B, _, Alias),
+	sub_atom(Spec, _, A, 0, Local),
+	Term =.. [Alias, Local].
 
 
 end_of_file.

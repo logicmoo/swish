@@ -30,6 +30,8 @@
     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
+    Changes by:    Riccardo Zese
+    E-mail:        riccardo.zese@unife.it
 */
 
 :- module(swish_template_hint,
@@ -43,6 +45,7 @@
 :- use_module(library(pldoc/doc_process)).
 :- use_module(library(pldoc/doc_wiki)).
 :- use_module(library(pldoc/doc_modes)).
+:- use_module(library(doc_http)).
 :- use_module(library(http/html_write)).
 :- use_module(library(memfile)).
 :- use_module(library(sgml)).
@@ -66,6 +69,10 @@ SWISH editor.
 @tbd	What about safely?
 @tbd	Dedicated template for the rendering support?
 */
+
+:- if(current_predicate(doc_enable/1)).
+:- initialization(doc_enable(true)).
+:- endif.
 
 %%	visible_predicate_templates(+Module, +Options, -Templates) is det.
 %
@@ -327,6 +334,95 @@ m_same_name_arity(H1, H2) :-
 
 
 		 /*******************************
+		 *	     TRILL		*
+		 *******************************/
+
+%%	trill_template(-Template)
+%
+%	Create a template for the TRILL queries.
+
+trill_template([     json{displayText:  "prob_instanceOf(+Class, +Individual, -Prob).",
+ 			  type:         "directive",
+			  template:     "prob_instanceOf(${Class},${Individual},Prob).",
+ 			  varTemplates: json{'TRILL-Query': Template}},
+			  
+		     json{displayText:  "prob_property_value(+Property, +Individual1, +Individual2, -Prob).",
+ 			  type:         "directive",
+			  template:     "prob_property_value(${Class},${Individual1},${Individual2},Prob).",
+ 			  varTemplates: json{'TRILL-Query': Template}},
+			  
+		     json{displayText:  "prob_sub_class(+Class1, +Class2, -Prob).",
+ 			  type:         "directive",
+			  template:     "prob_sub_class(${Class1},${Class2},Prob).",
+			  varTemplates: json{'TRILL-Query': Template}},
+
+		     json{displayText:  "prob_unsat(+ClassExpression, -Prob).",
+			  type:         "directive",
+			  template:     "prob_unsat(${ClassExpression},Prob).",
+			  varTemplates: json{'TRILL-Query': Template}},
+		 
+		     json{displayText:  "prob_inconsistent_theory(-Prob).",
+			  type:         "directive",
+			  template:     "prob_inconsistent_theory(Prob).",
+			  varTemplates: json{'TRILL-Query': Template}},
+		
+		     json{displayText:  "instanceOf(+Class, +Individual, -Expl).",
+ 			  type:         "directive",
+			  template:     "instanceOf(${Class},${Individual},Expl).",
+ 			  varTemplates: json{'TRILL-Query': Template}},
+			  
+		     json{displayText:  "property_value(+Property, +Individual1, +Individual2, -Expl).",
+ 			  type:         "directive",
+			  template:     "property_value(${Class},${Individual1},${Individual2},Expl).",
+ 			  varTemplates: json{'TRILL-Query': Template}},
+			  
+		     json{displayText:  "sub_class(+Class1, +Class2, -Expl).",
+ 			  type:         "directive",
+			  template:     "sub_class(${Class1},${Class2},Expl).",
+			  varTemplates: json{'TRILL-Query': Template}},
+
+		     json{displayText:  "unsat(+ClassExpression, -Expl).",
+			  type:         "directive",
+			  template:     "unsat(${ClassExpression},Expl).",
+			  varTemplates: json{'TRILL-Query': Template}},
+			  
+		     json{displayText:  "inconsistent_theory(-Expl).",
+			  type:         "directive",
+			  template:     "inconsistent_theory(Expl).",
+			  varTemplates: json{'TRILL-Query': Template}},
+		     
+		     json{displayText:  "instanceOf(+Class, +Individual).",
+ 			  type:         "directive",
+			  template:     "instanceOf(${Class},${Individual}).",
+ 			  varTemplates: json{'TRILL-Query': Template}},
+			  
+		     json{displayText:  "property_value(+Property, +Individual1, +Individual2).",
+ 			  type:         "directive",
+			  template:     "property_value(${Class},${Individual1},${Individual2}).",
+ 			  varTemplates: json{'TRILL-Query': Template}},
+			  
+		     json{displayText:  "sub_class(+Class1, +Class2).",
+ 			  type:         "directive",
+			  template:     "sub_class(${Class1},${Class2}).",
+			  varTemplates: json{'TRILL-Query': Template}},
+
+		     json{displayText:  "unsat(+ClassExpression).",
+			  type:         "directive",
+			  template:     "unsat(${ClassExpression}).",
+			  varTemplates: json{'TRILL-Query': Template}},
+			  
+		     json{displayText:  "inconsistent_theory.",
+			  type:         "directive",
+			  template:     "inconsistent_theory.",
+			  varTemplates: json{'TRILL-Query': Template}}
+		   ]) :-
+	findall(json{displayText: Comment,
+		     text: Name},
+		current_renderer(Name, Comment),
+		Template).
+
+
+		 /*******************************
 		 *	     RENDERING		*
 		 *******************************/
 
@@ -526,6 +622,8 @@ swish_templates(Template) :-
 	setof(From, visible_lib(swish, From), FromList),
 	swish_templates(Template, [from(FromList)]).
 
+swish_templates(Template, _Options) :-
+	trill_template(Template).
 swish_templates(Template, Options) :-
 	library_template(Template, Options).
 swish_templates(Template, _Options) :-

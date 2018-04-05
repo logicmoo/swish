@@ -45,6 +45,8 @@
 :- use_module(library(sandbox)).
 :- use_module('../render').
 
+:- nodebug.
+
 :- register_renderer(svgtree, "Render term as a tree").
 
 /** <module> SWISH SVG tree renderer

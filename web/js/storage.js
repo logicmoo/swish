@@ -243,7 +243,7 @@ define([ "jquery", "config", "modal", "form", "gitty",
 				});
 		 },
 		 error: function(jqXHDR) {
-		   modal.ajaxError(jqXHR);
+		   modal.ajaxError(jqXHDR);
 		 }
 	       });
       }
@@ -1055,7 +1055,9 @@ define([ "jquery", "config", "modal", "form", "gitty",
 
       if ( data.cleanData != data.getValue() ) {
 	if ( why == "beforeunload" ) {
-	  var message = "The source editor has unsaved changes.\n"+
+        debugger;
+        // Are we unloading becasue we are tried to load becasue we are navigating away or is it we need to open a new tab?
+    	  var message = "The source editor has unsaved changes.\n"+
 	                "These will be lost if you leave the page";
 
 	  ev = ev||window.event;
@@ -1064,6 +1066,8 @@ define([ "jquery", "config", "modal", "form", "gitty",
 
 	  return message;
 	} else {
+        // Can we open the new content in a new tab?
+        debugger;
 	  var message = "The source editor has unsaved changes.\n"+
 	                "These will be lost"+
 			( why == "setSource" ? " if you load a new program" :
