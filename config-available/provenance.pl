@@ -1,20 +1,10 @@
-#!/usr/bin/env swipl
-
-:- module(swish_daemon, []).
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Run
-
-    ./daemon.pl --help for help
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
 /*  Part of SWISH
 
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2014-2016, VU University Amsterdam
-			      CWI Amsterdam
+    Copyright (C): 2017, VU University Amsterdam
+			 CWI Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -43,40 +33,10 @@ Run
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-:- use_module(library(http/http_unix_daemon)).
-:- use_module(library(option)).
-:- use_module(library(main)).
+:- module(swish_config_provenance, []).
+:- use_module(swish:swish(lib/provenance)).
 
-:- initialization(swish_daemon, main).
+/** <module> Configure provenance tracking
 
-swish_daemon :-
-	current_prolog_flag(argv, Argv),
-	argv_options(Argv, _RestArgv, Options0),
-	swish_options(Options0, Options),
-	(   option(https(_), Options)
-	->  use_module(swish(lib/ssl_certificate))
-	;   true
-	),
-	http_daemon(Options).
-
-swish_options(Options0, Options) :-
-	option(https(_), Options0), !,
-	add_default_option(certfile, Options0, 'https/server.crt', Options1),
-	add_default_option(keyfile,  Options1, 'https/server.key', Options).
-swish_options(Options, Options).
-
-add_default_option(Name, Options0, Default, Options) :-
-	Term =.. [Name,Value],
-	(   option(Term, Options0)
-	->  Options = Options0
-	;   Value = Default,
-	    Options = [Term|Options0]
-	).
-
-user:file_search_path(swish, SwishDir) :-
-	getenv('SWISH_HOME', SwishDir), !.
-user:file_search_path(swish, SwishDir) :-
-	source_file(swish_daemon, ThisFile),
-	file_directory_name(ThisFile, SwishDir).
-
-:- [swish(swish)].
+This module adds _permalinks_ to SWISH
+*/
