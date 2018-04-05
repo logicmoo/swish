@@ -28,7 +28,7 @@ Draw a histogram of the sampled state sequences:
 </div>
 
 <div class="nb-cell query">
-mc_sample_arg_bar(hmm(S,[he,can,can,a,can]),100,S,O).
+mc_sample_arg(hmm(S,[he,can,can,a,can]),100,S,O),argbar(O,C).
 </div>
 
 <div class="nb-cell markdown">

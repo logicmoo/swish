@@ -111,19 +111,19 @@ the second clause and rerunning the queries.
 </div>
 
 <div class="nb-cell query">
-prob_bar(safe(a),Prob).
+prob(safe(a),Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell query">
-prob_bar(safe(a),tell,Prob).
+prob(safe(a),tell,Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell query">
-prob_bar(safe(c),Prob).
+prob(safe(c),Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell query">
-prob_bar(safe(c),tell_executed(b),Prob).
+prob(safe(c),tell_executed(b),Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell html">

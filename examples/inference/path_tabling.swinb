@@ -26,7 +26,7 @@ What is the probability that =a= and =e= are connected represented graphically?
 </div>
 
 <div class="nb-cell query">
-prob_bar(path(a,e),Prob).
+prob(path(a,e),Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell markdown">

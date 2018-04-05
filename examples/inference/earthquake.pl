@@ -55,16 +55,16 @@ volcanic_eruption(eyjafjallajkull).
 ?- prob(earthquake(eyjafjallajkull,moderate),Prob). % what is the probability of a moderate
 % earthquake at eyjafjallajkull?
 % expected result 0.6
-?- prob_bar(earthquake(stromboli,strong),Prob).  % what is the probability of a strong 
+?- prob(earthquake(stromboli,strong),Prob),bar(Prob,C).  % what is the probability of a strong 
 % earthquake at stromboli?
 % expected result 0.43999999999999995
-?- prob_bar(earthquake(stromboli,moderate),Prob).  % what is the probability of a moderate
+?- prob(earthquake(stromboli,moderate),Prob),bar(Prob,C).  % what is the probability of a moderate
 % earthquake at stromboli?
 % expected result 0.7999999999999998
-?- prob_bar(earthquake(eyjafjallajkull,strong),Prob).  % what is the probability of a strong 
+?- prob(earthquake(eyjafjallajkull,strong),Prob),bar(Prob,C).  % what is the probability of a strong 
 % earthquake at eyjafjallajkull?
 % expected result 0.2
-?- prob_bar(earthquake(eyjafjallajkull,moderate),Prob). % what is the probability of a moderate
+?- prob(earthquake(eyjafjallajkull,moderate),Prob),bar(Prob,C). % what is the probability of a moderate
 % earthquake at eyjafjallajkull?
 % expected result 0.6
 

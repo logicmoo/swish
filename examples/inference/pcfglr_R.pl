@@ -63,14 +63,14 @@ rule('S',Der,['S','S']):0.4; rule('S',Der,[a]):0.3;
 ?- mc_prob(pcfg([a,b,a]),Prob).
 % expected result ~ 0.009.
 
-?- mc_sample(pcfg([a,a]),1000,T,F,Prob). % take 1000 samples of pcfg([a,a])
+?- mc_sample(pcfg([a,a]),1000,Prob,[successes(T),failures(F)]). % take 1000 samples of pcfg([a,a])
 
-?- mc_sample_bar_r(pcfg([a,a]),1000). % take 1000 samples of pcfg([a,a])
+?- mc_sample(pcfg([a,a]),1000,Prob),bar_r(Prob). % take 1000 samples of pcfg([a,a])
 
 ?- mc_sample_arg(pcfg(S),20,S,Values). % take 20 samples of S in 
 % findall(S,pcfg(S),L)
 
-?- mc_sample_arg_bar_r(pcfg(L),20,L). % take 20 samples of S in 
+?- mc_sample_arg(pcfg(L),20,L,Values),argbar_r(Values). % take 20 samples of S in 
 % findall(S,pcfg(S),L)
 
 */

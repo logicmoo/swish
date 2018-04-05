@@ -49,7 +49,7 @@ graph(digraph([rankdir='LR'|G])):-
 
 ?- prob(path(a,e),Prob). % what is the probability that a and e are connected?
 % expected result 0.22888
-?- prob_bar(path(a,e),Prob). % what is the probability that a and e are connected?
+?- prob(path(a,e),Prob),bar(Prob,C). % what is the probability that a and e are connected?
 % expected result 0.22888
 ?- graph(G). % shows the probabilistic graph
 

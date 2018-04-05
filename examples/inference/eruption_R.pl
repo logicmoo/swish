@@ -40,9 +40,9 @@ fault_rupture(east_west).
 % expected result 0.588
 ?- prob(earthquake,Prob). % what is the probability of an earthquake?
 % expected result 0.357
-?- prob_bar_r(eruption). % what is the probability of an eruption?
+?- prob(eruption,Prob),bar_r(Prob). % what is the probability of an eruption?
 % expected result 0.588
-?- prob_bar_r(earthquake). % what is the probability of an earthquake?
+?- prob(earthquake,Prob),bar_r(Prob). % what is the probability of an earthquake?
 % expected result 0.357
 
 

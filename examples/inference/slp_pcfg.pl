@@ -48,7 +48,7 @@ s(L):-s(L,0).
 /** <examples>
 ?- mc_sample_arg(s(S),100,S,L).
 % sample 100 sentences from the language
-?- mc_sample_arg_bar(s(S),100,S,L).
+?- mc_sample_arg(s(S),100,S,P),argbar(P,C).
 % sample 100 sentences from the language and draw a bar chart
 
 

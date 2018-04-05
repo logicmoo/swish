@@ -29,9 +29,9 @@ toss(coin).
 % expected result 0.51
 ?- prob(res(coin,tails),Prob).  % what is the probability that coin lands tails?
 % expected result 0.49
-?- prob_bar_r(res(coin,heads)).  % what is the probability that coin lands heads?
+?- prob(res(coin,heads),Prob),bar_r(Prob).  % what is the probability that coin lands heads?
 % expected result 0.51
-?- prob_bar_r(res(coin,tails)).  % what is the probability that coin lands tails?
+?- prob(res(coin,tails),Prob),bar_r(Prob).  % what is the probability that coin lands tails?
 % expected result 0.49
 
 

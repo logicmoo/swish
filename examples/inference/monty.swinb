@@ -113,11 +113,11 @@ the third clause and rerunning the queries.
 </div>
 
 <div class="nb-cell query">
-prob_bar(win_keep,Prob).
+prob(win_keep,Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell query">
-prob_bar(win_switch,Prob).
+prob(win_switch,Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell html">

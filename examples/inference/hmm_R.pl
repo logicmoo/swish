@@ -70,7 +70,7 @@ state_diagram(digraph(G)):-
 
 ?- prob(hmm([a,c]),Prob). % what is the probability that the model emits the sequence [a,c])
 % expected result 0.01388888888888889
-?- prob_bar_r(hmm([a,c])). % what is the probability that the model emits the sequence [a,c])
+?- prob(hmm([a,c]),Prob),bar_r(Prob). % what is the probability that the model emits the sequence [a,c])
 % expected result 0.01388888888888889
 
 ?- state_diagram(G).
