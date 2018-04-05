@@ -62,19 +62,19 @@ tell:-
 % expected result 0.6666
 ?- prob(safe(c),Prob). % what is the probability that c is not executed
 % expcted result 0.3333333333333333
-?- prob_bar(safe(a),tell,Prob). % what is the probability that a is not executed after the jailer has spoken
+?- prob(safe(a),tell,Prob),bar(Prob,C). % what is the probability that a is not executed after the jailer has spoken
 % expected result 1/3, means that the jailer communication did not change the 
 % probability of a being safe
-?- prob_bar(safe(a),Prob). % what is the probability that a is not executed
+?- prob(safe(a),Prob),bar(Prob,C). % what is the probability that a is not executed
 % expcted result 0.3333333333333333
-?- prob_bar(tell_executed(b),Prob). % what is the probability that the jailer says b is going to be executed?
+?- prob(tell_executed(b),Prob),bar(Prob,C). % what is the probability that the jailer says b is going to be executed?
 % expcted result 0.5
-?- prob_bar(tell_executed(c),Prob). % what is the probability that the jailer says b is going to be executed?
+?- prob(tell_executed(c),Prob),bar(Prob,C). % what is the probability that the jailer says b is going to be executed?
 % expcted result 0.5
-?- prob_bar(safe(c),tell_executed(b),Prob). % what is the probability that c is safe
+?- prob(safe(c),tell_executed(b),Prob),bar(Prob,C). % what is the probability that c is safe
 % given that he has told b to a
 % expected result 0.6666
-?- prob_bar(safe(c),Prob). % what is the probability that c is not executed
+?- prob(safe(c),Prob),bar(Prob,C). % what is the probability that c is not executed
 % expcted result 0.3333333333333333
 
 */

@@ -22,7 +22,7 @@ What is the probability that coin lands heads represented graphically?
 </div>
 
 <div class="nb-cell query">
-prob_bar(heads(coin),Prob). 
+prob(heads(coin),Prob),bar(Prob,C). 
 </div>
 
 <div class="nb-cell markdown">
@@ -38,7 +38,7 @@ What is the probability that coin lands tails represented graphically?
 </div>
 
 <div class="nb-cell query">
-prob_bar(tails(coin),Prob). 
+prob(tails(coin),Prob),bar(Prob,C). 
 </div>
 
 <div class="nb-cell markdown">

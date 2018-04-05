@@ -51,7 +51,7 @@ What is the probability that the die lands on face 1 at time 0 represented graph
 </div>
 
 <div class="nb-cell query">
-prob_bar(on(0,1),Prob).
+prob(on(0,1),Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell markdown">
@@ -60,7 +60,7 @@ ically?
 </div>
 
 <div class="nb-cell query">
-prob_bar(on(1,1),Prob).
+prob(on(1,1),Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell markdown">
@@ -69,7 +69,7 @@ ically?
 </div>
 
 <div class="nb-cell query">
-prob_bar(on(2,1),Prob).
+prob(on(2,1),Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell markdown">
@@ -77,7 +77,7 @@ What is the probability that the die lands on face 1 at time 2 given that it lan
 </div>
 
 <div class="nb-cell query">
-prob_bar(on(2,1),on(0,1),Prob).
+prob(on(2,1),on(0,1),Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell markdown">
@@ -86,7 +86,7 @@ landed on face 1 at time 1 represented graphically?
 </div>
 
 <div class="nb-cell query">
-prob_bar(on(2,1),on(1,1),Prob).
+prob(on(2,1),on(1,1),Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell markdown">

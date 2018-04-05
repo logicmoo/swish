@@ -167,7 +167,7 @@ Samples samples.
 <div class="nb-cell program" data-background="true">
 dist(N,Samples,Chart):-
   mc_sample_arg_first(coupons(N,T),Samples,T,L),
-  density(L,10,Chart).
+  density(L,Chart,[nbins(10)]).
 </div>
 
 <div class="nb-cell markdown">

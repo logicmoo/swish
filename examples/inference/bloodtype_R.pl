@@ -94,13 +94,13 @@ mother(p_m, p).
 % expected result 0.193292577
 ?- prob(bloodtype(p,null),Prob). % what is the probability that the p's bloodtype is 0?
 %  expected result 0.1375200361199999
-?- prob_bar_r(bloodtype(p,a),Prob). % what is the probability that the p's bloodtype is a?
+?- prob(bloodtype(p,a),Prob),bar_r(Prob). % what is the probability that the p's bloodtype is a?
 % expected result 0.1957737927437685
-?- prob_bar_r(bloodtype(p,b),Prob). % what is the probability that the p's bloodtype is b?
+?- prob(bloodtype(p,b),Prob),bar_r(Prob). % what is the probability that the p's bloodtype is b?
 % expected result 0.22385005085999995
-?- prob_bar_r(bloodtype(p,ab),Prob). % what is the probability that the p's bloodtype is ab?
+?- prob(bloodtype(p,ab),Prob),bar_r(Prob). % what is the probability that the p's bloodtype is ab?
 % expected result 0.193292577
-?- prob_bar_r(bloodtype(p,null),Prob). % what is the probability that the p's bloodtype is 0?
+?- prob(bloodtype(p,null),Prob),bar_r(Prob). % what is the probability that the p's bloodtype is 0?
 %  expected result 0.1375200361199999
 */
  

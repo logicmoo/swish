@@ -49,7 +49,7 @@ set_sw(pt, norm(0.5, 0.1)).
 
 hist_uncond(Samples,NBins,Chart):-
   mc_sample_arg(widget(X),Samples,X,L0),
-  histogram(L0,NBins,Chart).
+  histogram(L0,Chart,[nbins(NBins)]).
 % What is the distribution of the feature?
 
 

@@ -32,15 +32,15 @@ toss(coin).
 % expected result 0.51
 ?- mc_prob(tails(coin),Prob).  % what is the probability that coin lands tails?
 % expected result 0.49
-?- mc_prob_bar_r(heads(coin)).  % what is the probability that coin lands heads?
+?- mc_prob(heads(coin),Prob),bar_r(Prob).  % what is the probability that coin lands heads?
 % expected result 0.51
-?- mc_prob_bar_r(tails(coin)).  % what is the probability that coin lands tails?
+?- mc_prob(tails(coin),Prob),bar_r(Prob).  % what is the probability that coin lands tails?
 % expected result 0.49
-?- mc_sample(heads(coin),1000,T,F,Prob).  
+?- mc_sample(heads(coin),1000,Prob,[successes(T),failures(F)]).  
 % take 1000 sample of heads(coin) and return the number of successes (T),
 % the number of failures (F) and the probability
 
-?- mc_sample(tails(coin),1000,T,F,Prob).  
+?- mc_sample(tails(coin),1000,Prob,[successes(T),failures(F)]).  
 % take 1000 sample of tails(coin) and return the number of successes (T),
 % the number of failures (F) and the probability
 
@@ -50,15 +50,15 @@ toss(coin).
 ?- mc_sample(tails(coin),1000,Prob).  
 % take 1000 sample of tails(coin) and return the probability
 
-?- mc_sample_bar_r(heads(coin),1000).  
+?- mc_sample(heads(coin),1000,Prob),bar_r(Prob).  
 % take 1000 sample of heads(coin) and chart the number of successes and 
 % faliures
 
-?- mc_sample_bar_r(tails(coin),1000).  
+?- mc_sample(tails(coin),1000,Prob),bar_r(Prob).  
 % take 1000 sample of tails(coin) and chart the number of successes and 
 % faliures
 
-?- mc_rejection_sample(heads(coin),biased(coin),1000,S,F,P).
+?- mc_rejection_sample(heads(coin),biased(coin),1000,P,[successes(S),failures(F)]).
 % take 1000 sample of heads(coin) given that biasdd(coin) is true
 % Use rejection sampling
 % F = 387,

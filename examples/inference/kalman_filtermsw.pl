@@ -76,7 +76,7 @@ values(obs_err,real).
 
 hist(Samples,NBins,Chart):-
   mc_sample_arg(kf_fin(1,_O1,Y),Samples,Y,L0),
-  histogram(L0,NBins,Chart).
+  histogram(L0,Chart,[nbins(NBins)]).
 % plot the density of the state at time 1 in case of no observation (prior)
 % and in case of observing 2.5.
 % Observation as in Russel and Norvig 2010, Fig 15.10

@@ -4,12 +4,14 @@ Latent Dirichlet Allocation
 See https://en.wikipedia.org/wiki/Latent_Dirichlet_allocation
 */
 
-/** <example>
+/** <examples>
+
 ?- prob_topic_1(G).
-?- mc_sample_arg_bar(word(1,1,W),100,W,G).
-?- mc_sample_arg_bar((word(1,1,W),topic(1,1,T)),100,(W,T),G).
-?- mc_sample_arg_bar(topic(1,1,T),100,T,G).
-?- mc_mh_sample_arg_bar(topic(1,1,T),(word(1,1,1),word(1,2,1)),100,2,T,G).
+?- mc_sample_arg(word(1,1,W),100,W,G),argbar(G,C).
+?- mc_sample_arg((word(1,1,W),topic(1,1,T)),100,(W,T),G),argbar(G,C).
+?- mc_sample_arg(topic(1,1,T),100,T,G),argbar(G,C).
+?- mc_mh_sample_arg(topic(1,1,T),(word(1,1,1),word(1,2,1)),100,T,G,
+  [lag(2)]),argbar(G,C).
 
 */
 :- use_module(library(mcintyre)).
@@ -32,11 +34,11 @@ topic(DocumentID,_,Topic):discrete(Topic,Dist):-
 
 word(DocumentID,WordID,Word):discrete(Word,Dist):-
   topic(DocumentID,WordID,Topic),
-  beta(Topic,Beta),
+  beta_par(Topic,Beta),
   word_list(Words),
   maplist(pair,Words,Beta,Dist).
 
-beta(_,Beta):dirichlet(Beta,Parameters):-
+beta_par(_,Beta):dirichlet(Beta,Parameters):-
   n_words(N),
   eta(Eta),
   findall(Eta,between(1,N,_),Parameters).
@@ -67,5 +69,5 @@ n_words(10).
 
 prob_topic_1(G):-
   mc_sample_arg(theta(1,[T0|_]),400,T0,L0),
-  mc_mh_sample_arg(theta(1,[T1|_]),(word(1,1,1),word(1,2,1)),400,2,T1,L1),
-  densities(L0,L1,30,G).
+  mc_mh_sample_arg(theta(1,[T1|_]),(word(1,1,1),word(1,2,1)),400,T1,L1,[lag(2)]),
+  densities(L0,L1,G,[nbins(30)]).

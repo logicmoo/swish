@@ -36,13 +36,13 @@ toss(coin2).
 % expected result 0.51
 ?- prob(tails(coin1),Prob).  % what is the probability that coin2 lands tails?
 % expected result 0.49
-?- prob_bar_r(heads(coin2)).  % what is the probability that coin1 lands heads? 
+?- prob(heads(coin2),Prob),bar_r(Prob).  % what is the probability that coin1 lands heads? 
 % expected result 0.51
-?- prob_bar_r(tails(coin2)).  % what is the probability that coin1 lands tails?
+?- prob(tails(coin2),Prob),bar_r(Prob).  % what is the probability that coin1 lands tails?
 % expected result 0.49
-?- prob_bar_r(heads(coin1)).  % what is the probability that coin2 lands heads? 
+?- prob(heads(coin1),Prob),bar_r(Prob).  % what is the probability that coin2 lands heads? 
 % expected result 0.51
-?- prob_bar_r(tails(coin1)).  % what is the probability that coin2 lands tails?
+?- prob(tails(coin1),Prob),bar_r(Prob).  % what is the probability that coin2 lands tails?
 % expected result 0.49
 
 

@@ -67,21 +67,21 @@ markov_chain(digraph(G)):-
 ?- mc_prob(reach(s1,0,s0),P).
 % expected result ~ 0.
 
-?- mc_sample(reach(s0,0,s1),1000,T,F,P).
+?- mc_sample(reach(s0,0,s1),1000,P,[successes(T),failures(F)]).
 % expected result ~ 0.5984054054054054.
 
-?- mc_sample_bar_r(reach(s0,0,s1),1000).
+?- mc_sample(reach(s0,0,s1),1000,Prob),bar_r(Prob).
 
 ?- mc_sample_arg(reach(s0,0,S),50,S,Values). 
 % take 50 samples of L in findall(S,reach(s0,0,S),L)
 
-?- mc_sample_arg_bar_r(reach(s0,0,S),50,S). 
+?- mc_sample_arg(reach(s0,0,S),50,S,O),argbar_r(O). 
 % take 50 samples of L in findall(S,reach(s0,0,S),L)
 
 ?- mc_sample_arg_first(reach(s0,0,S),50,S,Values). 
 % take 50 samples of the first value returned for S in reach(s0,0,S)
 
-?- mc_sample_arg_first_bar_r(reach(s0,0,S),50,S).
+?- mc_sample_arg_first(reach(s0,0,S),50,S,O),argbar_r(O).
 % take 50 samples of the first value returned for S in reach(s0,0,S)
 
 ?- markov_chain(G).

@@ -28,11 +28,11 @@ Original program by Joakim Nivre and Torbjorn Lager, adapted to MCINTYRE by Fabr
 ?- mc_sample_arg(hmm2(S,['I',can,can,a,can]),1000,S,O).
 % as above but for the second order model
 %
-?- mc_sample_arg_bar(hmm(S,['I',can,can,a,can]),1000,S,O).
-?- mc_sample_arg_bar(hmm2(S,['I',can,can,a,can]),1000,S,O).
-?- mc_sample_arg(hmm(S,[can, the ,can, do, the, can ,can]),10000,S,O).
+?- mc_sample_arg(hmm(S,['I',can,can,a,can]),1000,S,O),argbar(O,C).
+?- mc_sample_arg(hmm2(S,['I',can,can,a,can]),1000,S,O),argbar(O,C).
+?- mc_sample_arg(hmm(S,[can, the ,can, do, the, can ,can]),10000,S,O),argbar(O,C).
 % example by Douglas R. Miles
-?- mc_sample_arg_bar(hmm(S,[can, the ,can, do, the, can ,can]),10000,S,O).
+?- mc_sample_arg(hmm(S,[can, the ,can, do, the, can ,can]),10000,S,O),argbar(O,C).
 */
 
 :- use_module(library(mcintyre)).

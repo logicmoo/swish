@@ -67,7 +67,7 @@ choose_prop(N,NV,Alpha,P,V):-
 
 stick_proportion(_,Alpha,P):beta(P,1,Alpha).
 
-pick_portion(_,_,P):P;neg_pick_portion(_,_,P):1-P.
+pick_portion(N,NV,P):P;neg_pick_portion(N,NV,P):1-P.
 
 :- end_lpad.
 
@@ -77,7 +77,7 @@ obs([-1,7,3]).
 prior(Samples,NBins,Chart):-
   mc_sample_arg_first(dp_n_values(0,Samples,10.0,V),1,V,L),
   L=[Vs-_],
-  histogram(Vs,NBins,Chart).
+  histogram(Vs,Chart,[nbins(NBins)]).
 
 post(Samples,NBins,Chart):-
   obs(O),
@@ -87,7 +87,7 @@ post(Samples,NBins,Chart):-
   maplist(keys,L,LW),
   min_list(LW,Min),
   maplist(exp(Min),L,L1),
-  density(L1,NBins,-8,15,Chart).
+  density(L1,Chart,[nbins(NBins),min(-8),max(15)]).
 
 keys(_-W,W).
 

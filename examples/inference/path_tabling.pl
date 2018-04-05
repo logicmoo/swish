@@ -1,7 +1,7 @@
 /** <examples>
 
 ?- prob(path(a,e),Prob).
-?- prob_bar(path(a,e),Prob).
+?- prob(path(a,e),Prob),bar(Prob,C).
 ?- graph(G).
 
 */
@@ -19,6 +19,8 @@
 
 :- begin_lpad.
 path(X,X).
+
+path(X,Y):-
   path(X,Z),edge(Z,Y).
 
 edge(X,Y):-arc(X,Y).

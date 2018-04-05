@@ -83,18 +83,18 @@ choose_prop(N,NV,Alpha,P,V):-
 stick_proportion(_,Alpha,P):beta(P,1,Alpha).
 
 % flip of the coing for the portion of the stick of size P
-pick_portion(_,_,P):P;neg_pick_portion(_,_,P):1-P.
+pick_portion(N,NV,P):P;neg_pick_portion(N,NV,P):1-P.
 
 :- end_lpad.
 
 hist(Samples,NBins):-
   mc_sample_arg_raw(dp_stick_index(1,10.0,V),Samples,V,L),
   findall(Val-1,member(Val,L),LV),
-  histogram_r(LV,NBins).
+  histogram_r(LV,[nbins(NBins)]).
 
 hist_repeated_indexes(Samples,NBins):-
   repeat_sample(0,Samples,L),
-  histogram_r(L,NBins).
+  histogram_r(L,[nbins(NBins)]).
 
 repeat_sample(S,S,[]):-!.
 
@@ -107,7 +107,7 @@ repeat_sample(S0,S,[[N]-1|LS]):-
 hist_val(Samples,NBins):-
   mc_sample_arg_first(dp_n_values(0,Samples,10.0,V),1,V,L),
   L=[Vs-_],
-  histogram_r(Vs,NBins).
+  histogram_r(Vs,[nbins(NBins)]).
 
 
 
