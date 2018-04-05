@@ -69,5 +69,5 @@ n_words(10).
 
 prob_topic_1(G):-
   mc_sample_arg(theta(1,[T0|_]),400,T0,L0),
-  mc_mh_sample_arg(theta(1,[T1|_]),(word(1,1,1),word(1,2,1)),400,2,T1,L1),
-  densities(L0,L1,30,G).
+  mc_mh_sample_arg(theta(1,[T1|_]),(word(1,1,1),word(1,2,1)),400,T1,L1,[lag(2)]),
+  densities(L0,L1,G,[nbins(30)]).

@@ -32,34 +32,34 @@ mix(X) :- tails, h(X).
 
 hist_uncond(Samples,NBins):-
   mc_sample_arg(mix(X),Samples,X,L0),
-  histogram_r(L0,NBins).
+  histogram_r(L0,[nbins(NBins)]).
 % take SAmples samples of X in mix(X) and draw a histogram with NBins bins representing 
 % the probability density of X 
 
 hist_rej_heads(Samples,NBins):-
   mc_rejection_sample_arg(mix(X),heads,Samples,X,L0),
-  histogram_r(L0,NBins).
+  histogram_r(L0,[nbins(NBins)]).
 % take Samples samples of X in mix(X) given that heads was true using 
 % rejection sampling and draw an
 % histogram with NBins bins representing the probability density of X
 
 hist_mh_heads(Samples,Lag,NBins):-
-  mc_mh_sample_arg(mix(X),heads,Samples,Lag,X,L0),
-  histogram_r(L0,NBins).
+  mc_mh_sample_arg(mix(X),heads,Samples,X,L0,[lag(Lag)]),
+  histogram_r(L0,[nbins(NBins)]).
 % take Samples samples of X in mix(X) given that heads was true using 
 % Metropolis-Hastings and draw an
 % histogram with NBins bins representing the probability density of X
 
 hist_rej_dis(Samples,NBins):-
   mc_rejection_sample_arg(mix(X),(mix(Y),Y>2),Samples,X,L0),
-  histogram_r(L0,NBins).
+  histogram_r(L0,[nbins(NBins)]).
 % take Samples samples of X in mix(X) given that X>2 was true using 
 % rejection sampling and draw an
 % histogram with NBins bins representing the probability density of X
 
 hist_mh_dis(Samples,Lag,NBins):-
-  mc_mh_sample_arg(mix(X),(mix(Y),Y>2),Samples,Lag,X,L0),
-  histogram_r(L0,NBins).
+  mc_mh_sample_arg(mix(X),(mix(Y),Y>2),Samples,X,L0,[lag(Lag)]),
+  histogram_r(L0,[nbins(NBins)]).
 % take Samples samples of X in mix(X) given that X>2 was true using 
 % Metropolis-Hastings and draw an
 % histogram with NBins bins representing the probability density of X
@@ -83,7 +83,7 @@ hist_mh_dis(Samples,Lag,NBins):-
 % take 10000 samples of X in mix(X) given that heads was true using 
 % Metropolis-Hastings and draw an
 % histogram with 40 bins representing the probability density of X
-?- mc_mh_expectation(mix(X),heads,1000,2,X,E).
+?- mc_mh_expectation(mix(X),heads,1000,X,E,[lag(2)]).
 % E=-0.018433307290594284
 ?- hist_rej_dis(10000,40).
 % take 10000 samples of X in mix(X) given that X>2 was true using 
@@ -93,7 +93,7 @@ hist_mh_dis(Samples,Lag,NBins):-
 % take 10000 samples of X in mix(X) given that X>2 was true using 
 % Metropolis-Hastings and draw an
 % histogram with 40 bins representing the probability density of X
-?- mc_mh_expectation(mix(X),(mix(Y),Y>2),1000,2,X,E).
+?- mc_mh_expectation(mix(X),(mix(Y),Y>2),1000,X,E,[lag(2)]).
 
 */
  

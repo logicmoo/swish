@@ -17,30 +17,30 @@ http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=gaussian-p
 :- mc.
 :- begin_lpad.
 
-value(I,X) :-
+val(I,X) :-
   mean(M),
-  value(I,M,X).
+  val(I,M,X).
 % at time I we see X sampled from a Gaussian with mean M and variamce 2.0
 
 mean(M): gaussian(M,1.0, 5.0).
 % Gaussian distribution of the mean of the Gaussian of the variable
 
-value(_,M,X): gaussian(X,M, 2.0).
+val(_,M,X): gaussian(X,M, 2.0).
 % Gaussian distribution of the variable
 
 
 :- end_lpad.
 
 hist_uncond(Samples,NBins):-
-  mc_sample_arg(value(0,X),Samples,X,L0),
-  histogram_r(L0,NBins).
+  mc_sample_arg(val(0,X),Samples,X,L0),
+  histogram_r(L0,[nbins(NBins)]).
 % plot an histogram of the density of the random variable before any
 % observations by taking Samples samples and by dividing the domain
 % in NBins bins
 
 dens_lw(Samples):-
-  mc_sample_arg(value(0,Y),Samples,Y,L0),
-  mc_lw_sample_arg(value(0,X),(value(1,9),value(2,8)),Samples,X,L),
+  mc_sample_arg(val(0,Y),Samples,Y,L0),
+  mc_lw_sample_arg(val(0,X),(val(1,9),val(2,8)),Samples,X,L),
   densities_r(L0,L).
 % plot the densities of the random variable before and after
 % observing 9 and 8 by taking Samples samples using likelihood weighting
@@ -48,8 +48,8 @@ dens_lw(Samples):-
 % in NBins bins
 
 dens_part(Samples):-
-  mc_sample_arg(value(0,Y),Samples,Y,L0),
-  mc_particle_sample_arg(value(0,X),[value(1,9),value(2,8)],Samples,X,L),
+  mc_sample_arg(val(0,Y),Samples,Y,L0),
+  mc_particle_sample_arg(val(0,X),[val(1,9),val(2,8)],Samples,X,L),
   densities_r(L0,L).
 % plot the densities of the random variable before and after
 % observing 9 and 8 by taking Samples samples using particle filtering
@@ -57,7 +57,7 @@ dens_part(Samples):-
 % in NBins bins
 
 /** <examples>
-?- dens_lw(1000,40,G).
+?- dens_lw(1000).
 % plot the densities of the random variable before and after
 % observing 9 and 8 using likelihood weighting
 ?- dens_part(1000).
@@ -66,9 +66,9 @@ dens_part(Samples):-
 ?- hist_uncond(10000,40).
 % plot an histogram of the density of the random variable before any
 % observations
-?-  mc_lw_expectation(value(0,X),(value(1,9),value(2,8)),1000,X,E).
+?-  mc_lw_expectation(val(0,X),(val(1,9),val(2,8)),1000,X,E).
 % E = 7.166960047178755
-?- mc_expectation(value(0,X),10000,X,E).
+?- mc_expectation(val(0,X),10000,X,E).
 % E = 0.9698875384639362.
 
 */

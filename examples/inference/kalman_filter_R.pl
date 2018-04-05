@@ -97,7 +97,7 @@ obs_err(_,E):gaussian(E,0,1).
 % no observation
 hist(Samples,NBins):-
   mc_sample_arg(kf_fin(1,_O1,Y),Samples,Y,L0),
-  histogram_r(L0,NBins).
+  histogram_r(L0,[nbins(NBins)]).
 
 %! dens_lw(+S:int) is det
 % Plots the density of the state at time 1 in case of no observation (prior)

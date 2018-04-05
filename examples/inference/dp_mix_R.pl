@@ -69,7 +69,7 @@ choose_prop(N,NV,Alpha,P,V):-
 
 stick_proportion(_,Alpha,P):beta(P,1,Alpha).
 
-pick_portion(_,_,P):P;neg_pick_portion(_,_,P):1-P.
+pick_portion(N,NV,P):P;neg_pick_portion(N,NV,P):1-P.
 
 :- end_lpad.
 

@@ -63,7 +63,7 @@ student_gpa(G) :- nation(i),indian_gpa(G).
 % probability that the nation is America given that the student got 4.0
 % in his GPA
 % expected result: 1.0
-?- mc_sample(nation(a),1000,_T,_F,PPrior).
+?- mc_sample(nation(a),1000,PPrior).
 % prior probability that the nation is America 
 % expected result: 0.25
 

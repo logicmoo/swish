@@ -50,34 +50,34 @@ pt(X): gaussian(X,0.5, 1.5).
 
 hist_uncond(Samples,NBins,Chart):-
   mc_sample_arg(widget(X),Samples,X,L0),
-  histogram(L0,NBins,Chart).
+  histogram(L0,Chart,[nbins(NBins)]).
 % What is the distribution of the feature?
 
 hist_rej_macha(Samples,NBins,Chart):-
   mc_rejection_sample_arg(widget(X),machine(a),Samples,X,L0),
-  histogram(L0,NBins,Chart).
+  histogram(L0,Chart,[nbins(NBins)]).
 % What is the distribution of the feature given that the widget was procuded
 % by machine a, computed by taking Samples samples with rejection sampling and
 % drawing a histogram with NBins bins?
 
 hist_mh_macha(Samples,Lag,NBins,Chart):-
-  mc_mh_sample_arg(widget(X),machine(a),Samples,Lag,X,L0),
-  histogram(L0,NBins,Chart).
+  mc_mh_sample_arg(widget(X),machine(a),Samples,X,L0,[lag(Lag)]),
+  histogram(L0,Chart,[nbins(NBins)]).
 % What is the distribution of the feature given that the widget was procuded
 % by machine a, computed by taking Samples samples with Metropolis-Hastings
 % (lag=Lag) and drawing a histogram with NBins bins?
 
 hist_rej_dis(Samples,NBins,Chart):-
   mc_rejection_sample_arg(widget(X),(pt(Y),Y>0.2),Samples,X,L0),
-  histogram(L0,NBins,Chart).
+  histogram(L0,Chart,[nbins(NBins)]).
 % What is the distribution of the feature given that the third machine added a
 % quantity greater than 0.2, computed by taking Samples samples with rejection 
 % sampling and
 % drawing a histogram with NBins bins?
 
 hist_mh_dis(Samples,Lag,NBins,Chart):-
-  mc_mh_sample_arg(widget(X),(pt(Y),Y>0.2),Samples,Lag,X,L0),
-  histogram(L0,NBins,Chart).
+  mc_mh_sample_arg(widget(X),(pt(Y),Y>0.2),Samples,X,L0,[lag(Lag)]),
+  histogram(L0,Chart,[nbins(NBins)]).
 % What is the distribution of the feature given that the third machine added a
 % quantity greater than 0.2, computed by taking Samples samples with 
 % Metropolis-Hastings and
@@ -86,7 +86,7 @@ hist_mh_dis(Samples,Lag,NBins,Chart):-
 hist_lw(Samples,NBins,Chart):-
   mc_sample_arg(widget(Y),Samples,Y,L0),
   mc_lw_sample_arg(widget(X),pt(2.0),Samples,X,L),
-  densities(L0,L,NBins,Chart).
+  densities(L0,L,Chart,[nbins(NBins)]).
 % What is the distribution of the feature given that the third machine added
 % a quantity of 2.0, computed by taking Samples samples with likelihood weighting
 % and drawing a density with NBins bins?

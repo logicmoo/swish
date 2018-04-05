@@ -25,7 +25,7 @@ http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=gaussian-p
 :- mc.
 :- begin_lpad.
 
-value(I,X) :- 
+val(I,X) :- 
   std_dev(I,Sigma),
   mean(M),
   measurement(I,M,Sigma,X).
@@ -46,27 +46,27 @@ measurement(_,M,Sigma,X): gaussian(X,M,Sigma*Sigma).
 :- end_lpad.
 
 hist_uncond(Samples,NBins,Chart):-
-  mc_sample_arg(value(0,X),Samples,X,L0),
-  histogram(L0,NBins,Chart).
+  mc_sample_arg(val(0,X),Samples,X,L0),
+  histogram(L0,Chart,[nbins(NBins)]).
 % take Samples samples of X for index 0 (X in val(0,X) and draw a
 % histogram of the distribution with NBins bins
 
 dens_lw(Samples,NBins,Chart,E):-
-  mc_sample_arg(value(0,Y),Samples,Y,L0),
-  mc_lw_sample_arg(mean(X),(value(1,-27.020),value(2,3.570),
-  value(3,8.191),value(4,9.898),value(5,9.603),value(6,9.945),
-  value(7,10.056)),Samples,X,L),
+  mc_sample_arg(val(0,Y),Samples,Y,L0),
+  mc_lw_sample_arg(mean(X),(val(1,-27.020),val(2,3.570),
+  val(3,8.191),val(4,9.898),val(5,9.603),val(6,9.945),
+  val(7,10.056)),Samples,X,L),
   exp(L,Samples,E),
-  densities(L0,L,NBins,Chart).
+  densities(L0,L,Chart,[nbins(NBins)]).
 % take Samples samples of X for index 0 (X in val(0,X)) before and after
 % having observed the scientists' measurements and draw curves of the 
 % densities using NBins bins
 
 chart_lw_noise(Samples,Chart,E):-
   mc_lw_sample_arg((std_dev(1,Y1),std_dev(2,Y2),std_dev(3,Y3),std_dev(4,Y4),
-    std_dev(5,Y5),std_dev(6,Y6),std_dev(7,Y7)),(value(1,-27.020),value(2,3.570),
-  value(3,8.191),value(4,9.898),value(5,9.603),value(6,9.945),
-  value(7,10.056)),Samples,(Y1,Y2,Y3,Y4,Y5,Y6,Y7),L),
+    std_dev(5,Y5),std_dev(6,Y6),std_dev(7,Y7)),(val(1,-27.020),val(2,3.570),
+  val(3,8.191),val(4,9.898),val(5,9.603),val(6,9.945),
+  val(7,10.056)),Samples,(Y1,Y2,Y3,Y4,Y5,Y6,Y7),L),
   exp_noise(L,Samples,E),
   E = (E1,E2,E3,E4,E5,E6,E7),
   Chart = c3{data:_{x:x, rows:[x-e,1-E1,2-E2,3-E3,4-E4,5-E5,6-E6,7-E7],
