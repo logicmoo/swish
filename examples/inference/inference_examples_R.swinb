@@ -5,6 +5,8 @@
 
 Example programs for inference with  graphics elements produced by R.
 
+### Learning
+  - Bongard ([bongard_R.pl](example/learning/bongard_R.pl))
 ### Complex graphics
   - One-dimensional  Kalman filter
   ([kalman_filter_R.pl](example/inference/kalman_filter_R.pl), PRISM syntax
