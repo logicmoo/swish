@@ -86,5 +86,5 @@ pair(A,B,A:B).
 hist_val(Samples,NBins,Chart):-
   mc_sample_arg_first(dp_n_values(0,Samples,10.0,V,[10.0],_),1,V,L),
   L=[Vs-_],
-  histogram(Vs,Chart,[nbins(NBins)])
+  histogram(Vs,Chart,[nbins(NBins)]).
 
