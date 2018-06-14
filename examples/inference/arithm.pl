@@ -111,7 +111,7 @@ random_const(_,C):discrete(C,[0:0.1,1:0.1,2:0.1,3:0.1,4:0.1,
 % Sample using Metropolis Hastings
 % exected result
 % V = [[3]-52, [6]-20, [5]-16, [4]-12]
-?- mc_mh_sample_arg(eval(2,Y),eval(1,3),100,Y,V,
+?- mc_mh_sample_arg(eval(2,Y),eval(1,3),1000,Y,V,
   [mix(100),lag(3)]),argbar(V,C).
 
 

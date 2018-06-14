@@ -6,7 +6,7 @@ on a parameter alpha (concentration parameter): with alpha->0, a single
 value is sampled, with alpha->infinite the distribution is equal to the base
 distribution.
 In this example the base distribution is a Guassian with mean 0 and variance
-1, as in https://en.wikipedia.org/wiki/Dirichlet_process#/media/File:Dirichlet_process_draws.svg
+5, as in https://en.wikipedia.org/wiki/Dirichlet_process#/media/File:Dirichlet_process_draws.svg
 To model the process, this example uses a stick breaking process: to sample
 a value, a sample beta_1 is taken from Beta(1,alpha) and a coin with heads
 probability beta_1 is flipped. If the coin lands heads, a sample from the base
@@ -19,13 +19,13 @@ Moreover, they show the distribution of unique indexes as in
 http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=nonparametrics/dp-mixture-model
 */
 /** <examples>
-?- hist(200,20).
+?- hist(2000,20).
 % show the distribution of indexes with concentration parameter 10. 
-?- hist_val(200,20).
+?- hist_val(2000,20).
 % show the distribution of values with concentration parameter 10. Should look
 % like row 2 of https://en.wikipedia.org/wiki/Dirichlet_process#/media/File:Dirichlet_process_draws.svg
-?- hist_repeated_indexes(100,40).
-% show the distribution of unique indexes in 100 samples with concentration parameter 10. 
+?- hist_repeated_indexes(1000,100).
+% show the distribution of unique indexes in 10 samples from a DP with concentration parameter 10. 
 
 
 */
@@ -56,8 +56,8 @@ dp_value(NV,Alpha,V):-
 
 % dp_pick_value(I,V)
 % returns in V the value of index I of the base distribution 
-% (in this case N(0,1))
-dp_pick_value(_,V):gaussian(V,0,1).
+% (in this case N(0,5))
+dp_pick_value(_,V):gaussian(V,0,5).
 
 % dp_stick_index(NV,Alpha,I)
 % returns in I the index of the NVth sample from the DP

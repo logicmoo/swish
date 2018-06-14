@@ -11,9 +11,9 @@ updated. Less observations are considered with respect to http://www.robots.ox.a
 because the weights go rapidly to 0.
 */
 /** <examples>
-?- prior(200,100,G).
+?- prior(1000,100,G).
 % draw the prior density
-?- post(200,100,G).
+?- post(1000,30,G).
 % draw the posterior density
 
 */

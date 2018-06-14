@@ -11,13 +11,14 @@ updated. Less observations are considered with respect to http://www.robots.ox.a
 because the weights go rapidly to 0.
 */
 /** <examples>
-?- dens(200).
+?- dens(1000).
 % draw the prior and posterior densities
-?- prior(200).
+?- prior(1000).
 % draw the prior density
-?- post(200).
+?- post(1000).
 % draw the posterior density
-?- post_exp(200).
+?- post_exp(1000).
+
 % draw the posterior density using the exponential function.
 
 */
