@@ -72,5 +72,7 @@ dens_part(Samples,NBins,Chart):-
 % E = 7.166960047178755
 ?- mc_expectation(val(0,X),10000,X,E).
 % E = 0.9698875384639362.
-
+?-  mc_sample_arg(val(0,X),1000,X,L0,[]),histogram(L0,Chart,[]).
+% take 1000 samples of argument X of val(0,X) and draws the density of the 
+% samples using an histogram.
 */
