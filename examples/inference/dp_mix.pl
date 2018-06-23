@@ -87,7 +87,7 @@ post(Samples,NBins,Chart):-
   maplist(keys,L,LW),
   min_list(LW,Min),
   maplist(exp(Min),L,L1),
-  density(L1,Chart,[nbins(NBins),min(-8),max(15)]).
+  histogram(L1,Chart,[nbins(NBins),min(-8),max(15)]).
 
 keys(_-W,W).
 
