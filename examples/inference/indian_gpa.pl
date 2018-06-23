@@ -28,7 +28,7 @@ agpa(A): beta(A,8,2) :- is_density_A.
 % the GPA of American students follows a beta distribution if the
 % distribution is continuous
 
-american_gpa(G) : finite(G,[4.0:0.85,0.0:0.15]) :- is_discrete_A.
+american_gpa(G) : discrete(G,[4.0:0.85,0.0:0.15]) :- is_discrete_A.
 % the GPA of American students is 4.0 with probability 0.85 and 0.0 with 
 % probability 0.15 if the
 % distribution is discrete
@@ -41,14 +41,14 @@ is_density_I : 0.99; is_discrete_I:0.01.
 igpa(I): beta(I,5,5) :- is_density_I.
 % the GPA of Indian students follows a beta distribution if the
 % distribution is continuous
-indian_gpa(I): finite(I,[0.0:0.1,10.0:0.9]):-  is_discrete_I.
+indian_gpa(I): discrete(I,[0.0:0.1,10.0:0.9]):-  is_discrete_I.
 % the GPA of Indian students is 10.0 with probability 0.9 and 0.0 with
 % probability 0.1 if the
 % distribution is discrete
 indian_gpa(I) :- igpa(I0), I is I0*10.0.
 % the GPA of Indian students is obtained by rescaling the value of igpa
 % to the (0.0,4.0) interval
-nation(N) : finite(N,[a:0.25,i:0.75]).
+nation(N) : discrete(N,[a:0.25,i:0.75]).
 % the nation is America with probability 0.25 and India with probability 0.75
 student_gpa(G):- nation(a),american_gpa(G).
 % the GPA of the student is given by american_gpa if the nation is America
