@@ -78,8 +78,8 @@ term_rendering(Data, Vars, Options) -->
 %	It produces  inline   SVG
 
 render_latex(_LatexString,_Options) -->
-	{ \+ has_latex_renderer(pdflatex) }, !,
-	no_latex(pdflatex).
+	{ \+ has_latex_renderer(latex) }, !,
+	no_latex(latex).
 
 render_latex(LatexString, _Options) -->	% <svg> rendering
 	{ latex_stream(LatexString,SVG)
@@ -180,7 +180,7 @@ latex_stream(Latex, SVG) :-
   write(Stream,
 "\\documentclass{article}
 \\pagestyle{empty}
-\\usepackage{epic}
+\\usepackage{epic,eepic}
 \\usepackage{ecltree}
 \\begin{document}
 "),
