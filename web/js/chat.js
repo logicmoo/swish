@@ -45,7 +45,7 @@
 define([ "jquery", "config", "preferences", "form", "modal", "utils" ],
        function($, config, preferences, form, modal, utils) {
 
-var MIN_RECONNECT_DELAY =   1000;
+var MIN_RECONNECT_DELAY =  10000;
 var MAX_RECONNECT_DELAY = 300000;
 
 (function($) {
@@ -97,8 +97,8 @@ var MAX_RECONNECT_DELAY = 300000;
       var lead = "?";
       var ws = window.location.protocol.replace("http", "ws");
 
-      if ( data.connection && data.connection.readyState == 1 )
-	return this;			/* already connected */
+      if ( data.connection && data.connection.readyState != 3 )
+	return this;			/* already connecting, open or closing */
 
       function add_pref_param(name, pname) {
 	var value = preferences.getVal(pname);

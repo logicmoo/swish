@@ -1,18 +1,15 @@
-// list of examples, represented as a JSON list
-
 [
 { "file":"inference/inference_examples.swinb", "title":"cplint inference example programs"},
-{ "file":"inference/inference_examples_R.swinb", "title":"cplint examples with graphics in R "},
+{ "file":"inference/inference_examples_R.swinb", "title":"cplint examples with graphics in R"},
 { "file":"learning/learning_examples.swinb", "title":"SLIPCOVER learning example programs"},
 { "file":"lemur/lemur_examples.swinb", "title":"LEMUR learning example programs"},
 {"file":"aleph/aleph_examples.swinb","title":"ALEPH learning example programs"},
 { "file":"learning/exauc.swinb", "title":"AUC calculator"},
 { "file":"member.swinb", "title":"SLDNF tree drawing"},
-//{ "file":"/tutorial/tutorial.swinb", "title":"Tutorial"},
-{ "file":"examples.swinb",	  "title":"Prolog example programs" },
-"--",
-{ "file":"dict.swinb",		  "title":"Dict tutorial" },
-{ "file":"rendering.swinb",	  "title":"Render data graphically" },
-{ "file":"stats.swinb",		  "title":"Usage statistics" },
-{ "file":"jquery.swinb",	  "title":"Access the SWISH interface" }
+  "--",
+  { "file":"examples.swinb",	     "title":"Example programs" },
+  { "file":"prolog_tutorials.swinb", "title":"Prolog tutorials" },
+  { "file":"swish_tutorials.swinb",  "title":"SWISH tutorials" },
+  "--",
+  { "file":"stats.swinb",	     "title":"Usage statistics" }
 ]
