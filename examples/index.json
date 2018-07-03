@@ -7,7 +7,7 @@
 { "file":"learning/exauc.swinb", "title":"AUC calculator"},
 { "file":"member.swinb", "title":"SLDNF tree drawing"},
   "--",
-  { "file":"examples.swinb",	     "title":"Example programs" },
+  { "file":"examples.swinb",	     "title":"Prolog example programs" },
   { "file":"prolog_tutorials.swinb", "title":"Prolog tutorials" },
   { "file":"swish_tutorials.swinb",  "title":"SWISH tutorials" },
   "--",
