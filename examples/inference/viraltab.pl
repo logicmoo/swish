@@ -18,7 +18,6 @@ P = 0.192146176.
 */
 
 :- use_module(library(pita)).
-:- use_module(library(tabling)).
 
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(graphviz).
