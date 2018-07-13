@@ -84,11 +84,10 @@ render_latex(_LatexString,_Options) -->
 render_latex(LatexString, _Options) -->	% <svg> rendering
 	{ latex_stream(LatexString,SVG)
 	},
-  html(span([class(['output'])],
-     div([ class(['render-latex', 'reactive-size']),
+  html(div([ class(['render-latex', 'reactive-size', 'export-dom']),
 		       'data-render'('As tree')
 		     ],
-		     \svg(SVG, [])))).
+		     \svg(SVG, []))).
 
 %%	svg(+SVG:string, +Options:list)//
 %
