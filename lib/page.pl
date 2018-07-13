@@ -3,7 +3,8 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (c)  2014-2017, VU University Amsterdam
+    Copyright (c)  2014-2018, VU University Amsterdam
+			      CWI, Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -89,6 +90,7 @@ http:location(pldoc, swish(pldoc), [priority(100)]).
 
 :- multifile
 	swish_config:logo//1,
+	swish_config:title//1,
 	swish_config:source_alias/2,
 	swish_config:reply_page/1,
 	swish_config:li_login_button//1.
@@ -160,16 +162,7 @@ swish_reply3(_, Options) :-
 swish_reply3(_, Options) :-
 	reply_html_page(
 	    swish(main),
-	    [ title('cplint on SWISH -- Probabilistic Logic Programming'),
-	      link([ rel('shortcut icon'),
-		     href('/icons/favicon.ico')
-		   ]),
-	      link([ rel('apple-touch-icon'),
-		     href('/icons/cplint-touch-icon.png')
-		   ]),
-              meta([name('msvalidate.01'),
-                content('A9C78799EC9EDC7CE041CB7CD8E2D76E')])
-	    ],
+	    \swish_title(Options),
 	    \swish_page(Options)).
 
 params_options([], []).
@@ -429,6 +422,35 @@ collapsed_button -->
 		      span(class('icon-bar'), [])
 		    ])).
 
+
+		 /*******************************
+		 *	      BRANDING		*
+		 *******************************/
+
+%!	swish_title(+Options)// is det.
+%
+%	Emit the HTML header options dealing with the title and shortcut
+%	icons.  This can be hooked using swish_config:title//1.
+
+swish_title(Options) -->
+	swish_config:title(Options), !.
+swish_title(_Options) -->
+	html([ title('cplint on SWISH -- Probabilistic Logic Programming'),
+	      link([ rel('shortcut icon'),
+		     href('/icons/favicon.ico')
+		   ]),
+	      link([ rel('apple-touch-icon'),
+		     href('/icons/cplint-touch-icon.png')
+		   ]),
+              meta([name('msvalidate.01'),
+                content('A9C78799EC9EDC7CE041CB7CD8E2D76E')])
+	    ]).
+
+%!	swish_logos(+Options)// is det.
+%
+%	Emit the navbar branding logos at   the  top-left. Can be hooked
+%	using swish_config:swish_logos//1.
+
 swish_logos(Options) -->
 	swish_config:logo(Options), !.
 swish_logos(Options) -->
@@ -439,7 +461,8 @@ swish_logos(Options) -->
 %
 %	Hook  to  include  the  top-left    logos.   The  default  calls
 %	pengine_logo//1 and swish_logo//1.  The   implementation  should
-%	emit zero or more <a> elements.
+%	emit     zero     or      more       <a>      elements.      See
+%	`config_available/branding.pl` for an example.
 
 %!	pengine_logo(+Options)// is det.
 %!	swish_logo(+Options)// is det.
@@ -457,6 +480,10 @@ swish_logo(_Options) -->
 	},
 	html(a([href(HREF), class('swish-logo')], &(nbsp))).
 
+
+		 /*******************************
+		 *	     CONTENT		*
+		 *******************************/
 
 %%	swish_content(+Options)//
 %

@@ -59,6 +59,7 @@
 :- use_module(library(aleph)).
 :- use_module(library(sldnfdraw)).
 :- use_module(lib/plugin/http_dyn_workers, []).
+:- use_module(lib/web).
 
 
 		 /*******************************

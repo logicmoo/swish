@@ -3,7 +3,7 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2015-2017, VU University Amsterdam
+    Copyright (C): 2015-2018, VU University Amsterdam
 			      CWI Amsterdam
     All rights reserved.
 
@@ -46,10 +46,11 @@
  */
 
 define([ "jquery", "config", "tabbed", "form",
-	 "preferences", "modal", "prolog", "links",
-	 "laconic", "runner", "storage", "sha1"
+	 "preferences", "modal", "prolog", "links", "utils",
+	 "laconic", "runner", "storage", "sha1",
        ],
-       function($, config, tabbed, form, preferences, modal, prolog, links) {
+       function($, config, tabbed, form, preferences, modal, prolog, links,
+	        utils) {
 
 var cellTypes = {
   "program":  { label:"Program",  prefix:"p"   },
@@ -1917,7 +1918,69 @@ Notebook.prototype.submit = function(formsel, options) {
   });
 };
 
+/**
+  * Bind the query default button to this HTML cell.  The callback
+  * function is passed an object with a method `run(bindings)`, where
+  * `bindings` is an object holding `VarName: Value` keys.
+  */
+Notebook.prototype.bindQuery = function(a1, a2) {
+  var that = this;
+  var q;
+  var func;
+
+  if ( typeof(a1) == "function" && a2 == undefined ) {
+    q = this.cell().nextAll(".query").first();
+    func = a1;
+  } else {
+    q = this.cell(a1);
+    func = a2;
+  }
+
+  if ( q.length > 0 ) {
+    q.find(".action-run").off("click").on("click", function(ev) {
+      var query = {
+        run: function(bindings) {
+	  q.nbCell('run', {bindings:bindings});
+	}
+      };
+
+      func.call(that, query);
+      ev.preventDefault();
+      return false;
+    });
+  } else {
+    alert("No query named '"+cell+"'");
+  }
+};
+
+/**
+ * Hide the query and buttons of a named query cell
+ * @param {String} cell is the name of the query cell to hide
+ * @param {Boolean} [on] If `true` (default), hide the cell.
+ */
+Notebook.prototype.hideQuery = function(cell, on) {
+  var q = this.cell(cell);
+  if ( on == undefined )
+    on = true;
+
+  if ( q.length > 0 ) {
+    if ( on == true ) {
+      q.find(".nb-cell-buttons").hide();
+      q.find(".query").hide();
+    } else {
+      q.find(".nb-cell-buttons").show();
+      q.find(".query").show();
+    }
+  } else {
+    alert("No query named '"+cell+"'");
+  }
+}
+
 Notebook.prototype.$ = function(selector) {
   return this.cell().find(selector);
+}
+
+Notebook.prototype.loadCSS = function(url) {
+  return utils.loadCSS(url);
 }
 });
