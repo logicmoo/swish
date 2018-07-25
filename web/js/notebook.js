@@ -97,7 +97,11 @@ var cellTypes = {
 		"Move cell up":    function() { this.notebook('up'); },
 		"Move cell down":  function() { this.notebook('down'); },
 		"Insert cell":     function() { this.notebook('insertBelow'); },
-		"--":		   "Notebook actions",
+		"--":		   "Overall options",
+		"Clear all":       function() { this.notebook('clear_all'); },
+		"Play":            function() { this.notebook('run_all'); },
+		"Settings":        function() { this.notebook('settings'); },
+		"---":		   "Notebook actions",
 		"Exit fullscreen": function() { this.notebook('fullscreen',false)}
 	      }
 	    });
@@ -119,6 +123,7 @@ var cellTypes = {
 	    sep(),
 	    glyphButton("erase", "clear_all", "Clear all query output", "warning"),
 	    glyphButton("play", "run_all", "Run all queries", "primary"),
+	    glyphButton("wrench", "settings", "Settings", "default"),
 	    glyphButton("fullscreen", "fullscreen", "Full screen", "default")
 	    ));
 	elem.append(notebookMenu());
@@ -315,20 +320,85 @@ var cellTypes = {
       return this;
     },
 
+    getSettings: function() {
+      var settings = { open_fullscreen:	this.hasClass('open-fullscreen'),
+		       hide_navbar:     this.hasClass('hide-navbar')
+		     };
+
+      return settings;
+    },
+
+    settings: function() {
+      var that = this;
+      var current = this[pluginName]('getSettings');
+
+      function notebookSettingsBody() {
+	this.append($.el.form(
+          { class:"form-horizontal"
+	  },
+	  form.fields.checkboxes(
+		[ { name: "open_fullscreen",
+		    label: "open in fullscreen mode",
+		    value: current.open_fullscreen,
+		    title: "Open in fullscreen mode"
+		  }
+		], {col:3, label:"Initial view"}),
+	  form.fields.checkboxes(
+		[ { name: "hide_navbar",
+		    label: "hide navigation bar",
+		    value: current.hide_navbar,
+		    title: "Hide navigation bar"
+		  }
+		], {col:3, label:"Full screen options"}),
+	  form.fields.buttons(
+	  { label: "Apply",
+	    offset: 3,
+	    action: function(ev, values) {
+	      function update(field, cls) {
+		if ( values[field] != current[field] ) {
+		  if ( values[field] )
+		    that.addClass(cls);
+		  else
+		    that.removeClass(cls);
+		}
+	      }
+
+	      update("hide_navbar",     "hide-navbar");
+	      update("open_fullscreen", "open-fullscreen");
+
+	      that.notebook('checkModified');
+	    }
+	  })));
+      }
+
+      form.showDialog({ title: "Set options for notebook",
+                        body: notebookSettingsBody
+                      });
+    },
+
     run: function(cell) {
       cell = cell||currentCell(this);
       if ( cell )
 	cell.nbCell("run");
     },
 
-    fullscreen: function(val) {
+    /**
+     * Set the notebook in fullscreen mode.
+     * @arg {Boolean} [val] if `true` or the notebook has the class
+     * `fullscreen`, go to fullscreen mode.
+     * @arg {Boolean} [hide_navbar] if `val = true` and this parameter
+     * is true, also hide the SWISH navigation bar.
+     */
+    fullscreen: function(val, hide_navbar) {
       if ( val == undefined )		/* default: toggle */
 	val = !this.hasClass("fullscreen");
+      if ( hide_navbar == undefined )
+	hide_navbar = this.hasClass("hide-navbar");
 
       if ( val ) {
 	var chat_container = this.closest(".chat-container");
 	var node = chat_container.length == 1 ? chat_container : this;
-	$("body.swish").swish('fullscreen', node, this);
+	$("body.swish").swish('fullscreen', node, this, hide_navbar);
       } else {
 	$("body.swish").swish('exitFullscreen');
       }
@@ -550,7 +620,9 @@ var cellTypes = {
       options = options||{};
 
       if ( val == undefined ) {
-	var dom = $.el.div({class:"notebook"});
+	var classes = this[pluginName]('getClasses');
+	classes.unshift("notebook");
+	var dom = $.el.div({class: classes.join(" ")});
 
 	this.notebook('assignCellNames', false);
 	this.find(".nb-cell").each(function() {
@@ -564,15 +636,27 @@ var cellTypes = {
 	var notebook = this;
 	var content  = this.find(".nb-content");
 	var dom = $.el.div();
+	var isnew = content.children(".nb-cell").length == 0;
 
 	content.html("");
 	dom.innerHTML = val;		/* do not execute scripts */
+	var outer_div = $(dom).find("div.notebook");
 
-	if ( options.fullscreen == undefined )
-	  options.fullscreen = $(dom).find("div.notebook").hasClass("fullscreen");
-	if ( options.fullscreen ) {
+	this.removeClass("fullscreen hide-navbar");
+	if ( outer_div.hasClass("open-fullscreen") ) {
+	  options.fullscreen = true;
+	  this.addClass("open-fullscreen");
+	} else if ( outer_div.hasClass("fullscreen") ) {
+	  options.fullscreen = true;
 	  this.removeClass("fullscreen");
-	  this.notebook('fullscreen', true);
+	}
+	if ( outer_div.hasClass("hide-navbar") )
+	{ options.hide_navbar = true;
+	  this.addClass("hide-navbar");
+	}
+
+	if ( isnew && options.fullscreen ) {
+	  this.notebook('fullscreen', true, options.hide_navbar);
 	}
 
 	$(dom).find(".nb-cell").each(function() {
@@ -589,11 +673,27 @@ var cellTypes = {
     },
 
     /**
+     * @return {Array} of class names that are preserved.
+     */
+    getClasses: function() {
+      var found = this.attr("class").split(" ");
+      var classes = [];
+      var allowed = ["open-fullscreen", "hide-navbar"];
+
+      for(var i=0; i<found.length; i++) {
+	if ( allowed.indexOf(found[i]) >= 0 )
+	  classes.push(found[i]);
+      }
+
+      return classes.sort();
+    },
+
+    /**
      * Compute a state fingerprint for the entire notebook
      * @return {String} SHA1 fingerprint
      */
     changeGen: function() {
-      var list = [];
+      var list = this[pluginName]('getClasses');
       this.find(".nb-cell").each(function() {
 	var cg = $(this).nbCell('changeGen');
 	list.push(cg);
@@ -839,35 +939,38 @@ var cellTypes = {
      * (de)activate the current cell.
      */
     active: function(val) {
-      var data = this.data(pluginName);
+      return this.each(function() {
+	var elem = $(this);
+	var data = elem.data(pluginName);
 
-      if ( val ) {
-	this.addClass("active");
-	switch( data.type ) {
-	  case "program":
-	    this.find(".editor").prologEditor('makeCurrent');
-	    break;
-	  case "query":
-	    var ed = this.prevAll(".program").first().find(".editor");
-	    if ( ed.length == 1 )
-	      ed.prologEditor('makeCurrent');
-	    this.closest(".notebook")
-                .find(".nb-cell.program")
-                .not(this.nbCell("program_cells"))
-                .addClass("not-for-query");
-	    break;
+	if ( val ) {
+	  elem.addClass("active");
+	  switch( data.type ) {
+	    case "program":
+	      elem.find(".editor").prologEditor('makeCurrent');
+	      break;
+	    case "query":
+	      var ed = elem.prevAll(".program").first().find(".editor");
+	      if ( ed.length == 1 )
+		ed.prologEditor('makeCurrent');
+	      elem.closest(".notebook")
+		  .find(".nb-cell.program")
+		  .not(elem.nbCell("program_cells"))
+		  .addClass("not-for-query");
+	      break;
+	  }
+	} else if ( elem.length > 0 ) {
+	  elem.removeClass("active");
+	  switch( data.type ) {
+	    case "markdown":
+	    case "html":
+	      if ( elem.hasClass("runnable") ) {
+		elem.nbCell('run');
+	      }
+	      break;
+	  }
 	}
-      } else if ( this.length > 0 ) {
-	this.removeClass("active");
-	switch( data.type ) {
-	  case "markdown":
-	  case "html":
-	    if ( this.hasClass("runnable") ) {
-	      this.nbCell('run');
-	    }
-	    break;
-	}
-      }
+      });
     },
 
     ensure_in_view: function(where) {
@@ -1344,12 +1447,16 @@ var cellTypes = {
     htmlText = (htmlText||cellText(this)).trim();
 
     function makeEditable(ev) {
-      var cell = $(ev.target).closest(".nb-cell");
-      var text = cell.data('htmlText');
-      cell.removeData('htmlText');
-      methods.type.html.call(cell, {value:text});
-      cell.off("dblclick", makeEditable);
-      cell.off("click", links.followLink);
+      if ( !( $(ev.target).is("input") || /* allow double click inside these */
+	      $(ev.target).is("textarea")
+	    ) ) {
+	var cell = $(ev.target).closest(".nb-cell");
+	var text = cell.data('htmlText');
+	cell.removeData('htmlText');
+	methods.type.html.call(cell, {value:text});
+	cell.off("dblclick", makeEditable);
+	cell.off("click", links.followLink);
+      }
     }
 
     function runScripts() {
