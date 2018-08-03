@@ -2,7 +2,7 @@
   "--",
   { "file":"help.html",	      "title":"Help" },
   { "file":"help-cplint.html","title":"Help on cplint"},
-  { "url":"http://ds.ing.unife.it/~gcota/plptutorial/", "title":"Tutorial" },
+  { "url":"http://mcs.unife.it/~friguzzi/plptutorial/", "title":"Tutorial" },
   { "url":"http://www.swi-prolog.org/pack/list?p=cplint", "title":"Pack page on cplint"},
 
   { "file":"help-aleph.html", "title":"Help on Aleph"},
