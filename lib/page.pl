@@ -349,7 +349,7 @@ swish_page(Options) -->
 
 swish_navbar(Options) -->
 	swish_resources,
-	html(div([id('navbarhelp'),style('height:40px;margin: 10px 5px;text-align:center;line-height: 40px')],
+	html(div([id('navbarhelp'),style('height:40px;margin: 10px 5px;text-align:center')], %;line-height: 40px')],
         [span([style('color:maroon')],['cplint on ']),
         span([style('color:darkblue')],['SWI']),
         span([style('color:maroon')],['SH']),
@@ -362,7 +362,9 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([href('/help/credits.html'),target('_blank')],['Credits']),
         &(nbsp), &(nbsp),
-        a([id('dismisslink'),href('')],['Dismiss'])
+        a([id('dismisslink'),href('')],['Dismiss']),
+p([
+a([href('https://edu.swi-prolog.org/'),target('_blank')],['Online course'])])
 	/*
 	p([span([style('color:red')],['New']),': ',
 	'new api: ',
