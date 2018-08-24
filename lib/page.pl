@@ -414,7 +414,8 @@ a([href('/help/help-cplint.html#background-and-initial-lpadcpl-program'),
 			    [ li(\notifications(Options)),
 			      li(\search_box(Options)),
 			      \li_login_button(Options),
-			      li(\broadcast_bell(Options))
+			      li(\broadcast_bell(Options)),
+			      li(\updates(Options))
 			    ])
 		       ])
 		 ])).
@@ -435,6 +436,9 @@ collapsed_button -->
 		      span(class('icon-bar'), []),
 		      span(class('icon-bar'), [])
 		    ])).
+
+updates(_Options) -->
+	html([ a(id('swish-updates'), []) ]).
 
 
 		 /*******************************

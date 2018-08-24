@@ -62,6 +62,7 @@ define([ "jquery",
 	 "laconic",
 	 "login",
 	 "chatroom",
+	 "version",
 	 "d3",
 	 "c3",
 	 "svg-pan-zoom"
@@ -254,6 +255,7 @@ preferences.setInform("preserve-state", ".unloadable");
 
 	delete data.restoring;
 	elem[pluginName]('runDelayedRestore');
+	$().version('checkForUpdates');
       });
     },
 
@@ -757,6 +759,18 @@ preferences.setInform("preserve-state", ".unloadable");
 		TogetherJS(elem);
 	      });
       return this;
+    },
+
+    /**
+     * Show showUpdates
+     */
+    showUpdates: function(options) {
+      modal.show({
+        title: options.title || "Recent SWISH updates",
+	body: function() {
+	  this.version(options);
+	}
+      });
     }
   }; // methods
 
