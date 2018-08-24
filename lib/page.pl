@@ -362,9 +362,19 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([href('/help/credits.html'),target('_blank')],['Credits']),
         &(nbsp), &(nbsp),
+		a([href('https://edu.swi-prolog.org/'),target('_blank')],['Online course']),
+		&(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
-p([
-a([href('https://edu.swi-prolog.org/'),target('_blank')],['Online course'])])
+p(['Updated: ',
+a([href('/help/help-cplint.html#background-and-initial-lpadcpl-program'),
+   target('_blank')],
+  ['new annotations of input programs for parameter learning']),', ',
+  a([href('/example/learning/bongard_ind.pl')],
+  ['rule groundings']),', ',
+  a([href('/example/learning/bongard_initial.pl')],
+  ['initial values']),', ',
+  a([href('/example/learning/bongard_fixed.pl')],
+  ['fixed parameters'])])
 	/*
 	p([span([style('color:red')],['New']),': ',
 	'new api: ',

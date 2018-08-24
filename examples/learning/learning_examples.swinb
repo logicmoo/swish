@@ -22,6 +22,12 @@ This notebook gives an overview of example programs for learning with SLIPCOVER:
   learning has been manually crafted. =bongard.pl= contains the examples in 
   the models format while =bongardkeys.pl= in the keys format. 
   Structure learning takes about 2 seconds with =verbosity= = =1=.
+  [bongard_ind.pl](example/learning/bongard_ind.pl) demonstrates the possibility of learning
+  a different parameter for each rule grounding. 
+  [bongard_initial.pl](example/learning/bongard_initial.pl) shows how to set initial values
+  for the parameters.
+  [bongard_fixed.pl](example/learning/bongard_initial.pl) shows how to set some parameters as fixed.
+  See http://cplint.eu/help/help-cplint.html#background-and-initial-lpadcpl-program
   - Shop ([shop.pl](example/learning/shop.pl), parameter learning) The task is to predict the shopping behavior of people.  It is a toy problem from
   Meert, W., Struyf, J., and Blockeel, H.
 _Learning ground CP-Logic theories by leveraging Bayesian network learning
