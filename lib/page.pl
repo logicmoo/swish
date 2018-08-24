@@ -368,7 +368,7 @@ swish_navbar(Options) -->
 p(['Updated: ',
 a([href('/help/help-cplint.html#background-and-initial-lpadcpl-program'),
    target('_blank')],
-  ['new annotations of input programs for parameter learning']),', ',
+  ['new annotations of input programs for parameter learning']),': ',
   a([href('/example/learning/bongard_ind.pl')],
   ['rule groundings']),', ',
   a([href('/example/learning/bongard_initial.pl')],
