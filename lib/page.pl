@@ -366,15 +366,11 @@ swish_navbar(Options) -->
 		&(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
 p(['Updated: ',
-a([href('/help/help-cplint.html#background-and-initial-lpadcpl-program'),
-   target('_blank')],
-  ['new annotations of input programs for parameter learning']),': ',
-  a([href('/example/learning/bongard_ind.pl')],
-  ['rule groundings']),', ',
-  a([href('/example/learning/bongard_initial.pl')],
-  ['initial values']),', ',
-  a([href('/example/learning/bongard_fixed.pl')],
-  ['fixed parameters'])])
+a([href('/e/h_index.pl')],['h-index']),', ',
+a([href('/e/bitcoin_attack.pl')],
+  ['Bitcoin double spending attack']),', ',
+  a([href('/e/bitcoin_two_phase.pl')],
+  ['Bitcoin two-phase PoW'])])
 	/*
 	p([span([style('color:red')],['New']),': ',
 	'new api: ',
