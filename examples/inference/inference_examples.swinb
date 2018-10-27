@@ -622,6 +622,10 @@ is done.
     predicting product success ([figaro_product.swinb](example/figaro_product.swinb)), 
     estimating the bias of a coin ([figaro_coin.swinb](example/figaro_coin.swinb)) and 
     estimating average bias of a bag of coins ([figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)). From [A. Pfeffer, Pratical Probabilistic Programming](https://www.manning.com/books/practical-probabilistic-programming)
+  - Computation of the h-index ([h_index.pl](example/h_index.pl)). 
+    Computation of the h-index of an author given his number of papers
+    assuming that the citations per paper follow a Poisson distribution with 
+    given average.
 </div>
 
 </div>
