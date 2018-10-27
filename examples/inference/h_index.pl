@@ -40,11 +40,12 @@ compute_index([H|T],I0,I):-
 
 /** <examples> Your example queries go here, e.g.
 
-?- mc_sample_arg_first(h_index(200,10,H),1000,H,HList),argbar(HList,Bar).
+?- mc_sample_arg_first(h_index(200,10,H),1000,H,HList),density(HList,Dens,[nbins(20)]).
 compute the distribution of the h_index given that the authors wrote
 200 papers and each paper receives on average 10 citations
 ?- mc_expectation(h_index(200,10,H),1000,H,HExp).
 compute the expected value of the h_index given that the authors wrote
 200 papers and each paper receives on average 10 citations
+?- mc_sample_arg_first(citations(10,200,Cit),1000,Cit,CitList),density(CitList,Dens,[nbins(20)]).
 */
 
