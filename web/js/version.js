@@ -59,6 +59,7 @@ define([ "jquery", "config", "utils", "laconic" ],
 
 	if ( config.http.locations.versions ) {
 	  elem.append($.el.div({class:"version"},
+		  	       $.el.div({class:"v-cplint"}),
 			       $.el.div({class:"v-swish"}),
 			       $.el.div({class:"v-changelog"},
 					$.el.table()),
@@ -95,15 +96,16 @@ define([ "jquery", "config", "utils", "laconic" ],
 		else
 		  swishversion = $.el.span(data.swish.version);
 
-		elem.find(".v-swish").
+		elem.find(".v-cplint").
 		    append($.el.span($.el.a({href:"https://github.com/friguzzi/cplint"}, "cplint")," version "+
-				      data.cplint.version+"-"+data.cplint.gitversion.version+" "))
+				      data.cplint.version+"-"+data.cplint.gitversion.version+" "));
+
+		elem.find(".v-swish")
 		.append($.el.span($.el.a({class:"v-product",
-					      href:"https://swish.swi-prolog.org"},
-					     "SWISH"),
+					      href:"http://cplint.eu"},
+					     "cplint on SWISH"),
 				      " version ",
-				      swishversion))
-;
+				      swishversion));
 		elem.find(".v-prolog")
 		    .append($.el.span("Running on ",
 				      $.el.a({class:"v-product",

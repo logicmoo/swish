@@ -71,7 +71,7 @@ setup_versions :-
 	prolog_load_context(directory, Dir),
 	register_git_module(swish,
 			    [ directory(Dir),
-			      home_url('https://github.com/SWI-Prolog/swish')
+			      home_url('https://github.com/friguzzi/swish')
 			    ]),
 	pack_property(cplint,directory(CplintDir)),
 	register_git_module(cplint,[directory(CplintDir),
