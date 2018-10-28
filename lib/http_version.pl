@@ -58,11 +58,17 @@ file is not loaded by default for security reasons.
 versions(_Request) :-
     prolog_version_atom(SWIVersion),
     module_version_data(swish, SWISHVersion),
+    module_version_data(cplint,CplintGitVersion),
+    pack_property(cplint,version(CplintVersion)),
     reply_json_dict(json{ prolog:
                           json{ brand:  "SWI-Prolog",
                                 version: SWIVersion
                               },
-                          swish:SWISHVersion
+                          swish:SWISHVersion,
+			  cplint:
+			  json{ version:CplintVersion,
+			     gitversion:CplintGitVersion
+			    }
                         }).
 
 module_version_data(Module, Dict) :-

@@ -95,12 +95,15 @@ define([ "jquery", "config", "utils", "laconic" ],
 		else
 		  swishversion = $.el.span(data.swish.version);
 
-		elem.find(".v-swish")
-		    .append($.el.span($.el.a({class:"v-product",
+		elem.find(".v-swish").
+		    append($.el.span($.el.a({href:"https://github.com/friguzzi/cplint"}, "cplint")," version "+
+				      data.cplint.version+"-"+data.cplint.gitversion.version+" "))
+		.append($.el.span($.el.a({class:"v-product",
 					      href:"https://swish.swi-prolog.org"},
 					     "SWISH"),
 				      " version ",
-				      swishversion));
+				      swishversion))
+;
 		elem.find(".v-prolog")
 		    .append($.el.span("Running on ",
 				      $.el.a({class:"v-product",
