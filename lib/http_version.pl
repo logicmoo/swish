@@ -41,8 +41,8 @@
 :- use_module(library(git)).
 :- use_module(library(apply)).
 
-:- use_module(library(version)).
-:- use_module(library(markdown)).
+:- use_module(version).
+:- use_module(markdown).
 
 /** <module> Serve version details over HTTP
 
@@ -118,19 +118,14 @@ changes(Commit, Show, Changes) :-
     ->  include(is_tagged_change, ShortLog0, ShortLog)
     ;   ShortLog = ShortLog0
     ),
-    (   last_change(ShortLog, LastCommit, LastModified)
+    (   last_change(ShortLog0, LastCommit, LastModified)
     ->  (   nonvar(Commit)
         ->  length(ShortLog, Count)
         ;   Count = 0
         ),
-        Changes = json{commit:  LastCommit,
-                       date:    LastModified,
-                       changes: Count
-                      }
-    ;   last_change(ShortLog0, LastCommit, LastModified)
-    ->  Changes = json{commit:  LastCommit,
-                       date:    LastModified,
-                       changes: 0
+        Changes = json{ commit:  LastCommit,
+                        date:    LastModified,
+                        changes: Count
                       }
     ;   Changes = json{ changes: 0
                       }
@@ -200,10 +195,10 @@ format_commit_message(tagged, Message0, Message) :-
     sub_string(Message0, _, Post, 0, Msg),
     string_codes(Msg, Codes),
     wiki_file_codes_to_dom(Codes, '/', DOM),
-    phrase(swish_markdown:html(div(class('v-changelog-entry'),
-                                   [ span(class('v-changelog-tag'), Tag)
-                                   | DOM
-                                   ])),
+    phrase(wiki_html(div(class('v-changelog-entry'),
+                         [ span(class('v-changelog-tag'), Tag)
+                         | DOM
+                         ])),
            Tokens),
     with_output_to(string(Message), print_html(Tokens)).
 format_commit_message(all, Message0, Message) :-
@@ -212,8 +207,8 @@ format_commit_message(all, Message0, Message) :-
 format_commit_message(all, Message0, Message) :-
     string_codes(Message0, Codes),
     wiki_file_codes_to_dom(Codes, '/', DOM),
-    phrase(swish_markdown:html(div(class('v-changelog-entry'),
-                                   DOM)),
+    phrase(wiki_html(div(class('v-changelog-entry'),
+                         DOM)),
            Tokens),
     with_output_to(string(Message), print_html(Tokens)).
 
