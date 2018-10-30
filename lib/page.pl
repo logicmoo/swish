@@ -356,7 +356,7 @@ swish_navbar(Options) -->
         ' is a web application for probabilistic logic programming',
         ' with a Javascript-enabled browser.',
         &(nbsp), &(nbsp),
-        a([href('/help/about.html'),target('_blank')],['About']),
+        a([id('about')],['About']),
         &(nbsp), &(nbsp),
         a([href('/help/help-cplint.html'),target('_blank')],['Help']),
         &(nbsp), &(nbsp),

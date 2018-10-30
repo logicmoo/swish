@@ -189,6 +189,7 @@ preferences.setInform("preserve-state", ".unloadable");
       setupPanes();
       setupResize();
       setupUnload();
+      aboutLink();
       $("#search").search();
 
       options = options||{};
@@ -807,6 +808,10 @@ preferences.setInform("preserve-state", ".unloadable");
       $("body").append($.el.div({id:"modal"}));
       $("#modal").swishModal();
     }
+  }
+  function aboutLink() {
+var el = document.getElementById('about');
+el.addEventListener('click',function(){$(el).swishModal('showHelp', {file:'about.html'});});
   }
 
   /**
