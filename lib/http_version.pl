@@ -159,9 +159,10 @@ changelog(Request) :-
     http_parameters(Request,
                     [ commit(Since, [optional(true)]),
                       last(Count, [default(10)]),
-                      show(Show, [oneof([tagged, all]), default(tagged)])
+                      show(Show, [oneof([tagged, all]), default(tagged)]),
+		      pack(Pack, [default(swish)])
                     ]),
-    git_module_property(swish, directory(Dir)),
+    git_module_property(Pack, directory(Dir)),
     (   nonvar(Since)
     ->  atom_concat(Since, '..', Revisions),
         Options = [ revisions(Revisions) ]

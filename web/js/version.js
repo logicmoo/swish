@@ -89,16 +89,23 @@ define([ "jquery", "config", "utils", "laconic" ],
 		}
 
 		var swishversion;
+		var cplintversion;
 
 		if ( elem.hasClass("v-compact") )
+		{
 		  swishversion = $.el.a({title: "View recent changes"},
 					data.swish.version);
+		  cplintversion = $.el.a({title: "View recent changes"},
+					data.cplint.gitversion.version);
+		}
 		else
+	 	{
 		  swishversion = $.el.span(data.swish.version);
-
+		  cplintversion = $.el.span(data.cplint.gitversion.version);
+		}
 		elem.find(".v-cplint").
 		    append($.el.span($.el.a({href:"https://github.com/friguzzi/cplint"}, "cplint")," version "+
-				      data.cplint.version+"-"+data.cplint.gitversion.version+" "));
+				      data.cplint.version+"-",cplintversion," "));
 
 		elem.find(".v-swish")
 		.append($.el.span($.el.a({class:"v-product",
@@ -121,22 +128,32 @@ define([ "jquery", "config", "utils", "laconic" ],
 		      return false;
 		    }
 		  });
+		  $(cplintversion).on("click", function(ev) {
+		    if ( elem.hasClass("v-compact") ) {
+		      elem[pluginName]('versionDetails',{pack:'cplint'});
+		      ev.preventDefault();
+		      return false;
+		    }
+		  });
 		}
 	      });
       }
     },
 
-    versionDetails: function() {
+    versionDetails: function(options) {
       var body = this.closest(".modal-body");
 
       if ( body ) {
-	this.closest(".modal-content").find("h2").html("SWISH ChangeLog");
+	if ( options && options.pack )
+	  this.closest(".modal-content").find("h2").html(options.pack+" ChangeLog");
+	else
+	  this.closest(".modal-content").find("h2").html("SWISH ChangeLog");
 
 	this.detach();
 	body.empty();
 	body.append(this);
 	this.removeClass("v-compact");
-	this[pluginName]('changelog');
+	this[pluginName]('changelog',options);
       }
     },
 
@@ -154,6 +171,8 @@ define([ "jquery", "config", "utils", "laconic" ],
       } else {
 	params.last = options.last || 20;
       }
+      if ( options.pack )
+        params.pack = options.pack;
 
       this.find(".v-changelog > table").html("");
       $.get(config.http.locations.changelog,
