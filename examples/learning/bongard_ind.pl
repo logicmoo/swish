@@ -5,8 +5,8 @@ Proceedings of the Sixth International Workshop on Algorithmic
 Learning Theory, volume 997 of Lecture Notes in Artificial Intelligence,
 pages 80-94. SpringerVerlag, 1995.
 
-This example shows how to learn a different parameter for each grounding of a 
-clause.
+This example shows how to learn a different parameter for different 
+instantiotions of rules.
 
 Downloaded from
 https://dtai.cs.kuleuven.be/static/ACE/doc/
