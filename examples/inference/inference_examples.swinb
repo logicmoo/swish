@@ -632,6 +632,7 @@ is done.
   - Computing the probability of mining the next block with a two-phase 
     Proof-of-Work protocol in a Bitcoin network ([bitcoin_two_phase.pl](example/bitcoin_two_phase.pl)). From 
      Damiano Azzolini, Fabrizio Riguzzi, Evelina Lamma, Elena Bellodi, and Riccardo Zese.  Modeling bitcoin protocols with probabilistic logic programming. PLP 2018 http://ceur-ws.org/Vol-2219/paper6.pdf
+  - Truncated Dirichlet process ([truncated_dirichlet_process.pl](example/truncated_dirichlet_process.pl)) Comparison of the Dirichlet distribution with a truncated Dirichlet process.
 </div>
 
 </div>
