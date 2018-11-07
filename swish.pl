@@ -274,9 +274,7 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(library(auc)).
 :- use_module(library(matrix)).
 :- use_module(library(clpr)).
-:- multifile sandbox:safe_primitive/1.
 
-sandbox:safe_primitive(nf_r:{_}).
 
 :- multifile prolog_colour:term_colours/2.
 
