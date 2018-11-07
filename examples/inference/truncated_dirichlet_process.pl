@@ -17,6 +17,21 @@ pmass=pmass+theta[i];
 theta[K-1]=1-pmass;
 sample index from Discrete([1,...,K],theta)
 
+Or, equivalently
+
+pmass=1;
+for(i=0;i<K-1;i++)
+{
+theta_0= sample from Beta(1,alpha);
+theta[i]=theta_0*pmass;
+pmass=pmass*(1-theta_0);
+}
+theta[K-1]=pmass;
+
+See https://en.wikipedia.org/wiki/Dirichlet_process#The_stick-breaking_process
+
+sample index from Discrete([1,...,K],theta)
+
 For alpha=1, Beta(1,alpha) is the uniform distribution in [0,1]
 
 Sampling an integer from a discrete distribution over 1..K 
@@ -35,6 +50,8 @@ theta[i]=theta_0*(1-pmass);
 pmass=pmass+theta[i];
 }
 theta[K-1]=1-pmass;
+
+See https://en.wikipedia.org/wiki/Dirichlet_distribution#Marginal_beta_distributions
 
 This example compares the two sampling processes, showing 
 that they produce different distribution, even for alpha=1 
