@@ -1,9 +1,6 @@
 <div class="notebook">
 
 <div class="nb-cell html">
-<script type="text/javascript">
-$.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",function() {MathJax.Hub.Queue(["Typeset",MathJax.Hub]);});
-</script>
 <h2>Viral Marketing</h2>
 <p>
 A firm is interested in marketing a new product to its 
