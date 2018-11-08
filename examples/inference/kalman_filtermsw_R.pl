@@ -24,7 +24,6 @@ Third Edition, Prentice Hall, Figure 15.10 page 587
 PRISM syntax.
 */
 :- use_module(library(mcintyre)).
-:- use_module(library(clpr)).
 :- use_module(library(cplint_r)).
 :- mc.
 :- begin_lpad.
