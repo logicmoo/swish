@@ -33,7 +33,7 @@ replace :- \+ light.
 % expected result 0.4
 ?- prob(replace,Prob),bar(Prob,C). % what is the probability that we replace the bulb?
 % expected result 0.6
-?- prob_bar(light,Prob),bar(Prob,C).   % what is the probability that the light is on?
+?- prob(light,Prob),bar(Prob,C).   % what is the probability that the light is on?
 % expected result 0.4
 
 
