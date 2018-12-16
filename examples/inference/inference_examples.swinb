@@ -633,6 +633,8 @@ is done.
     Proof-of-Work protocol in a Bitcoin network ([bitcoin_two_phase.pl](example/bitcoin_two_phase.pl)). From 
      Damiano Azzolini, Fabrizio Riguzzi, Evelina Lamma, Elena Bellodi, and Riccardo Zese.  Modeling bitcoin protocols with probabilistic logic programming. PLP 2018 http://ceur-ws.org/Vol-2219/paper6.pdf
   - Truncated Dirichlet process ([truncated_dirichlet_process.pl](example/truncated_dirichlet_process.pl)) Comparison of the Dirichlet distribution with a truncated Dirichlet process.
+  - Fair coin from a biased coin ([von_neumann_trick.swinb](example/von_neumann_trick.swinb)) If you have a biased coin, obtain a fair coin using the von Neumann trick.
+  - Red and Blue Hats Puzzle ([hats.swinb](example/hats.swinb)) From Aaronson, Scott. Quantum Computing Since Democritus. Cambridge university press, 2013
 </div>
 
 </div>
