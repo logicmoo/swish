@@ -6,7 +6,7 @@
 %       c. induce_tree.
 
 /** <examples>
-?- induce_tree.
+?- induce_tree(T).
 */
 
 :-use_module(library(aleph)).
@@ -17,22 +17,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % specify tree type
 
-:- set(tree_type,classification).
-:- set(classes,[mammal,nmammal]).
-:- set(minpos,2).       % minimum examples in leaf for splitting
-:- set(prune_tree,true).
-:- set(confidence,0.25).% pruning conf parameter used by C4.5
-:- set(evalfn,entropy).
-:- set(dependent,2).	% second argument of class/2 is the one to predict
+:- aleph_set(tree_type,classification).
+:- aleph_set(classes,[mammal,nmammal]).
+:- aleph_set(minpos,2).       % minimum examples in leaf for splitting
+:- aleph_set(prune_tree,true).
+:- aleph_set(confidence,0.25).% pruning conf parameter used by C4.5
+:- aleph_set(evalfn,entropy).
+:- aleph_set(dependent,2).	% second argument of class/2 is the one to predict
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mode declarations
+:- aleph_set(lookahead,2).	% to allow lookahead to lteq/2
 
 :- modeh(1,class(+animal,-class)).
 :- modeb(1,has_gills(+animal)).
 :- modeb(1,has_covering(+animal,#covering)).
-:- modeb(1,has_legs(+animal,#nat)).
+:- modeb(1,has_legs(+animal,#integer)).
 :- modeb(1,homeothermic(+animal)).
 :- modeb(1,has_eggs(+animal)).
 :- modeb(1,not(has_gills(+animal))).

@@ -23,8 +23,7 @@
 :- modeb(*,mother(+person,-person)).
 :- modeb(*,father(+person,-person)).
 :- modeb(*,parent(+person,-person)).
-:- set(verbosity,0).
-:- set(abduce,true).
+:- aleph_set(abduce,true).
 :- abducible(parent/2).
 
 :- determination(grandparent/2,father/2).
@@ -71,9 +70,9 @@ mother(mum(X),X):-
 	person(X).
 
 
-% The correct rule for grandparent/2. This will 
+% The correct rule for grandparent/2. This will
 % not work because Aleph is missing the definition for
-% parent/2 (see below). 
+% parent/2 (see below).
 grandparent(X,Z):-
 	person(X),
 	person(Y),
