@@ -4,14 +4,9 @@
 % (optionally in the file specified by goodfile)
 
 /** <examples>
-?- sat(1),reduce,show(good).
+?- sat(1),reduce,show(good),good_clauses(C).
 */
 
-
-
-/** <examples>
-?- reduce_and_show(good).
-*/
 :-use_module(library(aleph)).
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(prolog).
