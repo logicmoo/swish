@@ -1,34 +1,37 @@
-% Simple illustration of positive-only learning within Aleph
+% Simple illustration of interactive construction of tree-based models
+% within Aleph
 % To run do the following:
 %       a. Load Aleph
 %       b. read_all(animals).
-%       c. sat(1).
-%       d. reduce.
-%	or
-%       a. Load Aleph
-%       b. read_all(animals).
-%       c. induce.
+%       c. induce_tree.
 
 /** <examples>
-?- induce(Program).
+?- induce_tree(T).
+% try with this input
+1.
 */
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% specify tree type
 
-:-use_module(library(aleph)).
+:- use_module(library(aleph)).
+:- aleph.
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(prolog).
 :- endif.
-:- aleph.
-:- set_random(seed(111)).
-:- aleph_set(evalfn,posonly).
-:- aleph_set(clauselength,2).
-:- aleph_set(gsamplesize,20).
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% class/2 learns the class (mammal/fish/reptile/bird) of various animals.
+
+:- aleph_set(tree_type,classification).
+:- aleph_set(classes,[mammal,nmammal]).
+:- aleph_set(minpos,2).       % minimum examples in leaf for splitting
+:- aleph_set(prune_tree,true).
+:- aleph_set(confidence,0.25).% pruning conf parameter used by C4.5
+:- aleph_set(evalfn,entropy).
+:- aleph_set(dependent,2).	% second argument of class/2 is the one to predict
+:- aleph_set(interactive,true).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Mode declarations
 
-:- modeh(1,class(+animal,#class)).
+:- modeh(1,class(+animal,-class)).
 :- modeb(1,has_gills(+animal)).
 :- modeb(1,has_covering(+animal,#covering)).
 :- modeb(1,has_legs(+animal,#nat)).
@@ -48,10 +51,9 @@
 :-determination(class/2,habitat/2).
 :-determination(class/2,has_milk/1).
 
-:-begin_bg.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Types
-
+:-begin_bg.
 animal(dog).  animal(dolphin).  animal(platypus).  animal(bat).
 animal(trout).  animal(herring).  animal(shark). animal(eel).
 animal(lizard).  animal(crocodile).  animal(t_rex).  animal(turtle).
@@ -161,36 +163,34 @@ has_gills(shark).
 has_gills(eel).
 
 nhas_gills(X) :- animal(X), not(has_gills(X)).
-dynamic aleph_false/0.
-aleph_false:-class(X,Y),class(X,Z),Y\=Z.
-
 :-end_bg.
+
 :-begin_in_pos.
-class(eagle,bird).
+
 class(bat,mammal).
 class(dog,mammal).
 class(bat,mammal).
-class(eagle,bird).
-class(ostrich,bird).
-class(shark,fish).
-class(crocodile,reptile).
 class(bat,mammal).
-class(shark,fish).
-class(penguin,bird).
-class(shark,fish).
-class(crocodile,reptile).
-class(crocodile,reptile).
-class(shark,fish).
 class(dog,mammal).
-class(snake,reptile).
 class(platypus,mammal).
-class(t_rex,reptile).
-class(crocodile,reptile).
+
+
+class(eagle,nmammal).
+class(eagle,nmammal).
+class(ostrich,nmammal).
+class(shark,nmammal).
+class(crocodile,nmammal).
+class(shark,nmammal).
+class(penguin,nmammal).
+class(shark,nmammal).
+class(crocodile,nmammal).
+class(crocodile,nmammal).
+class(shark,nmammal).
+class(snake,nmammal).
+class(t_rex,nmammal).
+class(crocodile,nmammal).
+
 :-end_in_pos.
-
-:-begin_in_neg.
-
-:-end_in_neg.
 
 
 

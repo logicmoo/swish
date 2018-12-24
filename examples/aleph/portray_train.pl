@@ -1,21 +1,23 @@
-% Simple illustration of the use of user-defined refinement operators
-%       in Aleph using Michalski's trains problem.
+% Simple illustration of pretty-printing clauses in Aleph
+%       using Michalski's trains problem.
 % To run do the following:
 %       a. Load Aleph
 %       b. read_all(train).
 %       c. sat(1).
 %       d. reduce.
 /** <examples>
-?- sat(1),reduce(C).
+?- sat(1),reduce(A).
 */
 :- use_module(library(aleph)).
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(prolog).
 :- endif.
 :- aleph.
+
+
+:-style_check(-discontiguous).
 :- aleph_set(i,2).
-:- aleph_set(verbose,1).
-:- aleph_set(refine,user).
+:- aleph_set(clauselength,4).
 
 :- modeh(1,eastbound(+train)).
 :- modeb(1,short(+car)).
@@ -40,7 +42,6 @@
 :- determination(eastbound/1,has_car/2).
 :- determination(eastbound/1,load/3).
 
-:-begin_bg.
 % type definitions
 car(car_11).  car(car_12).  car(car_13).  car(car_14).
 car(car_21).  car(car_22).  car(car_23).
@@ -58,7 +59,7 @@ shape(triangle). shape(circle). shape(nil).
 
 train(east1).  train(east2).  train(east3).  train(east4).  train(east5).
 train(west6).  train(west7).  train(west8).  train(west9).  train(west10).
-
+:-begin_bg.
 % eastbound train 1
 short(car_12).		% 0
 closed(car_12).		% 1
@@ -66,6 +67,10 @@ long(car_11).		% 2
 long(car_13).
 short(car_14).
 open_car(car_11).		% 3
+% infront(east1,car_11).
+% infront(car_11,car_12).
+% infront(car_12,car_13).
+% infront(car_13,car_14).
 open_car(car_13).
 open_car(car_14).
 shape(car_11,rectangle). % 4,5
@@ -89,6 +94,9 @@ has_car(east1,car_14).
 has_car(east2,car_21).
 has_car(east2,car_22).
 has_car(east2,car_23).
+% infront(east2,car_21).
+% infront(car_21,car_22).
+% infront(car_22,car_23).
 short(car_21).
 short(car_22).
 short(car_23).
@@ -109,6 +117,9 @@ wheels(car_23,2).
 has_car(east3,car_31).
 has_car(east3,car_32).
 has_car(east3,car_33).
+% infront(east3,car_31).
+% infront(car_31,car_32).
+% infront(car_32,car_33).
 short(car_31).
 short(car_32).
 long(car_33).
@@ -130,6 +141,10 @@ has_car(east4,car_41).
 has_car(east4,car_42).
 has_car(east4,car_43).
 has_car(east4,car_44).
+% infront(east4,car_41).
+% infront(car_41,car_42).
+% infront(car_42,car_43).
+% infront(car_43,car_44).
 short(car_41).
 short(car_42).
 short(car_43).
@@ -156,6 +171,9 @@ wheels(car_44,2).
 has_car(east5,car_51).
 has_car(east5,car_52).
 has_car(east5,car_53).
+% infront(east5,car_51).
+% infront(car_51,car_52).
+% infront(car_52,car_53).
 short(car_51).
 short(car_52).
 short(car_53).
@@ -176,6 +194,8 @@ wheels(car_53,2).
 % westbound train 6
 has_car(west6,car_61).
 has_car(west6,car_62).
+% infront(west6,car_61).
+% infront(car_61,car_62).
 long(car_61).
 short(car_62).
 shape(car_61,rectangle).
@@ -191,6 +211,9 @@ wheels(car_62,2).
 has_car(west7,car_71).
 has_car(west7,car_72).
 has_car(west7,car_73).
+% infront(west7,car_71).
+% infront(car_71,car_72).
+% infront(car_72,car_73).
 short(car_71).
 short(car_72).
 long(car_73).
@@ -211,6 +234,8 @@ wheels(car_73,2).
 % westbound train 8
 has_car(west8,car_81).
 has_car(west8,car_82).
+% infront(west8,car_81).
+% infront(car_81,car_82).
 long(car_81).
 short(car_82).
 shape(car_81,rectangle).
@@ -227,6 +252,10 @@ has_car(west9,car_91).
 has_car(west9,car_92).
 has_car(west9,car_93).
 has_car(west9,car_94).
+% infront(west9,car_91).
+% infront(car_91,car_92).
+% infront(car_92,car_93).
+% infront(car_93,car_94).
 short(car_91).
 long(car_92).
 short(car_93).
@@ -251,6 +280,8 @@ wheels(car_94,2).
 % westbound train 10
 has_car(west10,car_101).
 has_car(west10,car_102).
+% infront(west10,car_101).
+% infront(car_101,car_102).
 short(car_101).
 long(car_102).
 shape(car_101,u_shaped).
@@ -262,15 +293,58 @@ load(car_102,rectangle,2).
 wheels(car_101,2).
 wheels(car_102,2).
 
+:- aleph_set(portray_literals,true).
 
-refine(aleph_false,eastbound(_)).
-refine(eastbound(X),(eastbound(X):-has_car(X,_))).
-refine(eastbound(X),(eastbound(X):-has_car(X,Y),short(Y))).
-refine((eastbound(X):-has_car(X,Y),short(Y)),Clause):-
-	Clause = (eastbound(X):-has_car(X,Y),short(Y),closed(Y)).
+aleph_portray(eastbound(A)):-
+	write('Train '), format("~q",[A]),
+	write(' is eastbound').
+
+aleph_portray(has_car(A,B)):-
+	write('train '), format("~q",[A]),
+	write(' has a car '), format("~q",[B]).
+
+aleph_portray(short(B)):-
+	write('car '), format("~q",[B]),
+	write(' is short').
+
+aleph_portray(closed(B)):-
+	write('car '), format("~q",[B]),
+	write(' is closed').
+
+aleph_portray(long(B)):-
+	write('car '), format("~q",[B]),
+	write(' is long').
+
+aleph_portray(open_car(B)):-
+	write('car '), format("~q",[B]),
+	write(' is open').
+
+aleph_portray(double(B)):-
+	write('car '), format("~q",[B]),
+	write(' is double-walled').
+
+aleph_portray(jagged(B)):-
+	write('car '), format("~q",[B]),
+	write(' has a jagged roof').
+
+aleph_portray(shape(B,C)):-
+	write('car '), format("~q",[B]),
+	write(' is '), format("~q",[C]), write('-shaped').
+
+aleph_portray(wheels(B,C)):-
+	write('car '), format("~q",[B]),
+	write(' has '), format("~q",[C]),
+	write(' wheels').
+
+aleph_portray(load(B,C,D)):-
+	write('car '), format("~q",[B]),
+	write(' has '), write(D),
+	write(' '), format("~q",[C]), write('-shaped load(s)').
+
+
 :-end_bg.
-
 :-begin_in_pos.
+
 eastbound(east1).
 eastbound(east2).
 eastbound(east3).
@@ -278,10 +352,12 @@ eastbound(east4).
 eastbound(east5).
 :-end_in_pos.
 :-begin_in_neg.
+
 eastbound(west6).
 eastbound(west7).
 eastbound(west8).
 eastbound(west9).
 eastbound(west10).
+
 :-end_in_neg.
 
