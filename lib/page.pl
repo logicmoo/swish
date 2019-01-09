@@ -358,7 +358,7 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([id('about')],['About']),
         &(nbsp), &(nbsp),
-        a([href('/help/help-cplint.html'),target('_blank')],['Help']),
+        a([href('http://friguzzi.github.io/cplint/doc/help-cplint.html'),target('_blank')],['Help']),
         &(nbsp), &(nbsp),
         a([href('/help/credits.html'),target('_blank')],['Credits']),
         &(nbsp), &(nbsp),
