@@ -366,6 +366,7 @@ swish_navbar(Options) -->
 		&(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
 p(['Updated: ',
+a([href('http://ml.unife.it/plp-book/'),target('_blank')],["book"]),', ',
 a([href('/e/aleph_examples.swinb')],["new Aleph examples"]),', ',
 a([href('/e/von_neumann_trick.swinb')],["von Neumann's trick"]),', ',
 a([href('/e/hats.swinb')],['red and blue hats puzzle']),', ',
