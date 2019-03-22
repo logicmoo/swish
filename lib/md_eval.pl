@@ -34,17 +34,27 @@
 */
 
 :- module(md_eval,
-          [ html/1                              % +Spec
+          [ swish_provides/1            % ?Term
           ]).
-
 :- use_module(library(modules)).
 :- use_module(library(apply)).
 :- use_module(library(lists)).
 :- use_module(library(debug)).
+:- use_module(library(option)).
 :- use_module(library(occurs)).
 :- use_module(library(settings)).
+:- use_module(library(error)).
 :- use_module(library(pldoc/doc_wiki)).
-:- use_module(library(http/html_write)).
+:- use_module(library(dcg/basics)).
+:- use_module(library(time)).
+
+:- use_module(config).
+
+:- multifile
+    provides/1.                                 % ?Term
+
+:- setting(time_limit, number, 10,
+           "Timit limit for evaluating a ```{eval} cell").
 
 /** <module> Provide evaluable markdown
 
@@ -103,8 +113,11 @@ md_eval(_, _, DOM, DOM, I, I) :-
     call_collect_messages(0, -).
 
 eval(Module, I, Code, div(class(eval), Evaluated), Options) :-
+    option(time_limit(Limit), Options, 10),
     catch(( call_collect_messages(
-                do_eval(Module, I, Code, Evaluated0, Options),
+                call_with_time_limit(
+                    Limit,
+                    do_eval(Module, I, Code, Evaluated0, Options)),
                 Messages),
             append(Evaluated0, Messages, Evaluated)
           ),
@@ -123,14 +136,50 @@ do_eval(Module, I, Code, [div(class(output), DOM)], _Options) :-
                          sandboxed(true)
                        ]),
             close(In))),
+    eval_to_dom(Codes, DOM).
+
+eval_to_dom(Codes, DOM) :-
+    phrase(is_html, Codes),
+    E = error(_,_),
+    catch(setup_call_cleanup(
+              open_string(Codes, In),
+              load_html(In, DOM, []),
+              close(In)),
+          E, fail),
+    !.
+eval_to_dom(Codes, DOM) :-
     wiki_codes_to_dom(Codes, [], DOM).
+
+is_html -->
+    blanks, "<", tag(Tag),
+    string(_),
+    "</", tag(Tag), ">", blanks.
+
+tag([H|T]) -->
+    alpha(H),
+    alphas(T).
+
+alpha(H) -->
+    [H],
+    { between(0'a, 0'z, H) }.
+
+alphas([H|T]) -->
+    alpha(H),
+    !,
+    alphas(T).
+alphas([]) -->
+    [].
 
 contains_eval(DOM) :-
     sub_term(Pre, DOM),
+    nonvar(Pre),
     pre(Pre, eval, _),
     !.
 
 pre(pre(Attrs, Text), Ext, Text) :-
+    atomic(Text),
+    is_list(Attrs),
+    ground(Attrs),
     memberchk(ext(Ext), Attrs).
 
 :- thread_local
@@ -151,7 +200,7 @@ save_message(_Term, Kind, Lines) :-
     with_output_to(
         string(Msg),
         print_message_lines(current_output, Prefix, Lines)),
-    assertz(saved_message(div(class(Kind), Msg))).
+    assertz(saved_message(pre(class([eval,Kind]), Msg))).
 
 kind_prefix(error,   '% ERROR: ').
 kind_prefix(warning, '% Warning: ').
@@ -162,24 +211,57 @@ collect_messages(Ref, Messages) :-
 
 
 		 /*******************************
-		 *         OTHER OUTPUTS	*
+		 *           CONDITIONS		*
 		 *******************************/
 
-%!  html(+Spec) is det.
+%!  swish_provides(?Term) is nondet.
 %
-%   Include HTML into the output.
+%   True when Term describes a  provided   feature  of the current SWISH
+%   instances.  Provided Term values are:
+%
+%     - plugin(Name)
+%       True when Name is the name of a loaded plugin
+%
+%   In addition, plugins may provide additional terms by adding facts to
+%   swish_config:config(provides, Term).
 
-html(Spec) :-
-    phrase(html(html(Spec)), Tokens),
-    with_output_to(
-        string(HTML),
-        print_html(current_output, Tokens)),
-    format('~w', [HTML]).
+swish_provides(plugin(Plugin)) :-
+    swish_has_plugin(Plugin).
+swish_provides(Term) :-
+    provides(Term).
 
-:- multifile sandbox:safe_primitive/1.
 
-sandbox:safe_primitive(md_eval:html(Spec)) :-
-    \+ sub_term(\(_), Spec).
+%!  swish_has_plugin(+Name) is nondet.
+%
+%   True when Name is the name of a loaded plugin.  This predicate is
+%   intended for dynamic markdown pages.
+
+swish_has_plugin(Name) :-
+    var(Name), !,
+    distinct(Dir,
+             absolute_file_name(
+                 config_enabled(.),
+                 Dir,
+                 [ solutions(all),
+                   file_type(directory)
+                 ])),
+    directory_files(Dir, Files),
+    member(File, Files),
+    directory_file_path(Dir, File, Source),
+    source_file(Source),
+    file_name_extension(Name, _, File).
+swish_has_plugin(Name) :-
+    must_be(atom, Name),
+    absolute_file_name(
+        config_enabled(Name),
+        File,
+        [ solutions(all),
+          file_type(prolog)
+        ]),
+    source_file(File),
+    !.
+
+sandbox:safe_primitive(md_eval:swish_provides(_)).
 
 
 		 /*******************************
@@ -190,4 +272,6 @@ sandbox:safe_primitive(md_eval:html(Spec)) :-
     swish_markdown:dom_expansion/2.
 
 swish_markdown:dom_expansion(DOM0, DOM) :-
-    eval_dom(DOM0, DOM, []).
+    setting(time_limit, Limit),
+    Limit > 0,
+    eval_dom(DOM0, DOM, [time_limit(Limit)]).

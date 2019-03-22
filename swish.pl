@@ -59,7 +59,11 @@
 :- use_module(lib/tutorial).
 :- use_module(library(aleph)).
 :- use_module(library(sldnfdraw)).
+:- if(exists_source(library(http/http_dyn_workers))).
+:- use_module(library(http/http_dyn_workers)).
+:- else.
 :- use_module(lib/plugin/http_dyn_workers, []).
+:- endif.
 :- use_module(lib/web).
 :- use_module(lib/version).
 
@@ -232,6 +236,8 @@ swish_config:config(default_query,	'').
 :- use_module(swish:lib/attvar).
 :- use_module(swish:lib/jquery).
 :- use_module(swish:lib/dashboard).
+:- use_module(swish:lib/md_eval).
+:- use_module(swish:lib/html_output).
 :- use_module(swish:lib/swish_debug).
 :- use_module(swish:library(pengines_io)).
 :- use_module(swish:library(solution_sequences)).
@@ -250,6 +256,9 @@ pengines:prepare_module(Module, swish, _Options) :-
 
 :- use_module(library(clpfd), []).
 :- use_module(library(clpb), []).
+:- if(exists_source(library(dcg/high_order))).
+:- use_module(library(dcg/high_order), []).
+:- endif.
 :- use_module(lib/swish_chr, []).
 
 % load rendering modules
