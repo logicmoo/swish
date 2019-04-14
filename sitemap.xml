@@ -7,394 +7,306 @@
 <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
 
 <url>
-  <loc>http://cplint.lamping.unife.it/</loc>
+  <loc>http://cplint.eu/</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/index.html</loc>
+  <loc>http://cplint.eu/index.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/help/about.html</loc>
+  <loc>http://cplint.eu/help/about.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/help/help-cplint.html</loc>
+  <loc>http://cplint.eu/help/help-cplint.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/help/help.html</loc>
+  <loc>http://cplint.eu/help/help.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/help/runner.html</loc>
+  <loc>http://cplint.eu/help/runner.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/help/beware.html</loc>
+  <loc>http://cplint.eu/help/beware.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/help/background.html</loc>
+  <loc>http://cplint.eu/help/background.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/help/caveats.html</loc>
+  <loc>http://cplint.eu/help/caveats.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/help/query.html</loc>
+  <loc>http://cplint.eu/help/query.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/inference_examples.swinb</loc>
+  <loc>http://cplint.eu/example/inference/inference_examples.swinb</loc>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/coin.cpl</loc>
+  <loc>http://cplint.eu/example/inference/coin.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/coin.pl</loc>
+  <loc>http://cplint.eu/example/inference/coinmc.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/coinmc.pl</loc>
+  <loc>http://cplint.eu/example/inference/dice.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/dice.cpl</loc>
+  <loc>http://cplint.eu/example/inference/epidemic.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/dice.pl</loc>
+  <loc>http://cplint.eu/example/inference/earthquake.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/epidemic.cpl</loc>
+  <loc>http://cplint.eu/example/inference/sneezing.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/epidemic.pl</loc>
+  <loc>http://cplint.eu/example/inference/eruption.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/earthquake.cpl</loc>
+  <loc>http://cplint.eu/example/inference/mendel.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/earthquake.pl</loc>
+  <loc>http://cplint.eu/example/inference/bloodtype.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/sneezing.cpl</loc>
+  <loc>http://cplint.eu/example/inference/path.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/sneezing.pl</loc>
+  <loc>http://cplint.eu/example/inference/alarm.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/eruption.cpl</loc>
+  <loc>http://cplint.eu/example/inference/hmm.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/eruption.pl</loc>
+  <loc>http://cplint.eu/example/inference/pcfg.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/mendel.cpl</loc>
+  <loc>http://cplint.eu/example/inference/uwcse.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/mendel.pl</loc>
+  <loc>http://cplint.eu/example/inference/cora.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/bloodtype.cpl</loc>
+  <loc>http://cplint.eu/example/inference/monty.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/bloodtype.pl</loc>
+  <loc>http://cplint.eu/example/inference/jail.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/path.cpl</loc>
+  <loc>http://cplint.eu/example/inference/trigger.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/path.pl</loc>
+  <loc>http://cplint.eu/example/inference/light.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/alarm.cpl</loc>
+  <loc>http://cplint.eu/example/inference/coin2.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/alarm.pl</loc>
+  <loc>http://cplint.eu/example/inference/threesideddice.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/hmm.cpl</loc>
+  <loc>http://cplint.eu/example/inference/mendelc.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/hmm.pl</loc>
+  <loc>http://cplint.eu/example/inference/meta.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/pcfg.cpl</loc>
+  <loc>http://cplint.eu/example/inference/metacomb.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/pcfg.pl</loc>
+  <loc>http://cplint.eu/example/inference/flexprob.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/uwcse.cpl</loc>
+  <loc>http://cplint.eu/example/inference/persons.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/uwcse.pl</loc>
+  <loc>http://cplint.eu/example/inference/pcfglrdb.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/cora.cpl</loc>
+  <loc>http://cplint.eu/example/inference/pcfglr.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/cora.pl</loc>
+  <loc>http://cplint.eu/example/inference/markov_chaindb.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/monty.cpl</loc>
+  <loc>http://cplint.eu/example/inference/markov_chain.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/monty.pl</loc>
+  <loc>http://cplint.eu/example/inference/prefix.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/jail.cpl</loc>
+  <loc>http://cplint.eu/example/inference/testdb.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/jail.pl</loc>
+  <loc>http://cplint.eu/example/inference/var_objdb.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/trigger.cpl</loc>
+  <loc>http://cplint.eu/example/inference/var_obj.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/trigger.pl</loc>
+  <loc>http://cplint.eu/example/inference/plcg.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/light.cpl</loc>
+  <loc>http://cplint.eu/example/inference/pre_plcg.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/light.pl</loc>
+  <loc>http://cplint.eu/example/inference/pctl_slep.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/coin2.cpl</loc>
+  <loc>http://cplint.eu/example/inference/gpl.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/coin2.pl</loc>
+  <loc>http://cplint.eu/example/inference/rmc.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/threesideddice.cpl</loc>
+  <loc>http://cplint.eu/example/inference/hmmpos.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/threesideddice.pl</loc>
+  <loc>http://cplint.eu/example/inference/hmmpos2.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/mendelc.cpl</loc>
+  <loc>http://cplint.eu/example/inference/arithm.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/mendelc.pl</loc>
+  <loc>http://cplint.eu/example/learning/learning_examples.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/meta.cpl</loc>
+  <loc>http://cplint.eu/example/learning/mach.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/meta.pl</loc>
+  <loc>http://cplint.eu/example/learning/registration.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/metacomb.pl</loc>
+  <loc>http://cplint.eu/example/learning/bongard.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/flexprob.pl</loc>
+  <loc>http://cplint.eu/example/learning/bongardkeys.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/persons.pl</loc>
+  <loc>http://cplint.eu/example/learning/shop.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/pcfglrdb.pl</loc>
+  <loc>http://cplint.eu/example/learning/hmmlearn.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/pcfglr.pl</loc>
+  <loc>http://cplint.eu/example/learning/muta.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/markov_chaindb.pl</loc>
+  <loc>http://cplint.eu/example/learning/university.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/markov_chain.pl</loc>
+  <loc>http://cplint.eu/example/learning/exauc.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/prefix.pl</loc>
+  <loc>http://cplint.eu/tutorial/tutorial.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/testdb.pl</loc>
+  <loc>http://cplint.eu/tutorial/lpad.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/var_objdb.pl</loc>
+  <loc>http://cplint.eu/tutorial/inference/coin.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/var_obj.pl</loc>
+  <loc>http://cplint.eu/tutorial/inference/dice.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/plcg.pl</loc>
+  <loc>http://cplint.eu/tutorial/inference/epidemic.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/pre_plcg.pl</loc>
+  <loc>http://cplint.eu/tutorial/inference/earthquake.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/pctl_slep.pl</loc>
+  <loc>http://cplint.eu/tutorial/inference/coinmc.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/gpl.pl</loc>
+  <loc>http://cplint.eu/tutorial/inference/markov_chain.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/rmc.pl</loc>
+  <loc>http://cplint.eu/tutorial/inference/pctl_slep.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/hmmpos.pl</loc>
+  <loc>http://cplint.eu/tutorial/inference/artihm.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/hmmpos2.pl</loc>
+  <loc>http://cplint.eu/tutorial/learning/mach.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/inference/arithm.pl</loc>
+  <loc>http://cplint.eu/tutorial/learning/registration.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>http://cplint.lamping.unife.it/example/learning/learning_examples.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/example/learning/mach.pl</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/example/learning/registration.pl</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/example/learning/bongard.pl</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/example/learning/bongardkeys.pl</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/example/learning/shop.pl</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/example/learning/hmmlearn.pl</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/example/learning/muta.pl</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/example/learning/university.pl</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/example/learning/exauc.pl</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/tutorial.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/lpad.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/inference/coin.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/inference/dice.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/inference/epidemic.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/inference/earthquake.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/inference/coinmc.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/inference/markov_chain.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/inference/pctl_slep.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/inference/artihm.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/learning/mach.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/learning/registration.swinb</loc>
-  <changefreq>weekly</changefreq>
-</url>
-<url>
-  <loc>http://cplint.lamping.unife.it/tutorial/learning/bongard.swinb</loc>
+  <loc>http://cplint.eu/tutorial/learning/bongard.swinb</loc>
   <changefreq>weekly</changefreq>
 </url>
 </urlset>
