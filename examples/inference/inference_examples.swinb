@@ -57,7 +57,7 @@ Examples divided by features:
   [figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)
   - Metropolis-Hastings sampling:
   [lda.swinb](example/inference/lda.swinb),
-  [slp.pl](example/inference/slp.pl), [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl),
+  [slp_pdcg.pl](example/inference/slp_pdcg.pl), [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl),
   [widget.pl](example/inference/widget.pl)
   [widgetmsw.pl](example/inference/widgetmsw.pl),
   - rejection sampling:
