@@ -8,7 +8,7 @@ This notebook illustrates SWI-Prolog tabling, implementing the examples from the
 
 ## Computing Fibonacci numbers
 
-The nth-Fibonacci number is the sum of the two preceeding ones, where the Fibonacci number of 0 and 1 are both 1.
+The nth-Fibonacci number is the sum of the two preceding ones, where the Fibonacci number of 0 and 1 are both 1.
 
 ### First, the simple way
 

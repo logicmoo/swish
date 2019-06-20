@@ -52,7 +52,7 @@ A &lt;- {|r||1:10|}.
 </div>
 
 <div class="nb-cell markdown">
-Next, we transfer data from Prolog to R.  We compute the mean and return it to show that `a &lt;- List` actuall binds the R variable `a`.
+Next, we transfer data from Prolog to R.  We compute the mean and return it to show that `a &lt;- List` actual binds the R variable `a`.
 </div>
 
 <div class="nb-cell query">

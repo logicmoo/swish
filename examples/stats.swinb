@@ -139,7 +139,7 @@ chart(Period, [pengines,d_cpu], Chart).
   <div class="panel-heading">
     <label>Number of threads and visitors</label>
   </div>
-  <p>Threads are used as HTTP workers, pengines and some adminstrative tasks.
+  <p>Threads are used as HTTP workers, pengines and some administrative tasks.
      Visitors is the number of open websockets, which reflects the number of browser
      windows watching this page.
   </p><div class="panel-body">

@@ -3,7 +3,7 @@
 <div class="nb-cell markdown" name="md1">
 # CHAT80 demo of fullscreen mode
 
-This demo illustrates that SWISH can be used to realise fully functional HTML5 web applications without showing any SWISH specific elements.  The main applicaion consists of the HTML cell below that provides the entry form, a __hidden__ query that executes the command and shows the result and a __hidden__ program that ties the CHAT80 program to the query.
+This demo illustrates that SWISH can be used to realise fully functional HTML5 web applications without showing any SWISH specific elements.  The main application consists of the HTML cell below that provides the entry form, a __hidden__ query that executes the command and shows the result and a __hidden__ program that ties the CHAT80 program to the query.
 
 To examine this page, either download it or double click the HTML cell outside the input field, edit the two call near the bottom that hide the query and program and click outside the HTML cell to see the other page elements.
 </div>
