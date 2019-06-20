@@ -233,6 +233,8 @@ Examples divided by features:
   - Distributional clauses syntax:
   [indian_gpadc.pl](example/inference/indian_gpadc.pl),
   [nballsdc.pl](example/inference/nballsdc.pl)
+  - Decision theory:
+  [decision_theory.swinb](example/decision_theory.swinb)
 
 Examples divided by application domain:
   - reasoning about actions:
@@ -242,7 +244,8 @@ Examples divided by application domain:
   [random_walk.swinb](example/inference/random_walk.swinb),
   - marketing:
   [coupon.swinb](example/inference/coupon.swinb),
-  [viral.swinb](example/inference/viral.swinb)
+  [viral.swinb](example/inference/viral.swinb),
+  [decision_theory.swinb](example/decision_theory.swinb)
   - natural language:
   [lda.swinb](example/inference/lda.swinb),
   [pcfg.pl](example/inference/pcfg.pl),
@@ -278,12 +281,13 @@ Examples divided by application domain:
   [truel.pl](example/inference/truel.pl)
   - social networks:
   [mln.swinb](example/inference/mln.swinb),
-  [uwcse.pl](example/inference/uwcse.pl)
+  [uwcse.pl](example/inference/uwcse.pl),
   [figaro_product.swinb](example/figaro_product.swinb), 
+  [decision_theory.swinb](example/decision_theory.swinb)
  - filtering:
   [kalman_filter.swinb](example/inference/kalman_filter.swinb),
   [kalman_filter.pl](example/inference/kalman_filter.pl),
-  [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl),
+  [kalman_filtermsw.pl](example/inference/kalman_filtermsw.pl)
  - Bayesian estimation:
   [gaussian_mean_est.pl](example/inference/gauss_mean_est.pl),
   [seven_scientists.pl](example/inference/seven_scientists.pl),
@@ -291,10 +295,10 @@ Examples divided by application domain:
   [figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)
  - regression: [gpr.pl](example/inference/gpr.pl)
  - toy: [earthquake.pl](example/inference/earthquake.pl),
-   [eruption.pl](example/inference/eruption.pl),
+  [eruption.pl](example/inference/eruption.pl),
   [alarm.pl](example/inference/alarm.pl),
-   [light.pl](example/inference/light.pl),
-   [meta.pl](example/inference/meta.pl)
+  [light.pl](example/inference/light.pl),
+  [meta.pl](example/inference/meta.pl)
   [metacomb.pl](example/inference/metacomb.pl), [flexprob.pl](example/inference/flexprob.pl),
   [persons.pl](example/inference/persons.pl),
   [testdb.pl](example/inference/testdb.pl),
@@ -319,7 +323,7 @@ Complete list of examples with description:
   - Dice ([dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [dice_R.pl](example/inference/dice_R.pl))
   A six-sided die is repeatedly thrown until the outcome is six.
   From J. Vennekens, S. Verbaeten, and M. Bruynooghe.
-  _Logic programs with annotated disjunctionsi_. In International Conference on Logic Programming, volume 3131 of LNCS, pages 195-209. Springer, 2004.
+  _Logic programs with annotated disjunctions_. In International Conference on Logic Programming, volume 3131 of LNCS, pages 195-209. Springer, 2004.
   - Epidemic ([epidemic.pl](example/inference/epidemic.pl), [epidemic_R.pl](example/inference/epidemic_R.pl))
   Model of the development of an epidemic or a pandemic.
   From E. Bellodi and F. Riguzzi. _Expectation Maximization over binary decision diagrams for probabilistic logic programs_. Intelligent Data Analysis, 17(2):343-363, 2013.
@@ -378,7 +382,7 @@ Complete list of examples with description:
   a prefix of a string genated by the grammar.
   From
   T. Sato, P. Meyer, _Tabling for infinite probability computation_, in:
-  Intnational Confence on Logic Programming, Vol. 17 of LIPIcs, 2012,
+  Inernational Conference on Logic Programming, Vol. 17 of LIPIcs, 2012,
   pp.  348-358.
   T. Sato, P. Meyer, _Infinite probability computation by cyclic explanation
   graphs_, Theory and Practice of Logic Programming 14 (2014) 909-937.
@@ -550,7 +554,7 @@ Complete list of examples with description:
   Theory and Practice of Logic Programming 12.4-5 (2012): 505-523.
   http://arxiv.org/pdf/1112.2681v3.pdf
   - Stochastic logic program ([slp_pcfg.pl](example/inference/slp_pcfg.pl)).
-  Probabilistic contect-free grammar implemented as a Stochastic Logic Program.
+  Probabilistic context-free grammar implemented as a Stochastic Logic Program.
   SLPs define a distribution over arguments of goals.
   SLPs can be written as an LPAD/ProbLog program by
   recalling that in SLPs the probabilities of all rules with the same head predicate sum to one and define a mutually exclusive choice on how to continue a proof.
@@ -635,6 +639,7 @@ is done.
   - Truncated Dirichlet process ([truncated_dirichlet_process.pl](example/truncated_dirichlet_process.pl)) Comparison of the Dirichlet distribution with a truncated Dirichlet process.
   - Fair coin from a biased coin ([von_neumann_trick.swinb](example/von_neumann_trick.swinb)) If you have a biased coin, obtain a fair coin using the von Neumann trick.
   - Red and Blue Hats Puzzle ([hats.swinb](example/hats.swinb)) From Aaronson, Scott. Quantum Computing Since Democritus. Cambridge university press, 2013
+  - Decision theory problems ([decision_theory.swinb](example/decision_theory.swinb)) from G. V. den Broeck, I. Thon, M. van Otterlo, L. D. Raedt, Dtproblog: A decision-theoretic probabilistic prolog, in: M. Fox, D. Poole (Eds.), 24th AAAI Conference on Artificial Intelligence, AAAI’10, Atlanta, Georgia, USA, July 11-15, 2010, AAAI Press, 2010, pp. 1217–1222.
 </div>
 
 </div>
