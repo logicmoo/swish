@@ -38,8 +38,7 @@ prob(on(2,1),on(0,1),Prob).
 </div>
 
 <div class="nb-cell markdown">
-What is the probability that the die lands on face 1 at time 2 given that it lan
-ded on face 1 at times 0 and 1?
+What is the probability that the die lands on face 1 at time 2 given that it landed on face 1 at times 0 and 1?
 </div>
 
 <div class="nb-cell query">
@@ -55,8 +54,7 @@ prob(on(0,1),Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell markdown">
-What is the probability that the die lands on face 1 at time 1 represented graph
-ically?
+What is the probability that the die lands on face 1 at time 1 represented graphically?
 </div>
 
 <div class="nb-cell query">
@@ -64,8 +62,7 @@ prob(on(1,1),Prob),bar(Prob,C).
 </div>
 
 <div class="nb-cell markdown">
-What is the probability that the die lands on face 1 at time 2 represented graph
-ically?
+What is the probability that the die lands on face 1 at time 2 represented graphically?
 </div>
 
 <div class="nb-cell query">

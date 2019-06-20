@@ -4,7 +4,7 @@
 Printer Diagnosis Model
 ===============================
 
-In this notebook we translate into Probabilistic Logic Programming the Figaro example from Section 5.3 of [A. Pfeffer, Pratical Probabilistic Programming](https://www.manning.com/books/practical-probabilistic-programming), pages 145-155. 
+In this notebook we translate into Probabilistic Logic Programming the Figaro example from Section 5.3 of [A. Pfeffer, Practical Probabilistic Programming](https://www.manning.com/books/practical-probabilistic-programming), pages 145-155. 
 
 
 </div>
@@ -44,7 +44,7 @@ X = dot("digraph G {
 <div class="nb-cell markdown" name="md1">
 Code Description
 ----------------
-Some events  can happen randomly. First of all we can think that the printer could prints perfectly, not quite right or doesn't print at all. Then we can start thinking about what is the cause of the problem, how is the printing process and which elements of the systems might influence the printing process: is the printer power button on? How many pages does the printer print? Does the printer prints quickly? In this example we consider facts like: =softwareState/1=, wich could be =correct=, =glitchy= or =crashed=; =networkState/1=, which could be =up=, =intermittent= or =down=; =userCommandCorrect/1=, which could be =true= or =false=.
+Some events  can happen randomly. First of all we can think that the printer could prints perfectly, not quite right or doesn't print at all. Then we can start thinking about what is the cause of the problem, how is the printing process and which elements of the systems might influence the printing process: is the printer power button on? How many pages does the printer print? Does the printer prints quickly? In this example we consider facts like: =softwareState/1=, which could be =correct=, =glitchy= or =crashed=; =networkState/1=, which could be =up=, =intermittent= or =down=; =userCommandCorrect/1=, which could be =true= or =false=.
 </div>
 
 <div class="nb-cell program" data-background="true" name="p1">
@@ -187,7 +187,7 @@ prob(printerPowerButtonOn,evidence_printerState_out_printResultSummary_none,Prob
 </div>
 
 <div class="nb-cell markdown" name="md11">
-We can see that the probability is exactly the same; learning that printResult(none) doesn't change the probability that the printer power button is on if you already know that that the printerState(out). This mean that =printResultSummary/1= is conditionally indipendent from =printerPowerButtonOn= given =printerState/1=. 
+We can see that the probability is exactly the same; learning that printResult(none) doesn't change the probability that the printer power button is on if you already know that that the printerState(out). This mean that =printResultSummary/1= is conditionally independent from =printerPowerButtonOn= given =printerState/1=. 
 
 Now we can focus on the =printerState/1= queries. Let's first compute the probability that printerState(good).
 </div>
@@ -223,7 +223,7 @@ prob(softwareState(correct),networkState(up),Prob).
 </div>
 
 <div class="nb-cell markdown" name="md15">
-As we can see the probability is still the same and also in this case there is conditonally indipendence. Now we observe that the printer doesn't prints quickly
+As we can see the probability is still the same and also in this case there is conditionally independence. Now we observe that the printer doesn't prints quickly
 </div>
 
 <div class="nb-cell query" name="q10">
@@ -239,7 +239,7 @@ prob(softwareState(correct),evidence_not_printsQuickly_networkState_up,Prob).
 </div>
 
 <div class="nb-cell markdown" name="md17">
-Learning networkState(up) reduces the probability that the software is correct. We can also see that =softwareState/1= and =networkState/1= are indipendent but they aren't conditionally indipendent given =printsQuickly=.
+Learning networkState(up) reduces the probability that the software is correct. We can also see that =softwareState/1= and =networkState/1= are independent but they aren't conditionally independent given =printsQuickly=.
 </div>
 
 </div>

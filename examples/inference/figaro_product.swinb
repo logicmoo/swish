@@ -34,7 +34,7 @@ Performing inference
 --------------------
 Inference is executed by calling mc_expectation(numberBuy(0.9,0.7,15,N),100,N,E).
 
-Let's analyze the goal: with =mc_expectation= we compute the expextation of the value of argument =N= of query numberBuy(0.9,0.7,15,N) by sampling. The goal takes 100 samples of the query and sums up the value of =N= for each sample. The overall sum is divided by 100 to give the expected value =E= of the number of people that will buy the product.
+Let's analyze the goal: with =mc_expectation= we compute the expectation of the value of argument =N= of query numberBuy(0.9,0.7,15,N) by sampling. The goal takes 100 samples of the query and sums up the value of =N= for each sample. The overall sum is divided by 100 to give the expected value =E= of the number of people that will buy the product.
 
 The predicate =numberBuy/4= takes three parameters as input: the quality of the product (in this example 0.9), the affordability of the product (0.7) and the average number of friends in the social network, i.e. the Social Network Popularity, and returns the number of people who will buy the product (=N=).
 </div>
@@ -72,7 +72,7 @@ Code Description
 ----------------
 The =newly_visited/6= predicate is used to compute the binomial distribution through the predicate binomial(Var,N,P) where =Var= follows a binomial distribution with parameters =N= and =P=.
 
-=networkPopularity/2= returns the number of people in the social network, assuming that this number follows a Poisson distribuction.
+=networkPopularity/2= returns the number of people in the social network, assuming that this number follows a Poisson distribution.
 
 =flip/2= expresses whether if the target likes the product, depending on the product quality. In this case the target likes the product with probability equal to the product quality.
 </div>
@@ -113,7 +113,7 @@ helper(FriendVisited,TotalLikes,UnprocessedLikes,NumFriends,ProdQuality,NumberFr
     /*with this line we simulate the fact that a person promotes 
     the product to two friend where the probability that each 
     friend hasn't yet been visited is given by the value of unvisited fraction. b/6 is a predicate that simulate a binomial 
-    distribution, and in this case returns an argument (NewlyVisited) wich follows a binomial distribution with 
+    distribution, and in this case returns an argument (NewlyVisited) which follows a binomial distribution with 
     parameters 2 and UnvisitedFraction*/
     newly_visited(FriendVisited,TotalLikes,UnprocessedLikes,
                   NewlyVisited,2,UnvisitedFraction),

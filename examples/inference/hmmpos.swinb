@@ -13,7 +13,7 @@ state_diagram(G).
 </div>
 
 <div class="nb-cell markdown">
-The query below samples the state sequence corresonding to the phrase "he can can a can". 
+The query below samples the state sequence corresponding to the phrase "he can can a can". 
 The most frequent state sequence is an approximate POS tagging for the 
 sentence. It corresponds to the Viterbi path of the HMM.
 The most frequent tagging should be [pron, aux, v, det, n]:
@@ -61,7 +61,7 @@ hmm(S,O): =O= is the output sequence and =S= is the sequence of states.
 hmm(Q,S0,S,O):  from state =Q= and previous state =S0=, generates output =O= and
 sequence of states =S=.
 
-=O= is an output sequence if there is a state seuqnece =S= such that hmm(S,O) 
+=O= is an output sequence if there is a state sequence =S= such that hmm(S,O) 
 holds:
 </div>
 
@@ -94,7 +94,7 @@ hmm(Q,S0,S,[L|O]):-
 </div>
 
 <div class="nb-cell markdown">
-An HMM in sny state terminates the sequence without emitting any symbol:
+An HMM in any state terminates the sequence without emitting any symbol:
 </div>
 
 <div class="nb-cell program" data-background="true">

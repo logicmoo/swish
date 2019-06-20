@@ -11,7 +11,7 @@ In this notebook we translate into Probabilistic Logic Programming the Figaro ex
 </div>
 
 <div class="nb-cell markdown" name="md7">
-Immagine you have found a coin of dubious origin: it might be biased or not so you don't know the probability that it'll lands heads on any given toss. The goal of this program is to estimate the bias of the coin and to predict consecutive coin tosses. This is how the Bayesian network looks like, where the root node is Bias, a real value variable that represent the probabilty that any given toss will be heads:
+Imagine you have found a coin of dubious origin: it might be biased or not so you don't know the probability that it'll lands heads on any given toss. The goal of this program is to estimate the bias of the coin and to predict consecutive coin tosses. This is how the Bayesian network looks like, where the root node is Bias, a real value variable that represent the probability that any given toss will be heads:
 </div>
 
 <div class="nb-cell program" name="p4">
@@ -39,9 +39,9 @@ previous_tosses([h,t,h,h,h,h,h,t,h,t,h,h,h,t,h,h,h,h,h,h]),
 
 Code Description
 ----------------
-The predicate =next_toss/1= has only one argument and works in two steps: evaluates the probability of a variable called =Bias= through the predicate =bias/1= wich computes a beta distribution using beta(Var,Alpha,Beta) where =Var= follows a beta distribution with parameters =Alpha= and =Beta=. Then the predicate =flip/3= is used to computed the probability of the variable =T=, given a certain bias.
+The predicate =next_toss/1= has only one argument and works in two steps: evaluates the probability of a variable called =Bias= through the predicate =bias/1= which computes a beta distribution using beta(Var,Alpha,Beta) where =Var= follows a beta distribution with parameters =Alpha= and =Beta=. Then the predicate =flip/3= is used to computed the probability of the variable =T=, given a certain bias.
 
-=previous_tosses/1= is used to assert the evidence. It computes the length of the list in input then, for each element of this list (wich is a result of a previous toss, so head or tail), computes the bias using =bias/1= and the probability using =flip/3=.
+=previous_tosses/1= is used to assert the evidence. It computes the length of the list in input then, for each element of this list (which is a result of a previous toss, so head or tail), computes the bias using =bias/1= and the probability using =flip/3=.
 </div>
 
 <div class="nb-cell program" data-background="true" name="p1">

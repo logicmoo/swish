@@ -3,7 +3,7 @@
 <div class="nb-cell markdown" name="md1">
 Hierarchical Models
 ===================
-In this notebook we translate into Probabilistic Logic Programming the Figaro example from Section 6.1.2 of [A. Pfeffer, Pratical Probabilistic Programming](https://www.manning.com/books/practical-probabilistic-programming), pages 177-178.
+In this notebook we translate into Probabilistic Logic Programming the Figaro example from Section 6.1.2 of [A. Pfeffer, Practical Probabilistic Programming](https://www.manning.com/books/practical-probabilistic-programming), pages 177-178.
 </div>
 
 <div class="nb-cell html" name="htm1">
@@ -117,13 +117,13 @@ tosses([H|T],C,NT,Bias):-
 </div>
 
 <div class="nb-cell markdown" name="md4">
-=previous_tossess/1= has a list of lists of tosses as input: each sublist represents a different coin and contains the results of consecutive tosses. 
+=previous_tosses/1= has a list of lists of tosses as input: each sublist represents a different coin and contains the results of consecutive tosses. 
 
-=previous_tosses_coins/2= checks for each coin if it's fair or biased, using the predicate =real_bias/2=, then analyzes every single tosses using =tosses/4=. 
+=previous_tosses_coins/2= checks for each coin if it's fair or biased, using the predicate =real_bias/2=, then analyzes every single toss using =tosses/4=. 
 
-=real_bias/2= checks if the coin is biased or not, assuming that the distribution of biased coins into the bags follows a normal distribution. If the coin is fair, it has 50% of probability to land heads and 50% tails; if it's biased, the probability of heads is given by a beta distribution with parameters 2 and 5, and this porbability represents its bias. 
+=real_bias/2= checks if the coin is biased or not, assuming that the distribution of biased coins into the bags follows a normal distribution. If the coin is fair, it has 50% of probability to land heads and 50% tails; if it's biased, the probability of heads is given by a beta distribution with parameters 2 and 5, and this probability represents its bias. 
 
-=tossses/4= computes the probability of heads or tail using =flip/4=: the coin will land heads with probability equal to bias and tails with probability 1 - bias.
+=tosses/4= computes the probability of heads or tail using =flip/4=: the coin will land heads with probability equal to bias and tails with probability 1 - bias.
 </div>
 
 </div>
