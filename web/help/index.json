@@ -1,7 +1,7 @@
 [ { "file":"about.html",      "title":"About" },
   "--",
   { "file":"help.html",	      "title":"Help" },
-  { "url":"http://friguzzi.github.io/cplint/doc/help-cplint.html","title":"Help on cplint"},
+  { "url":"http://friguzzi.github.io/cplint/","title":"Help on cplint"},
   { "url":"http://mcs.unife.it/~friguzzi/plptutorial/", "title":"Tutorial" },
   { "url":"http://www.swi-prolog.org/pack/list?p=cplint", "title":"Pack page on cplint"},
 
