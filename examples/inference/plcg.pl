@@ -87,10 +87,5 @@ terminal(b).
 
 ?- mc_sample(plc([a,b]),1000,Prob),bar(Prob,C). % take 1000 samples of plc([a,b])
 
-?- mc_sample_arg(plc(S),20,S,Values). % take 20 samples of L in 
-% findall(S,pls(S),L)
-
-?- mc_sample_arg(plc(L),20,L,O),argbar(O,C). % take 20 samples of L in 
-% findall(S,pls(S),L)
 */
 
