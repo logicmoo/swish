@@ -24,13 +24,13 @@ http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=gaussian-p
 :- begin_lpad.
 
 val(I,X) :- 
-  std_dev(I,Sigma),
+  standard_dev(I,Sigma),
   mean(M),
   measurement(I,M,Sigma,X).
 % for scientist I we see X sampled from a Gaussian with mean M and standard deviation
 % Sigma
 
-std_dev(_,S): uniform(S,0,25).
+standard_dev(_,S): uniform(S,0,25).
 % the standard deviation is sampled for all scientists between 0 and 25 
 % uniformly
 
@@ -85,8 +85,8 @@ geom_bar(E) :-
 
 
 chart_lw_noise(Samples,E):-
-  mc_lw_sample_arg((std_dev(1,Y1),std_dev(2,Y2),std_dev(3,Y3),std_dev(4,Y4),
-    std_dev(5,Y5),std_dev(6,Y6),std_dev(7,Y7)),(val(1,-27.020),val(2,3.570),
+  mc_lw_sample_arg((standard_dev(1,Y1),standard_dev(2,Y2),standard_dev(3,Y3),standard_dev(4,Y4),
+    standard_dev(5,Y5),standard_dev(6,Y6),standard_dev(7,Y7)),(val(1,-27.020),val(2,3.570),
   val(3,8.191),val(4,9.898),val(5,9.603),val(6,9.945),
   val(7,10.056)),Samples,(Y1,Y2,Y3,Y4,Y5,Y6,Y7),L),
   exp_noise(L,Samples,E),
@@ -94,7 +94,7 @@ chart_lw_noise(Samples,E):-
   Ee=[E1,E2,E3,E4,E5,E6,E7],
   geom_bar(Ee).
 % take Samples samples of the standard deviation of the measurements of the
-% scientists (Y1,...,Y7 in std_dev(1,Y1),...,std_dev(7,Y7))
+% scientists (Y1,...,Y7 in standard_dev(1,Y1),...,standard_dev(7,Y7))
 % given the 7 observations and draw a bar chart of the mean of the samples
 % for each scientist
 
@@ -126,7 +126,7 @@ agg(V-W,S,S+V*W).
 
 ?- chart_lw_noise(1000,E).
 % take Samples samples of the standard deviation of the measurements of the
-% scientists (Y1,...,Y7 in std_dev(1,Y1),...,std_dev(7,Y7))
+% scientists (Y1,...,Y7 in standard_dev(1,Y1),...,standard_dev(7,Y7))
 % given the 7 observations and draw a bar chart of the mean of the samples
 % for each scientist.
 
