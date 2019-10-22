@@ -30,7 +30,7 @@ val(I,X) :-
 % for scientist I we see X sampled from a Gaussian with mean M and standard deviation
 % Sigma
 
-standard_dev(_,S): uniform(S,0,25).
+standard_dev(_,S): uniform_dens(S,0,25).
 % the standard deviation is sampled for all scientists between 0 and 25 
 % uniformly
 
