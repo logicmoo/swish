@@ -18,7 +18,6 @@
 :- use_rendering(prolog).
 :- endif.
 :- aleph.
-:- set_random(seed(111)).
 :- aleph_set(evalfn,posonly).
 :- aleph_set(clauselength,2).
 :- aleph_set(gsamplesize,20).
@@ -161,7 +160,6 @@ has_gills(shark).
 has_gills(eel).
 
 nhas_gills(X) :- animal(X), not(has_gills(X)).
-dynamic aleph_false/0.
 aleph_false:-class(X,Y),class(X,Z),Y\=Z.
 
 :-end_bg.
