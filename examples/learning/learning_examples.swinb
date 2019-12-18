@@ -46,12 +46,12 @@ original are the learned parameters. Note that the target parameters are those g
   Both parameters and structure can be learned. The input theory for parameter learning has been manually crafted. Structure learning takes about 120 seconds with =verbosity= = =1=.
   - Learning the probabilistic effects of actions in the Event Calculus
   ([learn_effect_axioms.pl](example/learning/learn_effect_axioms.pl), structure learning) 
-  - Fixing the values of some parameters in learning ([bongard_fixed.pl](example/learning/bongard_fixed.pl)), see the help http://cplint.eu/help/help-cplint.html#background-and-initial-lpadcpl-program
-  - Setting the initial values of parameters in learning ([bongard_initial.pl](example/learning/bongard_initial.pl)), see the help http://cplint.eu/help/help-cplint.html#background-and-initial-lpadcpl-program
-  - Learning different parameters for different instantiations of rules ([bongard_ind.pl](example/learning/bongard_ind.pl)), see the help http://cplint.eu/help/help-cplint.html#background-and-initial-lpadcpl-program
+  - Fixing the values of some parameters in learning ([bongard_fixed.pl](example/learning/bongard_fixed.pl)), see the help http://friguzzi.github.io/cplint/_build/html/index.html#background-and-initial-lpad-cpl-program
+  - Setting the initial values of parameters in learning ([bongard_initial.pl](example/learning/bongard_initial.pl)), see the help http://friguzzi.github.io/cplint/_build/html/index.html#background-and-initial-lpad-cpl-program
+  - Learning different parameters for different instantiations of rules ([bongard_ind.pl](example/learning/bongard_ind.pl)), see the help http://friguzzi.github.io/cplint/_build/html/index.html#background-and-initial-lpad-cpl-program
 
 More examples are included in the standalone version of =cplint= at https://github.com/friguzzi/cplint
-The stanalone version of =cplint= can be installed as a SWI-Prolog pack http://www.swi-prolog.org/pack/list
+The standalone version of =cplint= can be installed as a SWI-Prolog pack http://www.swi-prolog.org/pack/list
 The other datasets include Carcinogenesis, Cora, Hepatitis, HIV, IMDB,
 Mondial, UWCSE and WebKB.
 They have not been included here because of their computational cost.
