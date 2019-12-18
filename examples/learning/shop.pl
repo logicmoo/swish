@@ -5,7 +5,7 @@ Meert, W., Struyf, J., and Blockeel, H. 2008.
 Learning ground CP-Logic theories by leveraging Bayesian network learning
 techniques. Fundamenta Informaticae 89, 131-160
 
-The training examples are all possible worlds of the target programi (shop4). 
+The training examples are all possible worlds of the target program (shop4). 
 The prob fact in each model/interpretation/world indicates its probability 
 (it can be interpreted as frequency in a sampled dataset).
 The task is to recover
@@ -15,8 +15,8 @@ the target program.
 
 */
 /** <examples>
-?- induce_par([train],P),test(P,[test],LL,AUCROC,ROC,AUCPR,PR).  % learn the parameteters and test the result
-?- induce_par([train],P).  % learn the parameteters 
+?- induce_par([train],P),test(P,[test],LL,AUCROC,ROC,AUCPR,PR).  % learn the parameters and test the result
+?- induce_par([train],P).  % learn the parameters 
 ?- in(P),test(P,[test],LL,AUCROC,ROC,AUCPR,PR). % test the input theory
 */
 

@@ -7,7 +7,7 @@
 
 /** <examples>
 ?- induce_par([train],P),test_prob(P,[train],NP,NN,LL,L).
-?- induce_par([train],P).  % learn the parameteters
+?- induce_par([train],P).  % learn the parameters
 */
 
 :-sc.

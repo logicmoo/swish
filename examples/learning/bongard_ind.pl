@@ -6,14 +6,14 @@ Learning Theory, volume 997 of Lecture Notes in Artificial Intelligence,
 pages 80-94. SpringerVerlag, 1995.
 
 This example shows how to learn a different parameter for different 
-instantiotions of rules.
+instantiations of rules.
 
 Downloaded from
 https://dtai.cs.kuleuven.be/static/ACE/doc/
 */
 
 /** <examples>
-?- induce_par([train],P),test(P,[test],LL,AUCROC,ROC,AUCPR,PR). % learn the parameteters and test the result
+?- induce_par([train],P),test(P,[test],LL,AUCROC,ROC,AUCPR,PR). % learn the parameters and test the result
 */
 :-use_module(library(slipcover)).
 
