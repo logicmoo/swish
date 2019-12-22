@@ -43,7 +43,7 @@ Example programs for inference with  graphics elements produced by R.
   - Epidemic ([epidemic_R.pl](example/inference/epidemic_R.pl))
   - Earthquake ([earthquake_R.pl](example/inference/earthquake_R.pl))
   - Eruption ([eruption_R.pl](example/inference/eruption_R.pl))
-  - Mendelian inheritance of human bloodtype ([bloodtype_R.pl](example/inference/bloodtype_R.pl))
+  - Mendelian inheritance of human blood type ([bloodtype_R.pl](example/inference/bloodtype_R.pl))
   - Alarm Bayesian network ([alarm_R.pl](example/inference/alarm_R.pl))
   - Hidden Markov Model ([hmm_R.pl](example/inference/hmm_R.pl))
   - Cora: entity resolution ([cora_R.pl](example/inference/cora_R.pl))

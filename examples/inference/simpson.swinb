@@ -217,7 +217,7 @@ prob(recovery,(do(\+ drug),\+ female),P).
 
 <div class="nb-cell html">
 <p> As you can see, the probability of recovery on the whole population is now
-in accordance with that in the subpopulations, in particualar it is the 
+in accordance with that in the subpopulations, in particular it is the 
 weighted average of the probability of recovery in the subpopulations.
 </p>
 <p>

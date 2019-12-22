@@ -11,7 +11,7 @@ In this notebook we translate into Probabilistic Logic Programming the Figaro ex
 </div>
 
 <div class="nb-cell markdown" name="md7">
-Suppose you have a toss of coin, wich is one of many coins in a bag, wich is one of many bag in a box and each coin into the bag could be biased or not: how to compute the coin average bias and the average fairness probability? In this example the coin's bias depends on a property of the bag: some of the coins are fair (so 50% heads and 50% tails) and some are biased. The bag has a property that represents the probability that any given coin in the bag will be fair. This problem can be represented with a Bayesian network with three layers, one for each level of hierarchy: the first level represents the bag, the second the coins in the bag and the third the tosses (different coin could have different tosses).
+Suppose you have a toss of coin, which is one of many coins in a bag, which is one of many bag in a box and each coin into the bag could be biased or not: how to compute the coin average bias and the average fairness probability? In this example the coin's bias depends on a property of the bag: some of the coins are fair (so 50% heads and 50% tails) and some are biased. The bag has a property that represents the probability that any given coin in the bag will be fair. This problem can be represented with a Bayesian network with three layers, one for each level of hierarchy: the first level represents the bag, the second the coins in the bag and the third the tosses (different coin could have different tosses).
 </div>
 
 <div class="nb-cell program" name="p1">
@@ -80,7 +80,7 @@ is_fair(C,P):P;is_biased(C,P):1-P.
 </div>
 
 <div class="nb-cell markdown" name="md3">
-In this example the bias =bias/2= follows a beta distribuction with parameters 2 and 5 and the fair probability =fairProb/1= is given by an uniform distribuction with parameters 0.0 and 1.0.
+In this example the bias =bias/2= follows a beta distribution with parameters 2 and 5 and the fair probability =fairProb/1= is given by an uniform distribution with parameters 0.0 and 1.0.
 </div>
 
 <div class="nb-cell program" data-background="true" name="p2">

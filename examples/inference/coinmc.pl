@@ -51,14 +51,14 @@ toss(coin).
 
 ?- mc_sample(heads(coin),1000,Prob),bar(Prob,C).  
 % take 1000 sample of heads(coin) and chart the number of successes and 
-% faliures
+% failures
 
 ?- mc_sample(tails(coin),1000,Prob),bar(Prob,C).  
 % take 1000 sample of tails(coin) and chart the number of successes and 
-% faliures
+% failures
 
 ?- mc_rejection_sample(heads(coin),biased(coin),1000,P,[successes(S),failures(F)]).
-% take 1000 sample of heads(coin) given that biasdd(coin) is true
+% take 1000 sample of heads(coin) given that biased(coin) is true
 % Use rejection sampling
 % F = 387,
 % P = 0.613,

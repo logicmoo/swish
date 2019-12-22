@@ -10,7 +10,7 @@ Given that at time 0 the value 2.5 was
 observed, what is the distribution of the state at time 1 (filtering problem)?
 The distribution of the state is plotted in the case of having (posterior) or 
 not having the observation (prior).
-Liklihood weighing is used to condition the distribution on evidence on
+Likelihood weighting is used to condition the distribution on evidence on
 a continuous random variable (evidence with probability 0).
 CLP(R) constraints allow both sampling and weighing samples with the same
 program.
@@ -22,7 +22,7 @@ Islam, Muhammad Asiful, C. R. Ramakrishnan, and I. V. Ramakrishnan.
 "Inference in probabilistic logic programs with continuous random variables." 
 Theory and Practice of Logic Programming 12.4-5 (2012): 505-523.
 http://arxiv.org/pdf/1112.2681v3.pdf
-Russell, S. and Norvig, P. 2010. Arficial Intelligence: A Modern Approach. 
+Russell, S. and Norvig, P. 2010. Artificial Intelligence: A Modern Approach. 
 Third Edition, Prentice Hall, Figure 15.10 page 587
 
 */

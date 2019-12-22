@@ -35,12 +35,12 @@ samebib(B,C):0.3 :-
 
 samebib(B,C):0.3 :-
         title(B,D),title(C,E),sameatitle(D,E).
-% citation B refers to same paper as C with probability 0.3 if theit titles are 
+% citation B refers to same paper as C with probability 0.3 if their titles are 
 % the same
 
 samebib(B,C):0.3 :-
         venue(B,D),venue(C,E),samevenue(D,E).
-% citation B refers to same paper as C with probability 0.3 if theit venues are 
+% citation B refers to same paper as C with probability 0.3 if their venues are 
 % the same
 
 samevenue(A,B):0.3 :-

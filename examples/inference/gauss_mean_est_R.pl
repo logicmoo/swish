@@ -20,7 +20,7 @@ http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=gaussian-p
 val(I,X) :-
   mean(M),
   val(I,M,X).
-% at time I we see X sampled from a Gaussian with mean M and variamce 2.0
+% at time I we see X sampled from a Gaussian with mean M and variance 2.0
 
 mean(M): gaussian(M,1.0, 5.0).
 % Gaussian distribution of the mean of the Gaussian of the variable

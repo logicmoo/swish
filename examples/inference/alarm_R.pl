@@ -14,7 +14,7 @@ volume 3131 of LNCS, pages 195.209. Springer, 2004.
 burg(t):0.1; burg(f):0.9.
 % there is a burglary with probability 0.1
 earthq(t):0.2; earthq(f):0.8.
-% there is an eartquace with probability 0.2
+% there is an earthquake with probability 0.2
 alarm(t):-burg(t),earthq(t).
 % if there is a burglary and an earthquake then the alarm surely goes off
 alarm(t):0.8 ; alarm(f):0.2:-burg(t),earthq(f).

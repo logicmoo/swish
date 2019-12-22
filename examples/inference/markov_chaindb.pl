@@ -53,22 +53,22 @@ markov_chain(digraph(G)):-
 /** <examples>
 
 ?- prob(reach(s0,0,s0),P).
-% expecte result ~ 1.
+% expected result ~ 1.
 
 ?- prob(reach(s0,0,s1),P).
-% expecte result ~ 0.5984054054054054.
+% expected result ~ 0.5984054054054054.
 
 ?- prob(reach(s0,0,s2),P).
-% expecte result ~ 0.4025135135135135.
+% expected result ~ 0.4025135135135135.
 
 ?- prob(reach(s0,0,s3),P).
-% expecte result ~ 0.5998378378378378.
+% expected result ~ 0.5998378378378378.
 
 ?- prob(reach(s0,0,s4),P).
-% expecte result ~ 0.49948717948717947.
+% expected result ~ 0.49948717948717947.
 
 ?- prob(reach(s1,0,s0),P).
-% expecte result ~ 0.
+% expected result ~ 0.
 
 ?- markov_chain(G).
 % draw the Markov chain

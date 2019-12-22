@@ -21,7 +21,7 @@ Original program by Joakim Nivre and Torbjorn Lager, adapted to MCINTYRE by Fabr
 /** <examples>
 
 ?-  mc_sample_arg(hmm(S,['I',can,can,a,can]),1000,S,O).
-% sample the state sequence corresonding to the phrase "I can can a can"
+% sample the state sequence corresponding to the phrase "I can can a can"
 % the most frequent state sequence is an approximate POS tagging for the
 % sentence. It corresponds to the Viterbi path of the HMM.
 % expected result: the most frequent tagging should be [pn,vb,vb,dt,nn]
@@ -52,7 +52,7 @@ Original program by Joakim Nivre and Torbjorn Lager, adapted to MCINTYRE by Fabr
 % sequence of states S
 
 hmm(O):-hmm(_,O).
-% O is an output sequence if there is a state seuqnece S such that hmm(S,O) 
+% O is an output sequence if there is a state sequence S such that hmm(S,O) 
 % holds
 
 hmm(S,O):-trans(start,Q0,[]),hmm(Q0,[],S0,O),reverse(S0,S).
@@ -75,7 +75,7 @@ hmm(_,S,S,[]).
 % sequence of states S
 
 hmm2(O):-hmm2(_,O).
-% O is an output sequence if there is a state seuqnece S such that hmm1(S,O) 
+% O is an output sequence if there is a state sequence S such that hmm1(S,O) 
 % holds
 
 hmm2(S,O):-trans2(start,start,Q0,[]),hmm2(start,Q0,[],S0,O),reverse(S0,S).

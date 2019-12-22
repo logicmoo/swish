@@ -5,7 +5,7 @@ probability of being equal to already sampled values. The process depends
 on a parameter alpha (concentration parameter): with alpha->0, a single 
 value is sampled, with alpha->infinite the distribution is equal to the base
 distribution.
-In this example the base distribution is a Guassian with mean 0 and variance
+In this example the base distribution is a Gaussian with mean 0 and variance
 1, as in https://en.wikipedia.org/wiki/Dirichlet_process#/media/File:Dirichlet_process_draws.svg
 To model the process, this example uses the Chinese Restaurant Process: 
 # Draw <math>X_{1}</math> from the base distribution <math>H</math>.

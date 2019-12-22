@@ -1,7 +1,7 @@
 /*
-Program describing the Mendelian rules of inheritance of the bloodtype of 
+Program describing the Mendelian rules of inheritance of the blood type of 
 people. 
-The problem is to predict the probability of the bloodtype of a person.
+The problem is to predict the probability of the blood type of a person.
 
 From
 http://dtai.cs.kuleuven.be/cplve/ilp09/
@@ -23,8 +23,8 @@ Inductive Logic Programming. Springer Berlin Heidelberg, 2010. 96-109.
 % mchrom(Person,C) means that the chromosome of Person inherited from his mother
 % (or mother chromosome) has allele C. The alleles are a, b and null
 % pchrom(Person,C) means that the chromosome of Person inherited from his father
-% (or father chromosme) has allele C. The alleles are a, b and null
-% bloodtype(Person,B) means that Person has bloodtype B
+% (or father chromosome) has allele C. The alleles are a, b and null
+% bloodtype(Person,B) means that Person has blood type B
 
 % rules for determining the allele of the mother chromosome of a Person on the 
 % basis of those of his mother 
@@ -57,7 +57,7 @@ pchrom(Person,a):0.02 ; pchrom(Person,b):0.49 ; pchrom(Person,null):0.49 :- fath
 pchrom(Person,a):0.05 ; pchrom(Person,b):0.05 ; pchrom(Person,null):0.90 :- father(Father,Person), pchrom(Father,null), mchrom(Father,null).
                                                                                                                                             
                                                                                                                                             
-% rules for determining the bloodtype of a Person on the basis of the two 
+% rules for determining the blood type of a Person on the basis of the two 
 % alleles on his chromosomes
 bloodtype(Person,a):0.90 ; bloodtype(Person,b):0.03 ; bloodtype(Person,ab):0.03 ; bloodtype(Person,null):0.04 :- pchrom(Person,a   ),mchrom(Person,a   ).
 % if both chromosomes of Person have allele a, then the bloodtype of Person

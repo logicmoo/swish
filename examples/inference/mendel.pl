@@ -60,25 +60,25 @@ color(X,white) :- cg(X,1,w), cg(X,2,w).
 % expected result 0.75
 ?- prob(color(s,white),Prob). % what is the probability that the color of s' flowers is white?
 %  expected result 0.25
-?- prob(cg(s,1,p),Prob). % what is the probability that the color allele on chromosme 1 of s is p?
+?- prob(cg(s,1,p),Prob). % what is the probability that the color allele on chromosome 1 of s is p?
 % expected result 0.5
-?- prob(cg(s,1,w),Prob). % what is the probability that the color allele on chromosme 1 of s is w?
+?- prob(cg(s,1,w),Prob). % what is the probability that the color allele on chromosome 1 of s is w?
 % expected result 0.5
-?- prob(cg(s,2,p),Prob). % what is the probability that the color allele on chromosme 2 of s is p?
+?- prob(cg(s,2,p),Prob). % what is the probability that the color allele on chromosome 2 of s is p?
 %  expected result 0.5
-?- prob(cg(s,2,w),Prob). % what is the probability that the color allele on chromosme 2 of s is w?
+?- prob(cg(s,2,w),Prob). % what is the probability that the color allele on chromosome 2 of s is w?
 % expected result 0.5
 ?- prob(color(s,purple),Prob),bar(Prob,C). % what is the probability that the color of s' flowers is purple?
 % expected result 0.75
 ?- prob(color(s,white),Prob),bar(Prob,C). % what is the probability that the color of s' flowers is white?
 %  expected result 0.25
-?- prob(cg(s,1,p),Prob),bar(Prob,C). % what is the probability that the color allele on chromosme 1 of s is p?
+?- prob(cg(s,1,p),Prob),bar(Prob,C). % what is the probability that the color allele on chromosome 1 of s is p?
 % expected result 0.5
-?- prob(cg(s,1,w),Prob),bar(Prob,C). % what is the probability that the color allele on chromosme 1 of s is w?
+?- prob(cg(s,1,w),Prob),bar(Prob,C). % what is the probability that the color allele on chromosome 1 of s is w?
 % expected result 0.5
-?- prob(cg(s,2,p),Prob),bar(Prob,C). % what is the probability that the color allele on chromosme 2 of s is p?
+?- prob(cg(s,2,p),Prob),bar(Prob,C). % what is the probability that the color allele on chromosome 2 of s is p?
 % expected result 0.5
-?- prob(cg(s,2,w),Prob),bar(Prob,C). % what is the probability that the color allele on chromosme 2 of s is w?
+?- prob(cg(s,2,w),Prob),bar(Prob,C). % what is the probability that the color allele on chromosome 2 of s is w?
 % expected result 0.5
 
 */

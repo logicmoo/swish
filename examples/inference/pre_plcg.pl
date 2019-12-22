@@ -2,7 +2,7 @@
 A prefix parser for a probabilistic left-corner grammar.
 From
 T. Sato, P. Meyer, Tabling for infinite probability computation, in:
-Intnational Confence on Logic Programming, Vol. 17 of LIPIcs, 2012,
+International Conference on Logic Programming, Vol. 17 of LIPIcs, 2012,
 pp.  348-358.
 T. Sato, P. Meyer, Infinite probability computation by cyclic explanation
 graphs, Theory and Practice of Logic Programming 14 (2014) 909-937.
@@ -91,7 +91,7 @@ terminal(b).
 /** <examples>
 
 ?- mc_prob(pre_plc([a,b]),P). what is the probability of sentence [a,b]?
-% expecte result ~ 0.0326
+% expected result ~ 0.0326
 
 
 */

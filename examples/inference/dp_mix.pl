@@ -4,8 +4,8 @@ https://en.wikipedia.org/wiki/Dirichlet_process
 Samples are drawn from a mixture of normal distributions whose parameters are
 defined by means of a Dirichlet process, so the number of components is not
 fixed in advance. For each component, the variance is sampled from a gamma
-disrtibution and the mean is sampled from a Guassian with mean 0 and variance
-30 times the variance of the compoment.
+distribution and the mean is sampled from a Gaussian with mean 0 and variance
+30 times the variance of the component.
 Given some observations, the aim is to find how the distribution of values is
 updated. Less observations are considered with respect to http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=nonparametrics/dp-mixture-model
 because the weights go rapidly to 0.

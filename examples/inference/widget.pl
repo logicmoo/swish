@@ -56,14 +56,14 @@ hist_uncond(Samples,NBins,Chart):-
 hist_rej_macha(Samples,NBins,Chart):-
   mc_rejection_sample_arg(widget(X),machine(a),Samples,X,L0),
   histogram(L0,Chart,[nbins(NBins)]).
-% What is the distribution of the feature given that the widget was procuded
+% What is the distribution of the feature given that the widget was produced
 % by machine a, computed by taking Samples samples with rejection sampling and
 % drawing a histogram with NBins bins?
 
 hist_mh_macha(Samples,Lag,NBins,Chart):-
   mc_mh_sample_arg(widget(X),machine(a),Samples,X,L0,[lag(Lag)]),
   histogram(L0,Chart,[nbins(NBins)]).
-% What is the distribution of the feature given that the widget was procuded
+% What is the distribution of the feature given that the widget was produced
 % by machine a, computed by taking Samples samples with Metropolis-Hastings
 % (lag=Lag) and drawing a histogram with NBins bins?
 
@@ -102,12 +102,12 @@ hist_lw(Samples,NBins,Chart):-
 % What is the distribution of the feature?
 
 ?- hist_rej_macha(10000,40,G).
-% What is the distribution of the feature given that the widget was procuded
+% What is the distribution of the feature given that the widget was produced
 % by machine a, computed by taking 10000 samples with rejection sampling and
 % drawing a histogram with 40 bins?
 
 ?- hist_mh_macha(10000,2,40,G).
-% What is the distribution of the feature given that the widget was procuded
+% What is the distribution of the feature given that the widget was produced
 % by machine a, computed by taking 10000 samples with Metropolis-Hastings
 % (lag=Lag) and drawing a histogram with 40 bins?
 

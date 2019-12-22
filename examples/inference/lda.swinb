@@ -43,7 +43,7 @@ For each of the word positions \(i, j\), where \( j \in \{ 1,\dots,N_i \} \), an
 <p>The aim is to  compute the word probabilities of each topic, the topic of
 each word, and the particular topic mixture of each document. This can be done
 with Bayesian inference: the documents in the dataset represent the
-observations (evidence) and we want to compute the posterior distibution of
+observations (evidence) and we want to compute the posterior distribution of
 the above quantities.
 </p>
 <p>Suppose we have two topics, indicated with integers 1 and 2, and 10 words, indicated with integers \(1,\ldots,10\).

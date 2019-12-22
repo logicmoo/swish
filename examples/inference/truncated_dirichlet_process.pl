@@ -2,8 +2,8 @@
 Comparison of the Dirichlet distribution with a truncated 
 Dirichlet process.
 We compare the index values sampled from a Dirichlet process 
-trucanted at K with those sampled from a discrete distribution 
-over 1..K sampled from a symmetric Dirichlet distribuion.
+truncated at K with those sampled from a discrete distribution 
+over 1..K sampled from a symmetric Dirichlet distribution.
 The truncated Dirichlet process samples an integer between 
 1 and K as follows:
 
@@ -122,7 +122,7 @@ choose_prop(N,K,Alpha,P,V):-
 % sample of the beta_i parameters
 stick_proportion(_,Alpha,P):beta(P,1,Alpha).
 
-% flip of the coing for the portion of the stick of size P
+% flip of the coin for the portion of the stick of size P
 pick_portion(N,P):P;neg_pick_portion(N,P):1-P.
 
 :- end_lpad.

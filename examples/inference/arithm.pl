@@ -61,7 +61,7 @@ random_const(_,C):discrete(C,[0:0.1,1:0.1,2:0.1,3:0.1,4:0.1,
 ?- mc_mh_sample(eval(2,4),eval(1,3),100,P,
   [mix(100),lag(3),successes(T),failures(F)]).
 % perform Metropolis Hastings sampling of eval(2,Y) given that
-% eval(1,3) is true (100 samples, 100 mixing samplesi, lag 3)
+% eval(1,3) is true (100 samples, 100 mixing samples, lag 3)
 % expected result
 % T = 17,
 % F = 83,
@@ -99,7 +99,7 @@ random_const(_,C):discrete(C,[0:0.1,1:0.1,2:0.1,3:0.1,4:0.1,
 % sample arg Y of eval(2,Y) given that 
 % eval(0,2) and eval(1,3) are true
 % Sample using Metropolis Hastings
-% exected result
+% expected result
 % V = [[4]-100].
 ?- mc_mh_sample_arg(eval(2,Y),(eval(0,2),eval(1,3)),100,Y,V,
   [mix(100),lag(3)]),argbar(V,C).
@@ -109,7 +109,7 @@ random_const(_,C):discrete(C,[0:0.1,1:0.1,2:0.1,3:0.1,4:0.1,
 % sample arg Y of eval(2,Y) given that 
 % eval(1,3) is true
 % Sample using Metropolis Hastings
-% exected result
+% expected result
 % V = [[3]-52, [6]-20, [5]-16, [4]-12]
 ?- mc_mh_sample_arg(eval(2,Y),eval(1,3),1000,Y,V,
   [mix(100),lag(3)]),argbar(V,C).
@@ -119,7 +119,7 @@ random_const(_,C):discrete(C,[0:0.1,1:0.1,2:0.1,3:0.1,4:0.1,
 % sample argument Y of eval(2,Y) given that 
 % eval(1,3) is true
 % Sample using rejection sampling
-% exected result
+% expected result
 % V = [[3]-79, [4]-8, [6]-8, [2]-5].
 ?- mc_rejection_sample_arg(eval(2,Y),eval(1,3),100,Y,V),argbar(V,C).
 

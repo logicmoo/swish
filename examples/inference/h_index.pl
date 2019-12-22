@@ -58,7 +58,7 @@ compute the expected value of the h_index given that the authors wrote
 200 papers and each paper receives on average 10 citations
 ?- mc_sample_arg_first(citations(10,200,Cit),1000,Cit,CitList),density(CitList,Dens,[nbins(20)]).
 ?- h_vs_avg_cit(100,40,Chart).
-Plot of the depedency of the expected h-index as a function of the average
+Plot of the dependency of the expected h-index as a function of the average
 number of citations per article (max 40) given that there are 100 papers.
 The graphs shows that the expected h-index is directly proportional to the
 average number of citations (expected h-index=avg. n. cit. +5)
