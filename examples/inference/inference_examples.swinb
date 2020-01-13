@@ -17,6 +17,7 @@ Examples divided by features:
   - Dirichlet process: [dirichlet_process.pl](example/inference/dirichlet_process.pl), [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
   - continuous random variables:
+  [fruit.swinb](example/inference/fruit.swinb),
   [lda.swinb](example/inference/lda.swinb),
   [gpr.pl](example/inference/gpr.pl),
   [gaussian_mixture.pl](example/inference/gaussian_mixture.pl),
@@ -165,6 +166,7 @@ Examples divided by features:
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
   - Monte Carlo unconditional inference:
+  [fruit.swinb](example/inference/fruit.swinb),
   [tile_map.swinb](example/inference/tile_map.swinb),
   [tiny_event_calculusmc.pl](example/inference/tiny_event_calculusmc.pl),
   [random_walk.swinb](example/inference/random_walk.swinb),
@@ -294,6 +296,7 @@ Examples divided by application domain:
   [figaro_coin.swinb](example/figaro_coin.swinb),
   [figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)
  - regression: [gpr.pl](example/inference/gpr.pl)
+ - economy:   [fruit.swinb](example/inference/fruit.swinb),
  - toy: [earthquake.pl](example/inference/earthquake.pl),
   [eruption.pl](example/inference/eruption.pl),
   [alarm.pl](example/inference/alarm.pl),
@@ -640,6 +643,10 @@ is done.
   - Fair coin from a biased coin ([von_neumann_trick.swinb](example/von_neumann_trick.swinb)) If you have a biased coin, obtain a fair coin using the von Neumann trick.
   - Red and Blue Hats Puzzle ([hats.swinb](example/hats.swinb)) From Aaronson, Scott. Quantum Computing Since Democritus. Cambridge university press, 2013
   - Decision theory problems ([decision_theory.swinb](example/decision_theory.swinb)) from G. V. den Broeck, I. Thon, M. van Otterlo, L. D. Raedt, Dtproblog: A decision-theoretic probabilistic prolog, in: M. Fox, D. Poole (Eds.), 24th AAAI Conference on Artificial Intelligence, AAAI’10, Atlanta, Georgia, USA, July 11-15, 2010, AAAI Press, 2010, pp. 1217–1222.
+  - Fruit selling example ([fruit.swinb](example/inference/fruit.swinb)) from Steffen Michels, Arjen Hommersom, Peter J. F. Lucas, Marina Velikova:
+   A new probabilistic constraint logic programming language based on a generalised distribution semantics.   
+   Artif. Intell. 228: 1-44 (2015)
+
 </div>
 
 </div>
