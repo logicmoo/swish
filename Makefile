@@ -1,7 +1,7 @@
 # Copyright: VU University of Amsterdam, CWI Amsterdam
 # License:   Simplified BSD license
 
-YARN_ARCHIVE=swish-js-components.zip
+YARN_ARCHIVE=swish-node-modules.zip
 YARN_URL=https://www.swi-prolog.org/download/swish/${YARN_ARCHIVE}
 SWIPL=swipl
 
@@ -60,7 +60,7 @@ $(YARN_ARCHIVE)::
 
 upload::
 	rm -f $(YARN_ARCHIVE)
-	zip -r $(YARN_ARCHIVE) web/bower_components
+	zip -r $(YARN_ARCHIVE) web/node_modules
 	rsync $(YARN_ARCHIVE) ops:/home/swipl/web/download/swish/$(YARN_ARCHIVE)
 
 
