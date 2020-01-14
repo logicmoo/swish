@@ -17,6 +17,8 @@ Examples divided by features:
   - Dirichlet process: [dirichlet_process.pl](example/inference/dirichlet_process.pl), [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
   - continuous random variables:
+  [diabetes.swinb](example/inference/diabetes.swinb),
+  [ship.swinb](example/inference/ship.swinb),
   [fruit.swinb](example/inference/fruit.swinb),
   [lda.swinb](example/inference/lda.swinb),
   [gpr.pl](example/inference/gpr.pl),
@@ -57,6 +59,7 @@ Examples divided by features:
   [figaro_coin.swinb](example/figaro_coin.swinb),
   [figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)
   - Metropolis-Hastings sampling:
+  [diabetes.swinb](example/inference/diabetes.swinb),
   [lda.swinb](example/inference/lda.swinb),
   [slp_pdcg.pl](example/inference/slp_pdcg.pl), [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl),
   [widget.pl](example/inference/widget.pl)
@@ -166,6 +169,8 @@ Examples divided by features:
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
   - Monte Carlo unconditional inference:
+  [diabetes.swinb](example/inference/diabetes.swinb),
+  [ship.swinb](example/inference/ship.swinb),
   [fruit.swinb](example/inference/fruit.swinb),
   [tile_map.swinb](example/inference/tile_map.swinb),
   [tiny_event_calculusmc.pl](example/inference/tiny_event_calculusmc.pl),
@@ -186,7 +191,7 @@ Examples divided by features:
   [dp_chinese.pl](example/inference/dp_chinese.pl),
   [dp_mix.pl](example/inference/dp_mix.pl)
   - conditional inference:
-  [lda.swinb](example/inference/lda.swinb),
+  [diabetes.swinb](example/inference/diabetes.swinb),
   [mln.swinb](example/inference/mln.swinb),
   [threesideddice.pl](example/inference/threesideddice.pl),
   [arithm.pl](example/inference/arithm.pl), [gaussian_mixture.pl](example/inference/gaussian_mixture.pl),
@@ -201,6 +206,9 @@ Examples divided by features:
   [figaro_coin.swinb](example/figaro_coin.swinb),
   [figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)
   - unconditional inference:
+  [diabetes.swinb](example/inference/diabetes.swinb),
+  [ship.swinb](example/inference/ship.swinb),
+  [fruit.swinb](example/inference/fruit.swinb),
   [tiny_event_calculus.pl](example/inference/tiny_event_calculus.pl),
   [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl), [dice.swinb](example/inference/dice.swinb), [dice.pl](example/inference/dice.pl), [epidemic.pl](example/inference/epidemic.pl), [earthquake.pl](example/inference/earthquake.pl),
   [sneezing.pl](example/inference/sneezing.pl), [eruption.pl](example/inference/eruption.pl), [mendel.pl](example/inference/mendel.pl), [bloodtype.pl](example/inference/bloodtype.pl),
@@ -646,7 +654,12 @@ is done.
   - Fruit selling example ([fruit.swinb](example/inference/fruit.swinb)) from Steffen Michels, Arjen Hommersom, Peter J. F. Lucas, Marina Velikova:
    A new probabilistic constraint logic programming language based on a generalised distribution semantics.   
    Artif. Intell. 228: 1-44 (2015)
-
+  - Fire on a ship example ([ship.swinb](example/inference/ship.swinb))  from Steffen Michels, Arjen Hommersom, Peter J. F. Lucas, Marina Velikova:
+   A new probabilistic constraint logic programming language based on a generalised distribution semantics.   
+   Artif. Intell. 228: 1-44 (2015)
+  - Diabetes mellitus type 2 example ([diabetes.swinb](example/inference/diabetes.swinb))  from Steffen Michels, Arjen Hommersom, Peter J. F. Lucas, Marina Velikova:
+   A new probabilistic constraint logic programming language based on a generalised distribution semantics.   
+   Artif. Intell. 228: 1-44 (2015)
 </div>
 
 </div>
