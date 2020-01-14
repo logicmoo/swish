@@ -366,33 +366,12 @@ swish_navbar(Options) -->
 		&(nbsp), &(nbsp),
         a([id('dismisslink'),href('')],['Dismiss']),
 p(['Updated: ',
-  a([href('/e/decision_theory.swinb')],['DTProbLog']),', ',
-a([href('http://ml.unife.it/plp-book/'),target('_blank')],["book"]),', ',
-a([href('/e/aleph_examples.swinb')],["new Aleph examples"]),', ',
-a([href('/e/von_neumann_trick.swinb')],["von Neumann's trick"]),', ',
-a([href('/e/hats.swinb')],['red and blue hats puzzle']),', ',
-a([href('/e/h_index.pl')],['h-index']),', ',
-a([href('/e/bitcoin_attack.pl')],
-  ['Bitcoin double spending attack']),', ',
-  a([href('/e/bitcoin_two_phase.pl')],
-  ['Bitcoin two-phase PoW'])])
-	/*
-	p([span([style('color:red')],['New']),': ',
-	'new api: ',
-  a([href('/help/help-cplint.html#uncondq'),target('_blank')],['inference']),', ',
-  a([href('/help/help-cplint.html#graphing'),target('_blank')],['graphics']),'; '
-        'Figaro examples: ',
-%	a([href('/help/help-cplint.html#cont'),target('_blank')],
-%	['continuous random variables']),' and ',
-%	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
-%	['likelihood weighting']),': ',
-%	a([href('/example/inference/gaussian_mixture.pl')],
-%	['Gaussian mixture']),', ',
-%	a([href('/example/inference/kalman_filter.pl')],
-%	['Kalman filter']),', ',
-%	a([href('/example/inference/seven_scientists.pl')],['Bayesian estimation']),', ',
-%	a([href('/example/inference/indian_gpa.pl')],['Indian GPA problem'])
-%	*/
+a([href('/e/diabetes.swinb')],['diabetes']),', ',
+a([href('/e/fruit.swinb')],['fruit selling']),', ',
+a([href('/e/ship.swinb')],['fire on a ship']),', ',
+a([href('/e/decision_theory.swinb')],['DTProbLog']),', ',
+a([href('http://ml.unife.it/plp-book/'),target('_blank')],["book"])
+])
        ]))
         ,
 
