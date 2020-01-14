@@ -76,10 +76,11 @@ e:- hba1c(H),{H>7.2}.
 </div>
 <div class="nb-cell markdown">
 We want to compute the probability of diabetes type 2 a priori and given the evidence:
+</div>
 <div class="nb-cell query">
 mc_sample(dm,1000,Prob).
 </div>
 <div class="nb-cell query">
-mc_mh_sample(dm,e,1000,Prob).
+mc_mh_sample(dm,e,10000,Prob).
 </div>
 </div>
