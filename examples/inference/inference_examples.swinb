@@ -305,7 +305,7 @@ Examples divided by application domain:
   [figaro_coin.swinb](example/figaro_coin.swinb),
   [figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)
  - regression: [gpr.pl](example/inference/gpr.pl)
- - economy:   [fruit.swinb](example/inference/fruit.swinb),
+ - economy:   [fruit.swinb](example/inference/fruit.swinb)
  - toy: [earthquake.pl](example/inference/earthquake.pl),
   [eruption.pl](example/inference/eruption.pl),
   [alarm.pl](example/inference/alarm.pl),
