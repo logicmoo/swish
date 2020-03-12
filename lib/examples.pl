@@ -74,12 +74,14 @@ user:file_search_path(example, swish(examples)).
 user:file_search_path(example, swish(examples/inference)).
 user:file_search_path(example, swish(examples/learning)).
 user:file_search_path(example, swish(examples/lemur)).
+user:file_search_path(example, swish(examples/phil)).
 user:file_search_path(example, swish(examples/aleph)).
 
 user:file_search_path(e, swish(examples)).
 user:file_search_path(e, swish(examples/inference)).
 user:file_search_path(e, swish(examples/learning)).
 user:file_search_path(e, swish(examples/lemur)).
+user:file_search_path(e, swish(examples/phil)).
 user:file_search_path(e, swish(examples/aleph)).
 
 
