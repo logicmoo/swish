@@ -283,6 +283,7 @@ Examples divided by application domain:
   [simpson.swinb](example/inference/simpson.swinb),
   [epidemic.pl](example/inference/epidemic.pl),
   [sneezing.pl](example/inference/sneezing.pl),
+  [diabetes.swinb](example/inference/diabetes.swinb)
   - games:
   [tile_map.swinb](example/inference/tile_map.swinb),
   [coin.swinb](example/inference/coin.swinb), [coin.pl](example/inference/coin.pl), [coinmc.pl](example/inference/coinmc.pl),
@@ -304,7 +305,7 @@ Examples divided by application domain:
   [figaro_coin.swinb](example/figaro_coin.swinb),
   [figaro_coin_bag.swinb](example/figaro_coin_bag.swinb)
  - regression: [gpr.pl](example/inference/gpr.pl)
- - economy:   [fruit.swinb](example/inference/fruit.swinb),
+ - economy:   [fruit.swinb](example/inference/fruit.swinb)
  - toy: [earthquake.pl](example/inference/earthquake.pl),
   [eruption.pl](example/inference/eruption.pl),
   [alarm.pl](example/inference/alarm.pl),
@@ -319,6 +320,8 @@ Examples divided by application domain:
   [arithm.pl](example/inference/arithm.pl)
  - diagnosis:
   [figaro_printer.swinb](example/figaro_printer.swinb)
+ - prediction:
+  [ship.swinb](example/inference/ship.swinb)
 
 
 Complete list of examples with description:
