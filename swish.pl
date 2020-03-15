@@ -287,6 +287,8 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(library(matrix)).
 
 
+:- use_module(swish(lib/render/gvterm),   []).
+
 :- multifile prolog_colour:term_colours/2.
 
 prolog_colour:term_colours((:- begin_lpad),
