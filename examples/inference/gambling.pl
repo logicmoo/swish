@@ -22,3 +22,9 @@ never_comb_a:- \+ at_least_one_comb_a.
 
 
 :- end_lpad.
+
+/** <examples>
+?-mc_sample(at_least_one_comb_a,1000,P).
+?-mc_sample(never_comb_a,1000,P).
+
+*/
