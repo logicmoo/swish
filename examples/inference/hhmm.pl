@@ -5,7 +5,7 @@
 
 :- begin_lpad.
 
-init(S):gaussian(S,0,1).
+init_s(S):gaussian(S,0,1).
 trans_err_a(_,E):gaussian(E,0,2).
 trans_err_b(_,E):gaussian(E,0,4).
 obs_err_a(_,E):gaussian(E,0,1).
@@ -20,7 +20,7 @@ ok :-
     A > 2.
 
 kf(N,O,LS) :-
-  init(S),
+  init_s(S),
   kf_part(0, N, S,O,LS).
 
 kf_part(I, N, S, [V|RO], [S|LS]) :-
