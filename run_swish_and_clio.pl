@@ -72,7 +72,7 @@ sandbox:safe_meta_predicate(system:notrace/1).
 
 :- [swish].
 
-:- use_module(library(logicmoo_common)).
+% :- use_module(library(logicmoo_common)).
 
 
 :- use_module(library(http/http_dispatch)).
@@ -110,7 +110,7 @@ user:file_search_path(lps_corner, '/opt/logicmoo_workspace/packs_web/lps_corner'
 :- use_module(cliopatria(cliopatria)).
 
 :- if( \+ current_module(lps_server_UI) ).
-:- ensure_loaded(lps_corner(swish/user_module_clio)).
+% :- ensure_loaded(lps_corner(swish/user_module_clio)).
 :- endif.
 
 
@@ -130,4 +130,8 @@ rt123:- rtrace(swish_highlight:codemirror_tokens([protocol(http),method(post),re
     connection('keep-alive'),cache_control('max-age=0'),peer(ip(192,168,88,1)),
     accept_encoding('gzip, deflate'),accept_language('en-US,en;q=0.9'),cookie(['_ga'='GA1.2.2901774.1587353525',
     swipl_session='2c10-e3c5-65e9-df9a.gitlab']),content_type(html)])).
+
+:- if( \+ current_module(lps_server_UI) ).
+:- ensure_loaded(lps_corner(swish/user_module_clio)).
+:- endif.
 

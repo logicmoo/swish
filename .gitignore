@@ -1,10 +1,10 @@
-node_modules
-bower_components
+#node_modules
+#bower_components
 swish-bower-components.zip
 .bower-senitel
 passwd
-data
-log
+#data
+#log
 *.log
 *~
 *.bak

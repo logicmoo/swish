@@ -1,4 +1,6 @@
-:- module(conf_swish, []).
+:- module(conf_swish_forf_cliop, []).
+
+end_of_file.
 
 :- if(exists_source(cliopatria(hooks))).
 
