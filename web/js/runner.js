@@ -3,7 +3,7 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2014-2017, VU University Amsterdam
+    Copyright (C): 2014-2019, VU University Amsterdam
 			      CWI Amsterdam
     All rights reserved.
 
@@ -44,11 +44,11 @@
  * @requires editor
  */
 
-define([ "jquery", "config", "preferences",
+define([ "jquery", "config", "preferences", "utils",
 	 "cm/lib/codemirror", "form", "prolog", "links", "modal",
 	 "answer", "laconic", "sparkline", "download", "search"
        ],
-       function($, config, preferences,
+       function($, config, preferences, utils,
 		CodeMirror, form, prolog, links, modal) {
 
 		 /*******************************
@@ -72,12 +72,7 @@ define([ "jquery", "config", "preferences",
 
 	function runnerMenu() {
 	  var icon = $.el.span({class:"glyphicon glyphicon-menu-hamburger"});
-	  var menu = form.widgets.dropdownButton(
-	    icon,
-	    { divClass:"runners-menu btn-transparent",
-	      ulClass:"pull-right",
-	      client:elem,
-	      actions:
+	  var actions =
 	      { "Collapse all": function() {
 		  this.find(".prolog-runner").prologRunner('toggleIconic', true);
 	        },
@@ -88,7 +83,24 @@ define([ "jquery", "config", "preferences",
 		  this.find(".prolog-runner").prologRunner('stop');
 		},
 		"Clear": function() { this.prologRunners('clear'); }
-	      }
+	      };
+
+	  if ( config.swish.tasks && config.swish.tasks.enabled ) {
+	    actions["--"] = "divider",
+	    actions["List detached tasks"] = function() {
+	      this.prologRunners("list_tasks");
+	    }
+	    actions["Re-attach all"] = function() {
+	      this.prologRunners("reattach");
+	    }
+	  }
+
+	  var menu = form.widgets.dropdownButton(
+	    icon,
+	    { divClass:"runners-menu btn-transparent",
+	      ulClass:"pull-right",
+	      client:elem,
+	      actions:actions
 	    });
 
 	  return menu;
@@ -103,6 +115,9 @@ define([ "jquery", "config", "preferences",
 
 	elem.on("pane.resize", function() {
 	  elem.prologRunners('scrollToBottom', true);
+	});
+	elem.on("scroll-to-bottom", function(ev, arg) {
+	  elem.prologRunners('scrollToBottom', arg);
 	});
 
 	elem.data(pluginName, data);
@@ -131,7 +146,7 @@ define([ "jquery", "config", "preferences",
 
       data.inner.append(runner);
       $(runner).prologRunner(query);
-      this.prologRunners('scrollToBottom');
+      this.trigger('scroll-to-bottom');
 
       return this;
     },
@@ -142,6 +157,129 @@ define([ "jquery", "config", "preferences",
      */
     clear: function() {
       this.find(".prolog-runner").prologRunner('close');
+    },
+
+    /**
+     * List detached tasks
+     */
+    list_tasks: function() {
+      var runners = this;
+
+      function listTasks() {
+	var content = this;
+
+	function addRow(table, pengine) {
+	  var info  = pengine.detached || {};
+	  var stats = pengine.stats || {};
+	  var times = stats.time || {};
+	  var eye   = form.widgets.glyphIconButton(
+                        "eye-open",
+			{ title: "Attach",
+			  class: "btn-primary btn-xs"
+			});
+
+	  table.append($.el.tr($.el.td(info.query || "?"),
+			       $.el.td(utils.ago(times.epoch)),
+			       $.el.td(utils.ago(info.time)),
+			       $.el.td(times.cpu.toFixed(3)),
+			       $.el.td(pengine.queued),
+			       $.el.td(eye)));
+
+	  $(eye).on("click", function(ev) {
+	    runners.prologRunners('attach', pengine);
+	    $(ev.target).closest("tr").remove();
+	  });
+	}
+
+	function refresh() {
+	  $.ajax({ url: config.http.locations.pengines + "/list?application=swish",
+		   type: "GET",
+		   success: function(reply) {
+		     content.empty();
+		     if ( reply.pengines && reply.pengines.length	> 0 ) {
+		       var table;
+		       content.append(table=$.el.table(
+			 {class: "table table-striped table-condensed task-list"}));
+		       $(table).append($.el.tr($.el.th("Query"),
+					       $.el.th("Started"),
+					       $.el.th("Detached"),
+					       $.el.th("CPU"),
+					       $.el.th("Events")));
+
+		       for(var i=0; i<reply.pengines.length; i++) {
+			 addRow($(table), reply.pengines[i]);
+		       }
+
+		       var btn = form.widgets.glyphIconButton(
+				   "refresh",
+				   { title:"Refresh list",
+				     class:"btn-primary"
+				   });
+
+		       content.append(btn);
+		       $(btn).on("click", function() {
+			 content.find("table").addClass("refreshing");
+			 refresh();
+		       });
+		     } else {
+		       content.append($.el.div("No detached tasks"));
+		     }
+		   },
+		   error: function(jqXHR) {
+		     modal.ajaxError(jqXHR);
+		   }
+		 });
+	}
+
+	refresh();
+      }
+
+      form.showDialog({ title: "Detached tasks",
+			body:  listTasks
+		      });
+
+      return this;
+    },
+
+    /**
+     * Re-attach all detached queries
+     */
+    reattach: function() {
+      var that = this;
+
+      $.ajax({ url: config.http.locations.pengines + "/list?application=swish",
+               type: "GET",
+	       success: function(reply) {
+		 if ( reply.pengines ) {
+		   for(var i=0; i<reply.pengines.length; i++) {
+		     that.prologRunners("attach", reply.pengines[i]);
+		   }
+		 }
+	       },
+	       error: function(jqXHR) {
+		 modal.ajaxError(jqXHR);
+	       }
+             });
+    },
+
+    /**
+     * (re)attach a specific pengine
+     * @param {Object} pengine
+     * @param {String} pengine.id Identifier of the pengine to attach
+     */
+    attach: function(pengine) {
+      var data = this.data('prologRunners');
+      var runner = $.el.div({class: "prolog-runner"});
+      var info = pengine.detached || {};
+
+      data.inner.append(runner);
+      $(runner).prologRunner({ id: pengine.id,
+			       query: info.query || "Detached",
+			       state: info.state
+			     });
+      this.trigger('scroll-to-bottom');
+
+      return this;
     },
 
     /**
@@ -245,16 +383,25 @@ define([ "jquery", "config", "preferences",
      * results as a table.
      * @param {Boolean} [query.title=true] If `false`, suppress the
      * title.
+     * @param {Function} [query.success] Called when the query completed
+     * with success (`true`).  `this` is the runner, the first argument
+     * is the Pengine.
+     * @param {Function} [query.complete] Called when the query
+     * completed, regardless of the result. Passes the same arguments as
+     * `query.success`. The `state` property of the Pengine contains the
+     * result state.  See `this.setState()`.
      */
     _init: function(query) {
       return this.each(function() {
 	var elem = $(this);
 	var data = {};
 
-	function titleBarButton(glyph, title, action) {
+	function titleBarButton(glyph, title, action, display) {
 	  var btn = $.el.button({title:title, class:"rtb-"+action},
 				$.el.span({class:"glyphicon glyphicon-"+glyph}));
 	  $(btn).on("click", function() { elem.prologRunner(action); });
+	  if ( display == false )
+	    $(btn).hide();
 	  return btn;
 	}
 
@@ -271,11 +418,17 @@ define([ "jquery", "config", "preferences",
 	  function next1000() { elem.prologRunner('next', 1000); }
 	  function stop()     { data.prolog.stop(); }
 	  function abort()    { data.prolog.abort(); }
+	  function detach()   { elem.prologRunner('detach'); }
 
 	  function button(action, label) {
 	    var btn = $.el.button(label);
 	    $(btn).on("click", action);
 	    return btn;
+	  }
+
+	  function detach_button() {
+	    if ( config.swish.tasks && config.swish.tasks.enabled )
+	      return button(detach, "Detach");
 	  }
 
 	  function input() {
@@ -308,7 +461,8 @@ define([ "jquery", "config", "preferences",
 	  var inp = input();
 	  var div = $.el.div({class:"controller show-state"},
 			     $.el.span({class:"running"},
-				       button(abort, "Abort")),
+				       button(abort, "Abort"),
+				       detach_button()),
 			     $.el.span({class:"wait-next"},
 				       button(next, "Next"),
 				       button(next10, "10"),
@@ -334,14 +488,17 @@ define([ "jquery", "config", "preferences",
 	    titleBarButton("remove-circle", "Close",        'close'),
 	    titleBarButton("minus",         "Iconify",      'toggleIconic'),
 	    titleBarButton("download",      "Download CSV", 'downloadCSV'),
+	    titleBarButton("link",          "Permalink",    'permalink', false),
 	    stateButton(),
-	    qspan));
+	    qspan,
+            $.el.br({clear:"all"})));
 	} else {
-	  var close = glyphButton("remove-circle", "Close");
-	  elem.append(close);
-	  $(close).on("click", function() {
-	    elem.prologRunner('close');
-	  });
+	  elem.append($.el.div(
+	    {class:"runner-title runner-button-group"},
+	    titleBarButton("remove-circle", "Close",        'close'),
+	    titleBarButton("minus",         "Iconify",      'toggleIconic'),
+	    titleBarButton("download",      "Download CSV", 'downloadCSV'),
+	    titleBarButton("link",          "Permalink",    'permalink', false)));
 	}
 	if ( query.chunk )
 	  data.chunk = query.chunk;
@@ -353,7 +510,9 @@ define([ "jquery", "config", "preferences",
 	elem.prologRunner('populateActionMenu');
 	elem.keydown(function(ev) {
 	  if ( elem.prologRunner('getState') != "wait-input" &&
+	       !$(ev.target).is("input") &&
 	       !ev.ctrlKey && !ev.altKey ) {
+
 	    if ( keyBindings[ev.which] ) {
 	      ev.preventDefault();
 	      elem.prologRunner(keyBindings[ev.which]);
@@ -369,14 +528,15 @@ define([ "jquery", "config", "preferences",
 	data.query   = query;
 	data.answers = 0;
 
+	elem.prologRunner('setScreenDimensions');
+
 	/* Load pengines.js incrementally because we wish to ask the
 	   one from the pengine server rather than a packaged one.
 	*/
 
 	require([config.http.locations.pengines+"/pengines.js"],
 		function() {
-
-	  data.prolog = new Pengine({
+	  var pdata = {
 	    server: config.http.locations.pengines,
 	    runner: elem,
 	    application: "swish",
@@ -391,8 +551,18 @@ define([ "jquery", "config", "preferences",
 	    onoutput: handleOutput,
 	    onping: handlePing,
 	    onerror: handleError,
-	    onabort: handleAbort});
+	    onabort: handleAbort,
+	    ondetach: handleDetach
+	  };
+
+	  if ( query.id )			/* re-attaching */
+	    pdata.id = query.id;
+
+	  data.prolog = new Pengine(pdata);
 	  data.prolog.state = "idle";
+	  if ( query.state ) {
+	    elem.prologRunner('setState', query.state);
+	  }
 	  if ( config.swish.ping && data.prolog.ping != undefined ) {
 	    data.prolog.ping(config.swish.ping*1000);
 	  }
@@ -401,6 +571,34 @@ define([ "jquery", "config", "preferences",
 	return this;
       });
     }, //_init()
+
+    setScreenDimensions: function() {
+      var data = this.data(pluginName);
+      var pre  = $.el.pre({class: "measure"}, "xxxxxxxxxx");
+      var sw   = this.width();
+      var sh;
+      var container;
+
+      container = this.closest(".prolog-runners");
+      if ( container.length == 0 )
+	container = this.closest(".nb-view");
+      if ( container.length )
+	sh = container.height();
+
+      this.append(pre);
+      var cw = $(pre).width()/10;
+      var ch = $(pre).height();
+      $(pre).remove();
+
+      data.screen = {
+        width: sw,
+	cols: Math.floor(sw/cw)
+      };
+      if ( sh !== undefined ) {
+	data.screen.height = sh;
+	data.screen.rows   = Math.floor(sh/ch);
+      }
+    },
 
     /**
      * Add a _positive_ answer to the runner.  The answer is embedded in
@@ -413,6 +611,45 @@ define([ "jquery", "config", "preferences",
     renderAnswer: function(answer) {
       var data = this.data('prologRunner');
       var even = (++data.answers % 2 == 0);
+      var obj = removeSpecialBindings(answer);
+
+      function removeSpecialBindings(answer) {
+	var obj = {};
+	var bindings = answer.variables;
+	var projection = answer.projection;
+	var prefix = "_swish__";
+
+	for (var i = 0; i < bindings.length; i++) {
+	  var vars = bindings[i].variables;
+
+	  for (var v = 0; v < vars.length; v++) {
+	    if ( vars[v].startsWith(prefix) ) {
+	      var name = vars[v].replace(prefix, "");
+	      obj[name] = bindings[i].value;
+	      bindings.splice(i, 1);
+	      i--;
+	    }
+	  }
+	}
+
+	if ( projection ) {
+	  for(var i = 0; i < projection.length; i++) {
+	    if ( projection[i].startsWith(prefix) ) {
+	      projection.splice(i, 1);
+	      i--;
+	    }
+	  }
+	}
+
+	return obj;
+      }
+
+      // Would be better to avoid wrapping in HTML, but that
+      // requires extending pengines_io.pl
+      if ( obj.permahash ) {
+	data.permahash = $(obj.permahash).text().replace(/'/g,"");
+	this.find(".rtb-permalink").show({duration:400});
+      }
 
       if ( data.query.tabled ) {
 	if ( data.answers == 1 ) {
@@ -490,6 +727,7 @@ define([ "jquery", "config", "preferences",
      */
     error: function(options) {
       var msg;
+      var ishtml = false;
 
       if ( typeof(options) == 'object' ) {
 	if ( options.code == "died" ) {
@@ -499,7 +737,8 @@ define([ "jquery", "config", "preferences",
 	  }));
 	  return this;
 	} else if ( options.code == "syntax_error" )
-	{ var m = options.message.match(/^HTTP:DATA:(\d+):(\d+):\s*(.*)/);
+	{ var msg = options.message||options.data;
+	  var m = msg.match(/^HTTP:DATA:(\d+):(\d+):\s*(.*)/);
 
 	  if ( m && m.length == 4 ) {
 	    this.prologRunner('syntaxError',
@@ -512,12 +751,32 @@ define([ "jquery", "config", "preferences",
 	    msg = "Cannot run query due to a syntax error (check query window)";
 	  }
 	}
-	if ( !msg )
-	  msg = options.message;
-      } else
+	if ( !msg ) {
+	  if ( options.html ) {
+	    msg = options.html;
+	    ishtml = true;
+	  } else {
+	    msg = options.message;
+	  }
+	}
+      } else {
 	msg = options;
+	options = {};
+      }
 
-      addAnswer(this, $.el.pre({class:"prolog-message msg-error"}, msg));
+      if ( ishtml ) {
+	var el = $.el.pre({class:"prolog-message msg-error"}, "");
+	$(el).append(msg);
+	addAnswer(this, el);
+	if ( options.econtext ) {
+	  $(el).addClass("error-context")
+	       .on("click", gotoError)
+	       .data("error_context", options.econtext);
+	}
+      } else {
+	addAnswer(this, $.el.pre({class:"prolog-message msg-error"}, msg));
+      }
+
       return this;
     },
 
@@ -598,12 +857,16 @@ define([ "jquery", "config", "preferences",
       var request = prompt.data;
       var receiver;
 
+      console.log(request);
+
       if ( typeof(request.selector) == "string" ) {
 	receiver = $(request.selector);
       } else if ( typeof(request.selector) == "object" ) {
 	switch(request.selector.root) {
-	  case "this":	root = this; break;
-	  case "swish":	root = this.closest(".swish"); break;
+	  case "this":	   root = this; break;
+	  case "cell":	   root = this.closest(".nb-cell");  break;
+	  case "notebook": root = this.closest(".notebook"); break;
+	  case "swish":	   root = this.closest(".swish");    break;
 	}
 	if ( request.selector.sub == "" ) {
 	  receiver = root;
@@ -612,7 +875,9 @@ define([ "jquery", "config", "preferences",
 	}
       }
 
+      console.log(receiver);
       var result = receiver[request.method].apply(receiver, request.arguments);
+      console.log(result);
 
       prompt.pengine.respond(Pengine.stringify(result));
     },
@@ -724,6 +989,20 @@ define([ "jquery", "config", "preferences",
     },
 
     /**
+     * Detach the query from this runner.
+     */
+    detach: function() {
+      return this.each(function() {
+	var elem = $(this);
+	var data = elem.data('prologRunner');
+	data.prolog.detach({
+	  query: data.query.query,
+	  state: data.prolog.state
+	});
+      });
+    },
+
+    /**
      * Abort the associated Prolog engine.
      */
     abort: function() {
@@ -735,12 +1014,12 @@ define([ "jquery", "config", "preferences",
     },
 
     /**
-     * If the associated pengine is alive, send it a `destroy`.  Next,
+     * If the associated pengine is alive, send it an `abort`.  Next,
      * remove the runner from its container.
      */
     close: function() {
       if ( this.length ) {
-	var runners = RS(this);
+	var parents = this.parent();
 
 	this.each(function() {
 	  var elem = $(this);
@@ -748,12 +1027,15 @@ define([ "jquery", "config", "preferences",
 
 	  if ( elem.prologRunner('alive') ) {
 	    $(".prolog-editor").trigger('pengine-died', data.prolog.id);
-	    data.prolog.abort();
+	    if ( data.prolog.state != 'detached' ) {
+	      data.prolog.abort();
+	      elem.prologRunner('setState', 'aborted');
+	    }
 	  }
 	});
 	this.remove();
 
-	runners.prologRunners('scrollToBottom', true);
+	parents.trigger('scroll-to-bottom', true);
       }
       return this;
     },
@@ -779,7 +1061,7 @@ define([ "jquery", "config", "preferences",
 	this.removeClass("iconic");
       }
 
-      RS(this).prologRunners('scrollToBottom', true);
+      this.trigger('scroll-to-bottom', true);
 
       return this;
     },
@@ -811,6 +1093,91 @@ define([ "jquery", "config", "preferences",
       return this;
     },
 
+    /**
+     * Save a permalink
+     */
+    permalink: function() {
+      var runner = this;
+      var data = this.data('prologRunner');
+
+      if ( data.permahash ) {
+	var href = config.http.locations.permalink + data.permahash;
+	href = location.protocol + "//" + location.host + href;
+	var profile = $("#login").login('get_profile',
+					[ "display_name", "avatar", "email",
+					  "identity"
+					]);
+	var author  = profile.display_name;
+
+	function savePermalink() {
+	  this.append($.el.form(
+            { class:"form-horizontal"},
+	      form.fields.hidden("identity", profile.identity),
+	      profile.identity ? undefined :
+			       form.fields.hidden("avatar", profile.avatar),
+	      form.fields.link(href),
+	      form.fields.fileName(null, false),
+	      form.fields.title(),
+	      form.fields.description(),
+	      form.fields.tags([]),
+	      form.fields.author(author, profile.identity),
+	      form.fields.buttons(
+	      { label: "Save permalink",
+		action: function(ev, as) {
+			  runner.prologRunner('save_permalink', as);
+			  return false;
+			}
+	      })));
+	}
+
+	form.showDialog({
+	  title: "Save permalink",
+	  body:	 savePermalink
+	});
+      } else {
+	modal.alert("No permahash");
+      }
+
+      return this;
+    },
+
+    save_permalink: function(as) {
+      var runner = this;
+      var data = this.data('prologRunner');
+      var post = {
+        data: data.permahash,
+	type: "lnk",
+	meta: as
+      };
+
+      delete post.meta.link;
+
+      $.ajax({ url: config.http.locations.web_storage,
+               dataType: "json",
+	       contentType: "application/json",
+	       type: "POST",
+	       data: JSON.stringify(post),
+	       success: function(reply) {
+		 if ( reply.error ) {
+		   modal.alert(errorString("Could not save", reply));
+		 } else {
+		   modal.feedback({ html: "Saved",
+				    owner: runner
+		                  });
+		 }
+	       },
+	       error: function(jqXHR, textStatus, errorThrown) {
+		 if ( jqXHR.status == 403 ) {
+		   modal.alert("Permission denied.  Please try a different name");
+		 } else {
+		   alert('Save failed: '+textStatus);
+		 }
+	       }
+             });
+
+      return this;
+    },
+
   /**
    * @param {String} state defines the new state of the pengine.
    * Known states are:
@@ -825,6 +1192,7 @@ define([ "jquery", "config", "preferences",
    *   - "error"      - Pengine raised an error
    *   - "stopped"    - User selected *stop* after non-det answer
    *   - "aborted"    - User aborted execution
+   *   - "detached"   - User detached the query from the browser
    *
    * The widget is brought to the new  state   by  adding the state as a
    * class to all members of  the   class  `show-state`, which currently
@@ -839,6 +1207,7 @@ define([ "jquery", "config", "preferences",
 
      if ( data.prolog.state != state ) {
        var stateful = this.find(".show-state");
+       var query = data.query;
 
        stateful.removeClass(data.prolog.state).addClass(state);
        data.prolog.state = state;
@@ -848,17 +1217,24 @@ define([ "jquery", "config", "preferences",
        } else if ( state == "wait-input" ) {
 	 this.find("input").focus();
        }
+
+       if ( state == "true" && query.success )
+	 query.success.call(this, data.prolog);
+       if ( !aliveState(state) && query.complete )
+	 query.complete.call(this, data.prolog);
      }
 
      var runners = RS(this);
      if ( !aliveState(state) ) {
+       var elem = this;
        $(".prolog-editor").trigger('pengine-died', data.prolog.id);
        data.prolog.destroy();
-       setTimeout(function() { runners.prologRunners('scrollToBottom') }, 100);
+       setTimeout(function() { elem.trigger('scroll-to-bottom') }, 100);
      } else if ( state == "wait-next" || state == "true" ) {
-       setTimeout(function() { runners.prologRunners('scrollToBottom') }, 100);
+       var elem = this;
+       setTimeout(function() { elem.trigger('scroll-to-bottom') }, 100);
      } else {
-       runners.prologRunners('scrollToBottom');
+       this.trigger('scroll-to-bottom');
      }
 
      return this;
@@ -901,7 +1277,7 @@ define([ "jquery", "config", "preferences",
 
        for(i=0; i<stacks.length; i++) {
 	 var s = stacks[i];
-	 var limit = stats.stacks[s].limit;
+	 var limit = stats.stacks[s].limit || stats.stacks.total.limit;
 	 var usage = stats.stacks[s].usage;
 
 	 var u = Math.log10((usage/limit)*10000);
@@ -924,7 +1300,7 @@ define([ "jquery", "config", "preferences",
 	   data.stacks[s].usage = data.stacks[s].usage.slice(1);
 	 data.stacks[s].usage.push(u);
 	 spark.sparkline(data.stacks[s].usage,
-			 { height: spark.parent().height(),
+			 { height: "2em",
 			   composite: i>0,
 			   chartRangeMin: 0,
 			   chartRangeMax: 4,
@@ -960,6 +1336,7 @@ define([ "jquery", "config", "preferences",
   function aliveState(state) {
     switch( state )
     { case "running":
+      case "detached":
       case "wait-next":
       case "wait-input":
       case "wait-debug":
@@ -1051,40 +1428,61 @@ define([ "jquery", "config", "preferences",
   function handleCreate() {
     var elem = this.pengine.options.runner;
     var data = elem.data(pluginName);
-    var options = {};
-    var bps;
-    var resvar = config.swish.residuals_var || "Residuals";
+    if ( data == undefined ) {
+      this.pengine.destroy();			/* element already gone */
+    } else
+    { var options = $.extend({}, data.screen);
+      var bps;
+      var resvar    = config.swish.residuals_var || "Residuals";
+      var hashvar   = config.swish.permahash_var;
+      var wfsresvar = config.swish.wfs_residual_program_var;
 
-    registerSources(this.pengine);
+      if ( hashvar )
+	hashvar = ", "+hashvar;
+      else
+	hashvar = "";
+      if ( wfsresvar )
+	wfsresvar = ", "+wfsresvar;
+      else
+	wfsresvar = "";
 
-    if ( (bps = breakpoints(elem)) )
-      options.breakpoints = Pengine.stringify(bps);
-    if ( data.chunk )
-      options.chunk = data.chunk;
+      registerSources(this.pengine);
 
-    this.pengine.ask("'$swish wrapper'((\n" +
-		     termNoFullStop(data.query.query) +
-		     "\n), "+resvar+")", options);
-    elem.prologRunner('setState', "running");
+      if ( (bps = breakpoints(elem)) )
+	options.breakpoints = Pengine.stringify(bps);
+      if ( data.chunk )
+	options.chunk = data.chunk;
+      if ( data.query.tabled )
+	options.tabled = true;
+
+      this.pengine.ask("'$swish wrapper'((\n" +
+		       termNoFullStop(data.query.query) +
+		       "\n), ["+resvar+hashvar+wfsresvar+"])", options);
+      elem.prologRunner('setState', "running");
+    }
   }
 
   function handleSuccess() {
     var elem = this.pengine.options.runner;
 
-    for(var i=0; i<this.data.length; i++) {
-      var answer = this.data[i];
-      if ( this.projection )
-	answer.projection = this.projection;
+    if ( elem.data(pluginName) == undefined )
+    { this.pengine.destroy();			/* element already gone */
+    } else {
+      for(var i=0; i<this.data.length; i++) {
+	var answer = this.data[i];
+	if ( this.projection )
+	  answer.projection = this.projection;
 
-      elem.prologRunner('renderAnswer', answer);
+	elem.prologRunner('renderAnswer', answer);
+      }
+      if ( this.time > 0.1 )	/* more than 0.1 sec. CPU (TBD: preference) */
+	addAnswer(elem, $.el.div(
+	  {class:"cputime"},
+	  $.el.span(this.time.toFixed(3),
+		    " seconds cpu time")));
+
+      elem.prologRunner('setState', this.more ? "wait-next" : "true");
     }
-    if ( this.time > 0.1 )	/* more than 0.1 sec. CPU (TBD: preference) */
-      addAnswer(elem, $.el.div(
-	{class:"cputime"},
-	$.el.span(this.time.toFixed(3),
-		  " seconds cpu time")));
-
-    elem.prologRunner('setState', this.more ? "wait-next" : "true");
   }
 
   function handleFailure() {
@@ -1133,10 +1531,11 @@ define([ "jquery", "config", "preferences",
    * source locations
    */
   function clickableLocations(msg, editor) {
-    var pattern = /pengine:\/\/[-0-9a-f]{36}\/src:(\d+)/;
+    var pattern1 = /pengine:\/\/[-0-9a-f]{36}\/src:(\d+)/;
+    var patterng = /pengine:\/\/[-0-9a-f]{36}\/src:(\d+)/g;
 
-    return msg.replace(pattern, function(matched) {
-      var line = matched.match(pattern)[1];
+    return msg.replace(patterng, function(matched) {
+      var line = matched.match(pattern1)[1];
       return "<a class='goto-error' title='Goto location'>" +
                "<span class='glyphicon glyphicon-hand-right'></span> "+
 	       "<b>line <span class='line'>"+line+"</span></b></a>";
@@ -1162,7 +1561,7 @@ define([ "jquery", "config", "preferences",
       }
 
       return false;
-    } else if ( econtext.location.file ) {
+    } else if ( econtext && econtext.location.file ) {
       ctx.closest("body.swish")
 	 .swish('playFile', econtext.location);
     } else {
@@ -1236,7 +1635,7 @@ define([ "jquery", "config", "preferences",
     } else {
       console.log(msg.data);
     }
-    RS(elem).prologRunners('scrollToBottom');
+    elem.trigger('scroll-to-bottom');
   }
 
   function handleError() {
@@ -1248,8 +1647,14 @@ define([ "jquery", "config", "preferences",
 		     "queries by using |Next|, |Stop| or by\n"+
 		     "closing some queries.";
     } else if ( typeof(this.data) == 'string' ) {
-      this.message = this.data
-			 .replace(new RegExp("'"+this.pengine.id+"':", 'g'), "");
+      var data = elem.data(pluginName);
+      var econtext = {editor: data.query.editor};
+
+      var msg = utils.htmlEncode(this.data);
+      msg = clickableLocations(msg, econtext.editor);
+      msg = msg.replace(new RegExp("'"+this.pengine.id+"':", 'g'), "");
+      this.html = msg;
+      this.econtext = econtext;
     } else {
       this.message = "Unknown error";
     }
@@ -1270,6 +1675,18 @@ define([ "jquery", "config", "preferences",
     }
   }
 
+  function handleDetach() {
+    var elem = this.pengine.options.runner;
+    var data = elem.data('prologRunner');
+
+    if ( data ) {
+      elem.prologRunner('outputHTML', "Detached query");
+      elem.prologRunner('setState', "detached");
+    } else {
+      this.pengine.destroy();
+    }
+  }
+
   function handlePing() {
     var elem = this.pengine.options.runner;
 
@@ -1283,7 +1700,10 @@ define([ "jquery", "config", "preferences",
    */
 
   function answerHasOutput(answer) {
-    return answer.variables.length > 0 || answer.residuals;
+    return ( answer.variables.length > 0 ||
+	     answer.residuals ||
+	     answer.wfs_residual_program
+	   );
   }
 
   function termNoFullStop(s) {

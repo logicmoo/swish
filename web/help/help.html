@@ -165,7 +165,7 @@ can be used with `bash` to download the results for a query.  The call
 below downloads a CSV file for the <em>sin</em> function.
 
 <pre style="font-size:80%">
-$ bash swish.ask.sh --server=http://swish.swi-prolog.org \
+$ bash swish.ask.sh --server=http://cplint.lamping.unife.it \
 		    X,Y \
 		    "between(0,90,X),Y is sin(X*pi/180)"
 </pre>
@@ -175,7 +175,7 @@ The script can ask queries against stored Prolog scripts by specifying
 the script on the commandline.  For example:
 
 <pre style="font-size:80%">
-$ bash swish.ask.sh --server=http://swish.swi-prolog.org \
+$ bash swish.ask.sh --server=http://cplint.lamping.unife.it \
 		    sin_table.pl X,Y "sin_table(X,Y)"
 </pre>
 
@@ -185,7 +185,7 @@ be called as:
 
 <pre style="font-size:80%">
 ?- [library(pengines)].
-?- pengine_rpc('http://swish.swi-prolog.org',
+?- pengine_rpc('http://cplint.lamping.unife.it',
 	       sin_table(X,Y),
 	       [ src_text(':- include(sin_table).'),
 		 application(swish)
@@ -202,7 +202,7 @@ X = 2
 <h2 id="help-preload">Preload SWISH with data</h2>
 <p>
 You can make <span style="color:darkblue">SWI</span><span style="color:maroon">SH</span>
-start with a loaded program using the URL <code>http://swish.swi-prolog.org/</code> and
+start with a loaded program using the URL <code>http://cplint.lamping.unife.it/</code> and
 providing the parameters below.  The URL accepts both `GET` and `POST` requests.
 
   <dl class="dl-horizontal">
@@ -227,14 +227,14 @@ providing the parameters below.  The URL accepts both `GET` and `POST` requests.
 <p>The URL below opens <span style="color:darkblue">SWI</span><span style="color:maroon">SH</span> on a file from GitHub with a default query.
 
 <pre>
-http://swish.swi-prolog.org/?code=https://github.com/SWI-Prolog/swipl-devel/raw/master/demo/likes.pl&amp;q=likes(sam,Food).</pre>
-<a target="_blank" href="http://swish.swi-prolog.org/?code=https://github.com/SWI-Prolog/swipl-devel/raw/master/demo/likes.pl&amp;q=likes(sam,Food).">Try it!</a> (launches a new tab)
+http://cplint.lamping.unife.it/?code=https://github.com/SWI-Prolog/swipl-devel/raw/master/demo/likes.pl&amp;q=likes(sam,Food).</pre>
+<a target="_blank" href="http://cplint.lamping.unife.it/?code=https://github.com/SWI-Prolog/swipl-devel/raw/master/demo/likes.pl&amp;q=likes(sam,Food).">Try it!</a> (launches a new tab)
 
 <p>The URL below opens <span style="color:darkblue">SWI</span><span style="color:maroon">SH</span> on notebook.
 
 <pre>
-http://localhost:3050/?code=https://raw.githubusercontent.com/SWI-Prolog/swish/master/examples/htmlcell.swinb</pre>
-<a target="_blank" href="http://localhost:3050/?code=https://raw.githubusercontent.com/SWI-Prolog/swish/master/examples/htmlcell.swinb">Try it!</a> (launches a new tab)
+http://localhost:3020/?code=https://raw.githubusercontent.com/SWI-Prolog/swish/master/examples/htmlcell.swinb</pre>
+<a target="_blank" href="http://localhost:3020/?code=https://raw.githubusercontent.com/SWI-Prolog/swish/master/examples/htmlcell.swinb">Try it!</a> (launches a new tab)
 
 </body>
 </html>

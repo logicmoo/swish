@@ -3,7 +3,7 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2016-2017, VU University Amsterdam
+    Copyright (C): 2016-2020, VU University Amsterdam
 			      CWI Amsterdam
     All rights reserved.
 
@@ -39,7 +39,8 @@
 	    chat_to_profile/2,		% +ProfileID, :HTML
 	    chat_about/2,		% +DocID, +Message
 
-	    notifications//1		% +Options
+	    notifications//1,		% +Options
+	    broadcast_bell//1		% +Options
 	  ]).
 :- use_module(library(http/hub)).
 :- use_module(library(http/http_dispatch)).
@@ -72,6 +73,7 @@
 :- use_module(chatstore).
 :- use_module(authenticate).
 :- use_module(pep).
+:- use_module(content_filter).
 
 :- html_meta(chat_to_profile(+, html)).
 
@@ -89,11 +91,16 @@ browsers which in turn may have multiple SWISH windows opened.
      HTTP authentication.
 */
 
+:- multifile swish_config:config/2.
+
+swish_config:config(hangout, 'Hangout.swinb').
+swish_config:config(avatars, svg).		% or 'noble'
+
+
 		 /*******************************
 		 *	ESTABLISH WEBSOCKET	*
 		 *******************************/
 
-:- http_handler(root(chat), start_chat, [ id(swish_chat_root) ]).
 :- http_handler(swish(chat), start_chat, [ id(swish_chat) ]).
 
 :- meta_predicate must_succeed(0).
@@ -108,13 +115,13 @@ start_chat(Request) :-
 	start_chat(Request, [identity(Identity)]).
 
 start_chat(Request, Options) :-
-	authorized(chat, Options),
+	authorized(chat(open), Options),
 	(   http_in_session(Session)
 	->  CheckLogin = false
 	;   http_open_session(Session, []),
 	    CheckLogin = true
 	),
-	check_flooding,
+	check_flooding(Session),
 	http_parameters(Request,
 			[ avatar(Avatar, [optional(true)]),
 			  nickname(NickName, [optional(true)]),
@@ -125,10 +132,11 @@ start_chat(Request, Options) :-
 			 reconnect(Token),
 			 check_login(CheckLogin)
 		       ], Options, ChatOptions),
+	debug(chat(websocket), 'Accepting (session ~p)', [Session]),
 	http_upgrade_to_websocket(
 	    accept_chat(Session, ChatOptions),
 	    [ guarded(false),
-	      subprotocols(['v1.chat.swish.swi-prolog.org', chat])
+	      subprotocols(['v1.chat.cplint.lamping.unife.it', chat])
 	    ],
 	    Request).
 
@@ -140,12 +148,13 @@ extend_options([_|T0], Options, T) :-
 	extend_options(T0, Options, T).
 
 
-%!	check_flooding
+%!	check_flooding(+Session)
 %
 %	See whether the client associated with  a session is flooding us
 %	and if so, return a resource error.
 
-check_flooding :-
+check_flooding(_Session) :- !.
+check_flooding(Session) :-
 	get_time(Now),
 	(   http_session_retract(websocket(Score, Last))
 	->  Passed is Now-Last,
@@ -153,10 +162,14 @@ check_flooding :-
 	;   NewScore = 10,
 	    Passed = 0
 	),
+	debug(chat(flooding), 'Flooding score: ~2f (session ~p)',
+	      [NewScore, Session]),
 	http_session_assert(websocket(NewScore, Now)),
 	(   NewScore > 50
 	->  throw(http_reply(resource_error(
-				 websocket(reconnect(Passed, NewScore)))))
+				 error(permission_error(reconnect, websocket,
+							Session),
+				       websocket(reconnect(Passed, NewScore))))))
 	;   true
 	).
 
@@ -190,7 +203,10 @@ accept_chat_(Session, Options, WebSocket) :-
 	must_succeed(chat_broadcast(UserData.put(_{type:Reason,
 						   visitors:Visitors,
 						   wsid:WSID}))),
-	gc_visitors.
+	gc_visitors,
+	debug(chat(websocket), '~w (session ~p, wsid ~p)',
+	      [Reason, Session, WSID]).
+
 
 reconnect_token(WSID, Token, Options) :-
 	option(reconnect(Token), Options),
@@ -237,7 +253,22 @@ must_succeed(Goal) :-
 
 visitor(WSID) :-
 	visitor_session(WSID, _Session, _Token),
-	\+ inactive(WSID, 30).
+	(   inactive(WSID, 30)
+	->  fail
+	;   reap(WSID)
+	).
+
+:- if(current_predicate(hub_member/2)).
+reap(WSID) :-
+	hub_member(swish_chat, WSID),
+	!.
+:- else.
+reap(_) :-
+	!.
+:- endif.
+reap(WSID) :-
+	reclaim_visitor(WSID),
+	fail.
 
 visitor_count(Count) :-
 	aggregate_all(count, visitor(_), Count).
@@ -270,7 +301,6 @@ wsid_visitor(WSID, Visitor) :-
 wsid_visitor(WSID, Visitor) :-
 	session_user(Session, Visitor),
 	visitor_session(WSID, Session).
-
 
 %!	existing_visitor(+WSID, +Session, +Token, -TmpUser, -UserData) is semidet.
 %
@@ -375,9 +405,18 @@ do_gc_visitors :-
 
 reclaim_visitor(WSID) :-
 	debug(chat(gc), 'Reclaiming idle ~p', [WSID]),
-	retractall(visitor_session(WSID, _Session, _Token)),
+	reclaim_visitor_session(WSID),
 	retractall(visitor_status(WSID, _Status)),
 	unsubscribe(WSID, _).
+
+reclaim_visitor_session(WSID) :-
+	forall(retract(visitor_session(WSID, Session, _Token)),
+		       http_session_retractall(websocket(_, _), Session)).
+
+:- if(\+current_predicate(http_session_retractall/2)).
+http_session_retractall(Data, Session) :-
+	retractall(http_session:session_data(Session, Data)).
+:- endif.
 
 
 %%	create_session_user(+Session, -User, -UserData, +Options)
@@ -735,6 +774,11 @@ avatar_property(_Avatar, Source, avatar_source, Source).
 %	HTTP handler for Noble  Avatar   images.  Using  create_avatar/2
 %	re-creates avatars from the file name,  so we can safely discard
 %	the avatar file store.
+%
+%	Not really. A new user gets a new   avatar  and this is based on
+%	whether or not the file exists. Probably we should maintain a db
+%	of handed out avatars and their last-use   time stamp. How to do
+%	that? Current swish stats: 400K avatars, 3.2Gb data.
 
 reply_avatar(Request) :-
 	option(path_info(Local), Request),
@@ -751,17 +795,24 @@ reply_avatar(Request) :-
 noble_avatar_url(HREF, Options) :-
 	option(avatar(HREF), Options), !.
 noble_avatar_url(HREF, _Options) :-
+	swish_config:config(avatars, noble),
+	!,
 	noble_avatar(_Gender, Path, true),
 	file_base_name(Path, File),
 	http_absolute_location(swish(avatar/File), HREF, []).
+noble_avatar_url(HREF, _Options) :-
+	A is random(0x1FFFFF+1),
+	http_absolute_location(icons('avatar.svg'), HREF0, []),
+	format(atom(HREF), '~w#~d', [HREF0, A]).
+
 
 
 		 /*******************************
 		 *	   BROADCASTING		*
 		 *******************************/
 
-%%	chat_broadcast(+Message)
-%%	chat_broadcast(+Message, +Channel)
+%%	chat_broadcast(+Message) is det.
+%%	chat_broadcast(+Message, +Channel) is det.
 %
 %	Send Message to all known SWISH clients. Message is a valid JSON
 %	object, i.e., a dict or option list.
@@ -790,6 +841,9 @@ subscribed(Channel, WSID) :-
 	subscription(WSID, Channel, _).
 subscribed(Channel, SubChannel, WSID) :-
 	subscription(WSID, Channel, SubChannel).
+subscribed(gitty, SubChannel, WSID) :-
+	swish_config:config(hangout, SubChannel),
+	\+ subscription(WSID, gitty, SubChannel).
 
 
 		 /*******************************
@@ -922,14 +976,88 @@ json_message(Dict, WSID) :-
 	wsid_visitor(WSID, Visitor),
 	update_visitor_data(Visitor, _{name:Name}, 'set-nick-name').
 json_message(Dict, WSID) :-
-	_{type: "chat-message", docid:_} :< Dict, !,
+	_{type: "chat-message", docid:DocID} :< Dict, !,
 	chat_add_user_id(WSID, Dict, Message),
-	chat_relay(Message).
+	(   forbidden(Message, DocID, Why)
+	->  hub_send(WSID, json(json{type:forbidden,
+				     action:chat_post,
+				     about:DocID,
+				     message:Why
+				    }))
+	;   chat_relay(Message)
+	).
 json_message(Dict, _WSID) :-
 	debug(chat(ignored), 'Ignoring JSON message ~p', [Dict]).
 
 dict_file_name(Dict, File) :-
 	atom_string(File, Dict.get(file)).
+
+%!	forbidden(+Message, +DocID, -Why) is semidet.
+%
+%	True if the chat Message about DocID must be forbidden, in which
+%	case Why is  unified  with  a   string  indicating  the  reason.
+%	Currently:
+%
+%	  - Demands the user to be logged on
+%	  - Limits the size of the message and its payloads
+%
+%	@tbd Call authorized/2 with all proper identity information.
+
+forbidden(Message, DocID, Why) :-
+	\+ swish_config:config(chat_spam_protection, false),
+	\+ ws_authorized(chat(post(Message, DocID)), Message.user), !,
+	Why = "Due to frequent spamming we were forced to limit \c
+	       posting chat messages to users who are logged in.".
+forbidden(Message, _DocID, Why) :-
+	Text = Message.get(text),
+	string_length(Text, Len),
+	Len > 500,
+	Why = "Chat messages are limited to 500 characters".
+forbidden(Message, _DocID, Why) :-
+	Payloads = Message.get(payload),
+	member(Payload, Payloads),
+	large_payload(Payload, Why), !.
+forbidden(Message, _DocID, Why) :-
+	\+ swish_config:config(chat_spam_protection, false),
+	eval_content(Message.get(text), _WC, Score),
+	user_score(Message, Score, Cummulative, _Count),
+	Score*2 + Cummulative < 0,
+	!,
+	Why = "Chat messages must be in English and avoid offensive language".
+
+large_payload(Payload, Why) :-
+	Selections = Payload.get(selection),
+	member(Selection, Selections),
+	(   string_length(Selection.get(string), SelLen), SelLen > 500
+	;   string_length(Selection.get(context), SelLen), SelLen > 500
+	), !,
+	Why = "Selection too long (max. 500 characters)".
+large_payload(Payload, Why) :-
+	string_length(Payload.get(query), QLen), QLen > 1000, !,
+	Why = "Query too long (max. 1000 characters)".
+
+user_score(Message, MsgScore, Cummulative, Count) :-
+	Profile	= Message.get(user).get(profile_id), !,
+	block(Profile, MsgScore, Cummulative, Count).
+user_score(_, _, 0, 1).
+
+%!	block(+User, +Score, -Cummulative, -Count)
+%
+%	Keep a count and cummulative score for a user.
+
+:- dynamic
+	blocked/4.
+
+block(User, Score, Cummulative, Count) :-
+	blocked(User, Score0, Count0, Time), !,
+	get_time(Now),
+	Cummulative = Score0*(0.5**((Now-Time)/600)) + Score,
+	Count is Count0 + 1,
+	asserta(blocked(User, Cummulative, Count, Now)),
+	retractall(blocked(User, Score0, Count0, Time)).
+block(User, Score, Score, 1) :-
+	get_time(Now),
+	asserta(blocked(User, Score, 1, Now)).
 
 
 		 /*******************************
@@ -1120,8 +1248,8 @@ event_message(opened(File)) -->
 	html([ 'Opened ', \file(File) ]).
 event_message(download(File)) -->
 	html([ 'Opened ', \file(File) ]).
-event_message(download(Store, FileOrHash, _Format)) -->
-	{ event_file(download(Store, FileOrHash), File)
+event_message(download(Store, FileOrHash, Format)) -->
+	{ event_file(download(Store, FileOrHash, Format), File)
 	},
 	html([ 'Opened ', \file(File) ]).
 
@@ -1176,8 +1304,6 @@ html_string(HTML, String) :-
 		 *	       UI		*
 		 *******************************/
 
-:- multifile swish_config:config/2.
-
 %%	notifications(+Options)//
 %
 %	The  chat  element  is  added  to  the  navbar  and  managed  by
@@ -1198,14 +1324,43 @@ notifications(_Options) -->
 notifications(_Options) -->
 	[].
 
+%!	broadcast_bell(+Options)//
+%
+%	Adds a bell to indicate central chat messages
+
+broadcast_bell(_Options) -->
+	{ swish_config:config(chat, true),
+	  swish_config:config(hangout, Hangout),
+	  atom_concat('gitty:', Hangout, HangoutID)
+	}, !,
+	html([ a([ class(['dropdown-toggle', 'broadcast-bell']),
+		   'data-toggle'(dropdown)
+		 ],
+		 [ span([ id('broadcast-bell'),
+			  'data-document'(HangoutID)
+			], []),
+		   b(class(caret), [])
+		 ]),
+	       ul([ class(['dropdown-menu', 'pull-right']),
+		    id('chat-menu')
+		  ],
+		  [ li(a('data-action'('chat-shared'),
+			 'Open hangout')),
+		    li(a('data-action'('chat-about-file'),
+			 'Open chat for current file'))
+		  ])
+	     ]).
+broadcast_bell(_Options) -->
+	[].
+
 
 		 /*******************************
 		 *	      MESSAGES		*
 		 *******************************/
 
 :- multifile
-	prolog:message//1.
+	prolog:message_context//1.
 
-prolog:message(websocket(reconnect(Passed, Score))) -->
+prolog:message_context(websocket(reconnect(Passed, Score))) -->
 	[ 'WebSocket: too frequent reconnect requests (~1f sec; score = ~1f)'-
 	  [Passed, Score] ].

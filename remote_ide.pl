@@ -49,6 +49,7 @@
 :- multifile(owl2_model:datatype/2).
 :- dynamic(owl2_model:datatype/2).
 
+:- use_module(library(logicmoo_common)).
 
 /** <module>
 
@@ -67,7 +68,7 @@ from_http(G):- with_output_to(main_error,G).
 :- use_module(library(aleph),[]).
 
 
-:- use_module(library(must_trace)).
+#:- use_module(library(must_trace)).
 
 reexport_from(ReExporter,From:P):- 
     From:export(From:P),
@@ -117,11 +118,11 @@ user:file_search_path('swish', Dir):-  swish_home(Dir),!.
 
 user:file_search_path(project, '.').
 user:file_search_path(config_enabled, 'config-enabled-swish').
-user:file_search_path(config_enabled, swish('config-enabled')).
+user:file_search_path(config_enabled, swish('config-enabled-swish')).
 
 :- dynamic http:location/3.
 :- multifile http:location/3.
-http:location(root, '/', [priority(1100)]).
+%http:location(root, '/', [priority(1100)]).
 http:location(swish, root('swish'), [priority(500)]).
 http:location(root, '/swish', []).
 
@@ -157,7 +158,8 @@ nowdmsg(_).
 :- use_module(library(pita),[]).
 
 :- endif.
- 
+ 
+
 :- if(false).
 :- use_module(library(cplint_r),[]).
 :- use_module(library(mcintyre)).
@@ -192,15 +194,17 @@ swish_config:source_alias(project, [access(both), search('*.pl')]).
 swish_config:source_alias(library, []).
 
 swish_config:verify_write_access(Request, File, Options) :- currently_logged_in(swish_config:verify_write_access(Request, File, Options),_).
+swish_config:verify_write_access(_Request, _File, _Options).
 
 pengines:authentication_hook(Request, swish, User) :- 
    fail, currently_logged_in(pengines:authentication_hook(Request, swish, User),User),!.
 
 :- multifile pengines:allowed/2.
 :- dynamic pengines:allowed/2.
-
+	
 
 pengines:not_sandboxed(Maybe, Application) :- currently_logged_in(pengines:not_sandboxed(Maybe, Application),_User),!.
+pengines:not_sandboxed(Peer, _Application) :- authenticated_peer(Peer,_User).
 
 current_user(User):- currently_logged_in(why,User).
 
@@ -284,23 +288,23 @@ swish :-
 
 swish(Port) :-
 	http_server_property(Port, goal(swish_ide:http_dispatch)), !,
-	open_browser(Port).
+	remote_open_browser(Port).
 swish(_:Port) :-
 	integer(Port),
 	http_server_property(Port, goal(swish_ide:http_dispatch)), !,
-	open_browser(Port).
+	remote_open_browser(Port).
 swish(Port) :-
 	http_server(http_dispatch,
 		    [ port(Port),
 		      workers(16)
 		    ]),
-	open_browser(Port).
+	remote_open_browser(Port).
 
-open_browser(Port):- !, dmsg(open_browser(Port)).
+remote_open_browser(Port):- !, dmsg(remote_open_browser(Port)).
 open_browser(Address) :-
 	host_port(Address, Host, Port),
 	http_server_property(Port, scheme(Scheme)),
-	http_absolute_location(root(.), Path, []),
+	http_absolute_location(swish(.), Path, []),
 	format(atom(URL), '~w://~w:~w~w', [Scheme, Host, Port, Path]),
 	wdmsg(www_open_url(URL)).
 

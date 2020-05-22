@@ -3,7 +3,7 @@
 <div class="nb-cell markdown">
 # Using SWISH with ClioPatria
 
-[SWISH](http://swish.swi-prolog.org) (SWI-Prolog for SHaring) provides a Prolog shell over the web that allows you to formulate queries in a modular fashion and handle results in several ways:
+[SWISH](http://cplint.lamping.unife.it) (SWI-Prolog for SHaring) provides a Prolog shell over the web that allows you to formulate queries in a modular fashion and handle results in several ways:
 
   - As plain Prolog results.
   - Using the SWISH [C3](http://www.c3js.org) chart renderer.

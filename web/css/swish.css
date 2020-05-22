@@ -7,10 +7,10 @@
 @import url("answer.css");
 @import url("term.css");
 @import url("gitty.css");
-@import url("../bower_components/jquery.splitter/css/jquery.splitter.css");
-@import url("../bower_components/bootstrap/dist/css/bootstrap.css");
-@import url("../bower_components/tagmanager/tagmanager.css");
-@import url("../bower_components/c3/c3.css");
+@import url("../node_modules/jquery.splitter/css/jquery.splitter.css");
+@import url("../node_modules/bootstrap/dist/css/bootstrap.css");
+@import url("../node_modules/tagmanager/tagmanager.css");
+@import url("../node_modules/c3/c3.css");
 @import url("typeaheadjs.css");
 @import url("diffview.css");
 @import url("notebook.css");
@@ -20,8 +20,10 @@
 @import url("login.css");
 @import url("chat.css");
 @import url("chatroom.css");
+@import url("chatbell.css");
 @import url("flash.css");
-@import url("filesystems.css");
+@import url("sourcelist.css");
+@import url("version.css");
 
 /* Logos */
 
@@ -79,14 +81,4 @@ body .modal-dialog.swish-embedded-manual div.modal-body {
 iframe.swish-embedded-manual {
   width: 100%;
   border: 0px;
-}
-
-.navbar-default .navbar-nav  .active  a {
-  background-color: #f8f8f8;
-  color: #777;
-}
-
-.navbar-default .navbar-nav  .active  a:hover {
-  background-color: #e7e7e7;
-  color: #333;
 }

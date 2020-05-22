@@ -6,8 +6,8 @@ that a student GPA is exactly 4.04.0 in a model of transcripts of students
 from the USA (GPA's from 0.00.0 to 4.04.0 and India (GPA's from 0.00.0 to 
 10.010.0) what is the probability that the student is from India?... 
 As we know from statistics, given the mixture distribution and given the 
-fact that his/her GPA is exactly 4.04.0, the probability that the student 
-is American must be 1.01.0 
+fact that his/her GPA is exactly 4.0, the probability that the student 
+is American must be 1.0.
 (i.e. zero probability that the student is from India)."
 Probabilistic logic program from 
 https://github.com/davidenitti/DC/blob/master/examples/indian-gpa.pl
@@ -45,7 +45,7 @@ student_gpa ~ val(I) := nation~=i,indian_gpa~=I.
 % probability that the nation is America given that the student got 4.0
 % in his GPA
 % expected result: 1.0
-?- mc_sample(nation(a),1000,_T,_F,PPrior).
+?- mc_sample(nation(a),1000,PPrior).
 % prior probability that the nation is America 
 % expected result: 0.25
 */

@@ -1,13 +1,11 @@
 % Simple illustration of the technique of generalised
 %       closed-world specialisation within Aleph
-% To run do the following:
-%       a. Load Aleph
-%       b. read_all(cal).
-%       c. rdhyp.
-%	d. normal(A).
-%       e. sphyp.
-%       f. show(gcws).
-%       h. addgcws.
+/** <examples>
+?- rdhyp,sphyp,show(gcws),addgcws.
+% input
+% |: normal(A).
+*/
+
 :-use_module(library(aleph)).
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(prolog).
@@ -3661,4 +3659,4 @@ normal(1592).
 normal(1596).
 normal(1600).
 :-end_in_neg.
-:-aleph_read_all.
+

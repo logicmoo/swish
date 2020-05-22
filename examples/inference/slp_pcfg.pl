@@ -1,5 +1,5 @@
 /*
-Probabilistic contect-free grammar implemented as a Stochastic Logic Program.
+Probabilistic context-free grammar implemented as a Stochastic Logic Program.
 The grammar
 0.2:S->aS
 0.2:S->bS
@@ -48,7 +48,7 @@ s(L):-s(L,0).
 /** <examples>
 ?- mc_sample_arg(s(S),100,S,L).
 % sample 100 sentences from the language
-?- mc_sample_arg_bar(s(S),100,S,L).
+?- mc_sample_arg(s(S),100,S,P),argbar(P,C).
 % sample 100 sentences from the language and draw a bar chart
 
 

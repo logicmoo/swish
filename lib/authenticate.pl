@@ -31,9 +31,6 @@
     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
-
-    Changes by:    Riccardo Zese
-    E-mail:        riccardo.zese@unife.it
 */
 
 :- module(swish_authenticate,
@@ -70,10 +67,10 @@ based on the HTTP request.
 
 authenticate(Request, Auth) :-
     http_peer(Request, Peer),
-    http_auth(Request, Auth0),
-    profile_auth(Request, Auth1),
-    Auth2 = Auth0.put(Auth1).put(peer, Peer),
-    identity(Auth2, Auth),
+    http_auth(Request, HTTPAuth),
+    profile_auth(Request, ProfileAuth),
+    Auth2 = HTTPAuth.put(ProfileAuth).put(peer, Peer),
+    identity(Request, Auth2, Auth),
     debug(authenticate, 'Identity: ~p', [Auth]).
 
 :- multifile
@@ -93,19 +90,28 @@ http_auth(_Request, auth{}).
 
 profile_auth(Request, Auth) :-
     swish_config:user_profile(Request, Profile),
-    Auth = _{identity_provider: _,
-             external_identity: _,
-             profile_id:_},
-    Auth :< Profile,
-    !.
+    Pattern = _{ identity_provider: _,
+                 external_identity: _,
+                 profile_id:_},
+    Pattern :< Profile,
+    Auth = auth{}.put(Pattern).
 profile_auth(_, auth{}).
 
-identity(Auth0, Auth) :-
+identity(Request, Auth0, Auth) :-
     _{identity_provider:Provider, external_identity:ExtID} :< Auth0,
     !,
+    (   swish_config:user_info(Request, Provider, UserInfo),
+        is_dict(UserInfo, Tag),
+        (   var(Tag)
+        ->  Tag = user_info
+        ;   true
+        )
+    ->  true
+    ;   UserInfo = user_info{}
+    ),
     atomic_list_concat([Provider,ExtID], :, Identity),
-    Auth = Auth0.put(identity, Identity).
-identity(Auth, Auth).
+    Auth = Auth0.put(_{identity:Identity, user_info:UserInfo}).
+identity(_, Auth, Auth).
 
 
 %!  user_property(+Identity, ?Property) is nondet.

@@ -4,20 +4,21 @@ https://en.wikipedia.org/wiki/Dirichlet_process
 Samples are drawn from a mixture of normal distributions whose parameters are
 defined by means of a Dirichlet process, so the number of components is not
 fixed in advance. For each component, the variance is sampled from a gamma
-disrtibution and the mean is sampled from a Guassian with mean 0 and variance
-30 times the variance of the compoment.
+distribution and the mean is sampled from a Gaussian with mean 0 and variance
+30 times the variance of the component.
 Given some observations, the aim is to find how the distribution of values is
 updated. Less observations are considered with respect to http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=nonparametrics/dp-mixture-model
 because the weights go rapidly to 0.
 */
 /** <examples>
-?- dens(200).
+?- dens(1000).
 % draw the prior and posterior densities
-?- prior(200).
+?- prior(1000).
 % draw the prior density
-?- post(200).
+?- post(1000).
 % draw the posterior density
-?- post_exp(200).
+?- post_exp(1000).
+
 % draw the posterior density using the exponential function.
 
 */
@@ -69,7 +70,7 @@ choose_prop(N,NV,Alpha,P,V):-
 
 stick_proportion(_,Alpha,P):beta(P,1,Alpha).
 
-pick_portion(_,_,P):P;neg_pick_portion(_,_,P):1-P.
+pick_portion(N,NV,P):P;neg_pick_portion(N,NV,P):1-P.
 
 :- end_lpad.
 

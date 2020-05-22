@@ -7,77 +7,93 @@ A six-sided die is repeatedly thrown until the outcome is six.
 on(T,F) means that on the =T=th throw the face =F= came out.
 
 What is the probability that the die lands on face 1 at time 0?
-
 </div>
+
 <div class="nb-cell query">
-prob(on(0,1),Prob). 
-</div> 
+prob(on(0,1),Prob).
+</div>
+
 <div class="nb-cell markdown">
-
 What is the probability that the die lands on face 1 at time 1?
-
 </div>
+
 <div class="nb-cell query">
-prob(on(1,1),Prob). 
-</div> 
+prob(on(1,1),Prob).
+</div>
+
 <div class="nb-cell markdown">
 What is the probability that the die lands on face 1 at time 2?
 </div>
+
 <div class="nb-cell query">
-prob(on(2,1),Prob). 
-</div> 
+prob(on(2,1),Prob).
+</div>
+
 <div class="nb-cell markdown">
 What is the probability that the die lands on face 1 at time 2 given that it landed on face 1 at time 0?
 </div>
+
 <div class="nb-cell query">
-prob(on(2,1),on(0,1),Prob). 
+prob(on(2,1),on(0,1),Prob).
 </div>
+
 <div class="nb-cell markdown">
-What is the probability that the die lands on face 1 at time 2 given that it lan
-ded on face 1 at times 0 and 1?
+What is the probability that the die lands on face 1 at time 2 given that it landed on face 1 at times 0 and 1?
 </div>
+
 <div class="nb-cell query">
 prob(on(2,1),evidence,Prob).
 </div>
+
 <div class="nb-cell markdown">
 What is the probability that the die lands on face 1 at time 0 represented graphically?
 </div>
+
 <div class="nb-cell query">
-prob_bar(on(0,1),Prob). 
+prob(on(0,1),Prob),bar(Prob,C).
 </div>
+
 <div class="nb-cell markdown">
-What is the probability that the die lands on face 1 at time 1 represented graph
-ically?
+What is the probability that the die lands on face 1 at time 1 represented graphically?
 </div>
+
 <div class="nb-cell query">
-prob_bar(on(1,1),Prob). 
+prob(on(1,1),Prob),bar(Prob,C).
 </div>
+
 <div class="nb-cell markdown">
-What is the probability that the die lands on face 1 at time 2 represented graph
-ically?
+What is the probability that the die lands on face 1 at time 2 represented graphically?
 </div>
+
 <div class="nb-cell query">
-prob_bar(on(2,1),Prob).
+prob(on(2,1),Prob),bar(Prob,C).
 </div>
+
 <div class="nb-cell markdown">
 What is the probability that the die lands on face 1 at time 2 given that it landed on face 1 at time 0 represented graphically?
 </div>
+
 <div class="nb-cell query">
-prob_bar(on(2,1),on(0,1),Prob). 
+prob(on(2,1),on(0,1),Prob),bar(Prob,C).
 </div>
+
 <div class="nb-cell markdown">
 What is the probability that the die lands on face 1 at time 2 given that it 
 landed on face 1 at time 1 represented graphically?
 </div>
+
 <div class="nb-cell query">
-prob_bar(on(2,1),on(1,1),Prob).
+prob(on(2,1),on(1,1),Prob),bar(Prob,C).
 </div>
+
 <div class="nb-cell markdown">
 What is the BDD for query on(1,1)?
 </div>
+
 <div class="nb-cell query">
-bdd_dot_string(on(1,1),BDD,Var).  
+bdd_dot_string(on(1,1),BDD,Var).
 </div>
+
 <div class="nb-cell markdown">
 A solid edge indicates a 1-child, a dashed edge indicates a 0-child and 
 a dotted 
@@ -96,8 +112,8 @@ rule.
 
 ### Preamble:
 </div>
-<div class="nb-cell program prolog" data-background="true">
 
+<div class="nb-cell program" data-background="true">
 :- use_module(library(pita)).
 
 :- if(current_predicate(use_rendering/1)).
@@ -109,45 +125,48 @@ rule.
 :- pita.
 
 :- begin_lpad.
-
 </div>
+
 <div class="nb-cell markdown">
 on(T,F) means that the die landed on face =F= at time =T=.
 At time 0 the dice lands on one of its faces with equal probability:
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 on(0,1):1/6;on(0,2):1/6;on(0,3):1/6;
 on(0,4):1/6;on(0,5):1/6;on(0,6):1/6.
 </div>
+
 <div class="nb-cell markdown">
 At time =T= the die lands on one of its faces with equal probability if
 at the previous time point it was thrown and it did not land on face 6:
 </div>
-<div class="nb-cell program prolog" data-background="true">
 
+<div class="nb-cell program" data-background="true">
 on(X,1):1/6;on(X,2):1/6;on(X,3):1/6;
 on(X,4):1/6;on(X,5):1/6;on(X,6):1/6:-
-  X1 is X-1,X1>=0,on(X1,_),
+  X1 is X-1,X1&gt;=0,on(X1,_),
   \+ on(X1,6).
 </div>
+
 <div class="nb-cell markdown">
 Evidence formed by more than one atom must be explicitly represented. 
 For example, if on(0,1) and on(1,1) are evidence, we can define a 
 clause with their conjunction in the body and use the head as the evidence
 in queries:
 </div>
-<div class="nb-cell program prolog" data-background="true">
 
+<div class="nb-cell program" data-background="true">
 evidence:-
   on(0,1),
   on(1,1).
 </div>
+
 <div class="nb-cell markdown">
 ### Epilogue:
 </div>
-<div class="nb-cell program prolog" data-background="true">
 
-
+<div class="nb-cell program" data-background="true">
 :- end_lpad.
 </div>
 
@@ -157,4 +176,5 @@ J. Vennekens, S. Verbaeten, and M. Bruynooghe. Logic programs with annotated
 disjunctions. In International Conference on Logic Programming, 
 volume 3131 of LNCS, pages 195-209. Springer, 2004.
 </div>
+
 </div> 

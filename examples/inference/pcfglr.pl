@@ -1,5 +1,5 @@
 /*
-Probabilistic contect-free grammar.
+Probabilistic context-free grammar.
 0.2:S->aS
 0.2:S->bS
 0.3:S->a
@@ -18,7 +18,7 @@ Theory and Practice of Logic Programming,  doi:10.1017/S1471068413000677.
 
 :- begin_lpad.
 % pcfg(LT): LT is string of terminals accepted by the grammar
-% pcfg(L,LT,LT0) L is a tring of terminals and not terminals that derives
+% pcfg(L,LT,LT0) L is a string of terminals and not terminals that derives
 % the list of terminals in LT-LT0
 
 pcfg(L):- pcfg(['S'],[],_Der,L,[]).
@@ -66,14 +66,14 @@ rule('S',Der,['S','S']):0.4; rule('S',Der,[a]):0.3;
 ?- mc_prob(pcfg([a,b,a]),Prob).
 % expected result ~ 0.009.
 
-?- mc_sample(pcfg([a,a]),1000,T,F,Prob). % take 1000 samples of pcfg([a,a])
+?- mc_sample(pcfg([a,a]),1000,Prob,[successes(T),failures(F)]). % take 1000 samples of pcfg([a,a])
 
-?- mc_sample_bar(pcfg([a,a]),1000,Chart). % take 1000 samples of pcfg([a,a])
+?- mc_sample(pcfg([a,a]),1000,Prob),bar(Prob,C). % take 1000 samples of pcfg([a,a])
 
 ?- mc_sample_arg(pcfg(S),20,S,Values). % take 20 samples of S in 
 % findall(S,pcfg(S),L)
 
-?- mc_sample_arg_bar(pcfg(L),20,L,Chart). % take 20 samples of S in 
+?- mc_sample_arg(pcfg(L),20,L,Values),argbar(Values,C). % take 20 samples of S in 
 % findall(S,pcfg(S),L)
 
 */

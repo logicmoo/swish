@@ -64,7 +64,7 @@ var KEY = "SWISHCONFIG";
 var config;
 
 function getCachedConfig() {
-  if ( typeof(Storage) !== "undefined" && typeof(window.swish) !== "undefined" && window.swish.config_hash ) {
+  if ( typeof(Storage) !== "undefined" && window.swish.config_hash ) {
     var str;
 
     if ( (str = localStorage.getItem(KEY)) ) {

@@ -1,0 +1,1 @@
+../config-available-swish/auth_scz.pl

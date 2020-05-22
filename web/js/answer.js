@@ -45,7 +45,6 @@
 define([ "jquery", "laconic" ],
        function() {
 
-
 		 /*******************************
 		 *	RENDER AN ANSWER	*
 		 *******************************/
@@ -118,7 +117,9 @@ define([ "jquery", "laconic" ],
   };
 
   function answerHasOutput(answer) {
-    return answer.variables.length > 0 || answer.residuals;
+    return ( answer.variables.length > 0 ||
+	     answer.residuals ||
+	     answer.wfs_residual_program );
   }
 
   function renderSubstitutions(substs, html) {
@@ -135,6 +136,19 @@ define([ "jquery", "laconic" ],
   function renderAnswer(answer) {
     var html = [];
     var bindings = answer.variables;
+    var wfshelp = "http://www.swi-prolog.org/pldoc/man?section=WFS";
+
+    console.log(answer);
+    if ( answer.wfs_residual_program )
+    { html.push("<div class=\"wfs-residual-program\">",
+		"<div class=\"wfs-title\">",
+		"WFS residual program (",
+		"<a href=\"", wfshelp, "\">", "help", "</a>",
+		")</div>",
+                answer.wfs_residual_program,
+		"</div>");
+    }
+
     for (var i = 0; i < bindings.length; i++) {
       var vars = bindings[i].variables;
       for (var v = 0; v < vars.length - 1; v++) {
@@ -484,15 +498,33 @@ define([ "jquery", "laconic" ],
       if ( !aSupportsDownload() )
 	type = "application/octet-stream";
 
-      var href	= "data:"+type+";charset=UTF-8,"
-		+ encodeURIComponent(data);
+      console.log(type);
 
-      var a = $.el.a({ href:href,
-		       download:"swish-rendered."+ext
-		     });
-      this.append(a);
-      a.click();
-      $(a).remove();
+      var blob = new Blob([data], {type:type});
+      var href = URL.createObjectURL(blob);
+      var filename = "swish-rendered."+ext;
+      var a, input, btn;
+
+      var span = $.el.div({class:"download"},
+			  btn = $.el.button({ type:"button", class:"close" }),
+			  a = $.el.a({ href:href,
+			               target:"_blank",
+				       download:filename
+				     },
+				     "Right click me to download as "),
+			  $.el.br(),
+			  input = $.el.input({value:filename}));
+      this.append(span);
+      $(btn)
+	.html("&times;")
+	.on("click", function(ev) {
+	  $(span).remove();
+	});
+      $(input).on("change keyup paste", function(ev) {
+	$(a).attr("download", $(input).val());
+	ev.preventDefault();
+	return false;
+      });
 
       return this;
     },

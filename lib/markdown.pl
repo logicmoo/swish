@@ -32,7 +32,10 @@
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-:- module(swish_markdown, []).
+:- module(swish_markdown,
+	  [ wiki_file_codes_to_dom/3,		% +Code, +Files, -DOM
+	    wiki_html//1			% :HTML
+	  ]).
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_parameters)).
 :- use_module(library(http/http_client)).
@@ -47,6 +50,13 @@
 
 :- use_module(storage).
 :- use_module(config).
+
+:- html_meta
+	wiki_html(html,?,?).
+
+:- multifile
+	dom_expansion/2.
+
 
 /** <module> SWISH Notebook markdown support
 
@@ -87,23 +97,34 @@ wiki_file_codes_to_dom(String, File, DOM) :-
         (   nb_current(pldoc_file, OrgFile)
         ->  setup_call_cleanup(
                 b_setval(pldoc_file, File),
-                wiki_codes_to_dom(String, [], DOM),
+                wiki_codes_to_dom(String, [], DOM0),
                 b_setval(pldoc_file, OrgFile))
         ;   setup_call_cleanup(
                 b_setval(pldoc_file, File),
-                wiki_codes_to_dom(String, [], DOM),
+                wiki_codes_to_dom(String, [], DOM0),
                 nb_delete(pldoc_file))
-        ).
+        ),
+	expand_dom(DOM0, DOM).
+
+expand_dom(DOM0, DOM) :-
+	dom_expansion(DOM0, DOM), !.
+expand_dom(DOM, DOM).
 
 
 		 /*******************************
 		 *	     HOOK WIKI		*
 		 *******************************/
 
+
+wiki_html(_:HTML) -->
+	html(swish_markdown:HTML).
+
+
 :- multifile
 	prolog:doc_autolink_extension/2.
 
 prolog:doc_autolink_extension(swinb, notebook).
+prolog:doc_autolink_extension(lnk,   permalink).
 
 /* TO REMOVE
 prolog:doc_autolink_extension(cpl, program).
@@ -137,7 +158,7 @@ file(File, Options) -->
 	html(a([class([alias,file]), href(HREF)], Label)).
 file(File, Options) -->
 	{ storage_file(File),
-	  option(label(Label), Options),
+	  option(label(Label), Options, File),
 	  http_location_by_id(swish, Swish),
 	  directory_file_path(Swish, p, StoreDir),
 	  directory_file_path(StoreDir, File, HREF)

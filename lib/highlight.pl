@@ -3,7 +3,8 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (c)  2014-2016, VU University Amsterdam
+    Copyright (c)  2014-2020, VU University Amsterdam
+			      CWI, Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -33,7 +34,8 @@
 */
 
 :- module(swish_highlight,
-	  [ current_highlight_state/2
+	  [ current_highlight_state/2,		% +UUID, -State
+	    man_predicate_summary/2		% +PI, -Summary
 	  ]).
 :- use_module(library(debug)).
 :- use_module(library(settings)).
@@ -49,8 +51,8 @@
 :- use_module(library(memfile)).
 :- use_module(library(prolog_colour)).
 :- use_module(library(lazy_lists)).
-:- if(exists_source(library(helpidx))).
-:- use_module(library(helpidx), [predicate/5]).
+:- if(exists_source(library(pldoc/man_index))).
+:- use_module(library(pldoc/man_index)).
 :- endif.
 
 http:location(codemirror, swish(cm), []).
@@ -650,12 +652,16 @@ server_tokens(Role) :-
 
 server_tokens(TB, GroupedTokens) :-
 	current_editor(UUID, TB, _Role, _Lock, _),
+	Ignore = error(syntax_error(swi_backslash_newline),_),
 	setup_call_cleanup(
-	    open_memory_file(TB, read, Stream),
-	    ( set_stream_file(TB, Stream),
-	      prolog_colourise_stream(Stream, UUID, colour_item(TB))
-	    ),
-	    close(Stream)),
+	    asserta(user:thread_message_hook(Ignore, _, _), Ref),
+	    setup_call_cleanup(
+		open_memory_file(TB, read, Stream),
+		( set_stream_file(TB, Stream),
+		  prolog_colourise_stream(Stream, UUID, colour_item(TB))
+		),
+		close(Stream)),
+	    erase(Ref)),
 	collect_tokens(TB, GroupedTokens).
 
 collect_tokens(TB, GroupedTokens) :-
@@ -789,7 +795,13 @@ style(neck(Neck),     neck, [ text(Text) ]) :-
 style(head(Class, Head), Type, [ text, arity(Arity) ]) :-
 	goal_arity(Head, Arity),
 	head_type(Class, Type).
+style(goal_term(_Class, Goal), var, []) :-
+	var(Goal), !.
+style(goal_term(Class, {_}), brace_term_open-brace_term_close,
+      [ name({}), arity(1) | More ]) :-
+	goal_type(Class, _Type, More).
 style(goal(Class, Goal), Type, [ text, arity(Arity) | More ]) :-
+	Goal \= {_},
 	goal_arity(Goal, Arity),
 	goal_type(Class, Type, More).
 style(file_no_depend(Path), file_no_depends,		   [text, path(Path)]).
@@ -806,14 +818,18 @@ style(string,		 string,			   []).
 style(codes,		 codes,				   []).
 style(chars,		 chars,				   []).
 style(atom,		 atom,				   []).
+style(rational(_Value),	 rational,			   [text]).
+style(format_string,	 format_string,			   []).
 style(meta(_Spec),	 meta,				   []).
 style(op_type(_Type),	 op_type,			   [text]).
+style(decl_option(_Name),decl_option,			   [text]).
 style(functor,		 functor,			   [text]).
 style(control,		 control,			   [text]).
 style(delimiter,	 delimiter,			   [text]).
 style(identifier,	 identifier,			   [text]).
 style(module(_Module),   module,			   [text]).
 style(error,		 error,				   [text]).
+style(constraint(Set),   constraint,			   [text, set(Set)]).
 style(type_error(Expect), error,		      [text,expected(Expect)]).
 style(syntax_error(_Msg,_Pos), syntax_error,		   []).
 style(instantiation_error, instantiation_error,	           [text]).
@@ -822,6 +838,7 @@ style(predicate_indicator, atom,			   [text]).
 style(arity,		 int,				   []).
 style(int,		 int,				   []).
 style(float,		 float,				   []).
+style(keyword(_),	 keyword,			   [text]).
 style(qq(open),		 qq_open,			   []).
 style(qq(sep),		 qq_sep,			   []).
 style(qq(close),	 qq_close,			   []).
@@ -850,6 +867,8 @@ style(html(_Element),	 html,				   []).
 style(entity(_Element),	 entity,			   []).
 style(html_attribute(_), html_attribute,		   []).
 style(sgml_attr_function,sgml_attr_function,		   []).
+style(html_call,	 html_call,			   [text]).  % \Rule
+style(html_raw,		 html_raw,			   [text]).  % \List
 style(http_location_for_id(_), http_location_for_id,       []).
 style(http_no_location_for_id(_), http_no_location_for_id, []).
 					% XPCE support
@@ -861,6 +880,10 @@ style(class(user(File),_Name),	  xpce_class_user,	   [text, file(File)]).
 style(class(user,_Name),	  xpce_class_user,	   [text]).
 style(class(undefined,_Name),	  xpce_class_undef,	   [text]).
 
+style(table_mode(_Mode), table_mode,			   [text]).
+style(table_option(_Mode), table_option,		   [text]).
+
+
 neck_text(clause,       (:-)).
 neck_text(grammar_rule, (-->)).
 neck_text(method(send), (:->)).
@@ -870,6 +893,7 @@ neck_text(directive,    (:-)).
 head_type(exported,	 head_exported).
 head_type(public(_),	 head_public).
 head_type(extern(_),	 head_extern).
+head_type(extern(_,_),	 head_extern).
 head_type(dynamic,	 head_dynamic).
 head_type(multifile,	 head_multifile).
 head_type(unreferenced,	 head_unreferenced).
@@ -893,6 +917,7 @@ goal_type(dynamic(Line),      goal_dynamic,	 [line(Line)]).
 goal_type(multifile(Line),    goal_multifile,	 [line(Line)]).
 goal_type(expanded,	      goal_expanded,	 []).
 goal_type(extern(_),	      goal_extern,	 []).
+goal_type(extern(_,_),	      goal_extern,	 []).
 goal_type(recursion,	      goal_recursion,	 []).
 goal_type(meta,		      goal_meta,	 []).
 goal_type(foreign(_),	      goal_foreign,	 []).
@@ -966,15 +991,18 @@ css_style(Style, Style).
 %	True if RGB is the color for the named X11 color.
 
 x11_color(Name, R, G, B) :-
-	(   x11_color_cache(_,_,_,_)
+	(   x11_colors_done
 	->  true
-	;   load_x11_colours
+	;   with_mutex(swish_highlight, load_x11_colours)
 	),
 	x11_color_cache(Name, R, G, B).
 
 :- dynamic
-	x11_color_cache/4.
+	x11_color_cache/4,
+	x11_colors_done/0.
 
+load_x11_colours :-
+	x11_colors_done, !.
 load_x11_colours :-
 	source_file(load_x11_colours, File),
 	file_directory_name(File, Dir),
@@ -984,7 +1012,8 @@ load_x11_colours :-
 	    ( lazy_list(lazy_read_lines(In, [as(string)]), List),
 	      maplist(assert_colour, List)
 	    ),
-	    close(In)).
+	    close(In)),
+	asserta(x11_colors_done).
 
 assert_colour(String) :-
 	split_string(String, "\s\t\r", "\s\t\r", [RS,GS,BS|NameParts]),
@@ -994,6 +1023,8 @@ assert_colour(String) :-
 	atomic_list_concat(NameParts, '_', Name0),
 	downcase_atom(Name0, Name),
 	assertz(x11_color_cache(Name, R, G, B)).
+
+:- catch(initialization(load_x11_colours, prepare_state), _, true).
 
 %%	css(?Context, ?Selector, -Style) is nondet.
 %
@@ -1131,13 +1162,35 @@ predicate_info(Module:Name/Arity, Key, Value) :-
 	functor(Head, Name, Arity),
 	predicate_property(system:Head, iso), !,
 	ignore(Module = system),
-	(   catch(once(predicate(Name, Arity, Summary, _, _)), _, fail),
+	(   man_predicate_summary(Name/Arity, Summary),
 	    Key = summary,
 	    Value = Summary
 	;   Key = iso,
 	    Value = true
 	).
-predicate_info(_Module:Name/Arity, summary, Summary) :-
-	catch(once(predicate(Name, Arity, Summary, _, _)), _, fail), !.
-predicate_info(PI, summary, Summary) :-	% PlDoc
-	once(prolog:predicate_summary(PI, Summary)).
+predicate_info(PI, summary, Summary) :-
+	PI = Module:Name/Arity,
+
+	(   man_predicate_summary(Name/Arity, Summary)
+	->  true
+	;   Arity >= 2,
+	    DCGArity is Arity - 2,
+	    man_predicate_summary(Name//DCGArity, Summary)
+	->  true
+	;   prolog:predicate_summary(PI, Summary)
+	->  true
+	;   Arity >= 2,
+	    DCGArity is Arity - 2,
+	    prolog:predicate_summary(Module:Name/DCGArity, Summary)
+	).
+
+:- if(current_predicate(man_object_property/2)).
+man_predicate_summary(PI, Summary) :-
+    man_object_property(PI, summary(Summary)).
+:- elif(current_predicate(predicate/5)).
+man_predicate_summary(Name/Arity, Summary) :-
+    predicate(Name, Arity, Summary, _, _).
+:- else.
+man_predicate_summary(_, _) :-
+    fail.
+:- endif.

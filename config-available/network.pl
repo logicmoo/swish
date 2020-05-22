@@ -10,9 +10,9 @@ accessible URL for the SWISH server if   this address cannot be resolved
 automatically.
 */
 
-%:- set_setting_default(http:public_host,   localhost).
-%:- set_setting_default(http:public_port,   3020).
-%:- set_setting_default(http:public_scheme, http).
+:- set_setting_default(http:public_host,   'gitlab.logicmoo.org').
+:- set_setting_default(http:public_port,   3020).
+:- set_setting_default(http:public_scheme, http).
 
 :- multifile http:location/3.
 :- dynamic   http:location/3.
@@ -22,5 +22,6 @@ automatically.
 % server under a specific location using a  proxy. It *does not work* to
 % proxy /my-swish-app to http://machine.running.swish/
 
-http:location(root, '/swish', []).
+% http:location(swish, '/swish', []).
+% http:location(root, '/', []).
 

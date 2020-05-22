@@ -48,16 +48,16 @@ evidence:-
 ?- prob(on(2,1),evidence,Prob).
 % what is the probability that the die lands on face 1 at time 2 given that it landed on face 1 at times 0 and 1?
 % expected result 0.16666666666666666
-?- prob_bar(on(0,1),Prob). % what is the probability that the die lands on face 1 at time 0?
+?- prob(on(0,1),Prob),bar(Prob,C). % what is the probability that the die lands on face 1 at time 0?
 % expected result 0.16666666666666666
-?- prob_bar(on(1,1),Prob). % what is the probability that the die lands on face 1 at time 1?
+?- prob(on(1,1),Prob),bar(Prob,C). % what is the probability that the die lands on face 1 at time 1?
 % expected result 0.13888888888888887
-?- prob_bar(on(2,1),Prob). % what is the probability that the die lands on face 1 at time 2?
+?- prob(on(2,1),Prob),bar(Prob,C). % what is the probability that the die lands on face 1 at time 2?
 % expected result 0.11574074074074071
 
-?- prob_bar(on(2,1),on(0,1),Prob). % what is the probability that the die lands on face 1 at time 2 given that it landed on face 1 at time 0?
+?- prob(on(2,1),on(0,1),Prob),bar(Prob,C). % what is the probability that the die lands on face 1 at time 2 given that it landed on face 1 at time 0?
 % expected result 0.13888888888888887
-?- prob_bar(on(2,1),on(1,1),Prob). % what is the probability that the die lands on face 1 at time 2 given that it landed on face 1 at time 1?
+?- prob(on(2,1),on(1,1),Prob),bar(Prob,C). % what is the probability that the die lands on face 1 at time 2 given that it landed on face 1 at time 1?
 % expected result 0.16666666666666666
 
 

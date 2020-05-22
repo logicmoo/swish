@@ -6,7 +6,7 @@ Given a synchronous ring of N processes the protocol is used
 to elect a leader (a uniquely designated processor) by sending messages around 
 the ring.
 
-The protocol proceeds in rounds and is parametrised by a constant K. Each round 
+The protocol proceeds in rounds and is parametrized by a constant K. Each round 
 begins by all processors (independently) choosing a random number (uniformly) 
 from {1,...,K} as an id. The processors then pass their ids around the ring. 
 If there is a unique id, then the processor with the maximum unique id is 
@@ -48,11 +48,11 @@ See also http://www.prismmodelchecker.org/casestudies/synchronous_leader.php
 
 ?- graph_exp_rounds_n(G).
 % graph the expected number of rounds to elect a leader as a
-% funtion of the number of processes when K=3
+% function of the number of processes when K=3
 
 ?- graph_exp_rounds_k(G).
 % graph the expected number of rounds to elect a leader as a
-% funtion of K when N=3
+% function of K when N=3
 
 ?- network_topology(G).
 % draw a graph representing the network topology

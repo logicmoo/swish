@@ -22,7 +22,7 @@ hist(Samples,Chart):-
   maplist(to_pair,L0,L1),
   keysort(L1,L),
   maplist(key,L,X),
-  maplist(y,L,Y),
+  maplist(value,L,Y),
   Chart = c3{data:_{x:x,
     columns:[[x|X],[freq|Y]], type:bar},
     axis:_{ x:_{ tick:_{fit:false}}},

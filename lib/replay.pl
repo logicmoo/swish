@@ -39,7 +39,9 @@
 	    replay/1,			% +Pengine
 	    replay/2,			% +Pengine, +ServerURL
 	    concurrent_replay/1,	% +Count
-	    skip_pengine/1		% +Pengine
+	    skip_pengine/1,		% +Pengine
+
+	    pengine_source/2		% ?Pengine, ?Source
 	  ]).
 :- use_module(library(debug)).
 :- use_module(library(pengines)).
@@ -56,7 +58,7 @@ range of log messages from the log   file  during which the SWISH server
 behaved suspicious, e.g., appears to leak memory or crash. To replay the
 log, perform the following steps:
 
-  - Start a pengine server at http://localhost:3020
+  - Start a pengine server at http://gitlab.logicmoo.org:3020
   - Load this file using =|swipl lib/replay.pl|=
   - Load the log file to be examined using load_log/1.
   - Replay the first pengine interaction using replay/0. Hit
@@ -103,7 +105,14 @@ replay :-
 	pengine_in_log(Pengine, _StartTime, Src),
 	\+ skip_pengine_store(Pengine),
 	Src \== (-),
-	replay(Pengine).
+	catch(replay(Pengine), E, true),
+	(   var(E)
+	->  true
+	;   E = error(socket_error(econnrefused, _), _)
+	->  print_message(warning, E),
+	    !					% server seems dead
+	;   print_message(warning, E)
+	).
 
 replay_after(Time) :-
 	pengine_in_log(Pengine, StartTime, Src),
@@ -132,10 +141,10 @@ replay1(P) :-
 
 %%	replay(+Pengine) is det.
 %
-%	Same as replay(Pengine, 'http://localhost:3020/').
+%	Same as replay(Pengine, 'http://gitlab.logicmoo.org:3020/').
 
 replay(Pengine) :-
-	replay(Pengine, 'http://localhost:3020/').
+	replay(Pengine, 'http://gitlab.logicmoo.org:3020/').
 
 %%	replay(+Pengine, +ServerURL) is det.
 %
@@ -143,14 +152,14 @@ replay(Pengine) :-
 
 replay(Pengine, URL) :-
 	pengine_interaction(Pengine, StartTime, CreateOptions, Messages),
+	format_time(string(D), '%+', StartTime),
+	debug(playback(create), '*** ~q at ~s', [Pengine, D]),
+	show_source(CreateOptions),
 	pengine_create([ server(URL),
 			 id(Id)
 		       | CreateOptions
 		       ]),
-	format_time(string(D), '%+', StartTime),
-	debug(playback(create), '*** ~q at ~s', [Pengine, D]),
 	debug(playback(create), '*** ~q', [Id]),
-	show_source(CreateOptions),
 	get_time(Now),
 	run(Messages, Now, Id, []).
 
@@ -178,9 +187,12 @@ show_source(Options) :-
 
 run([], _, _, _) :- !.
 run(Messages, StartTime, Id, Options) :-
-	pengine_event(Event, [listen(Id)]),
-	reply(Event, Id, StartTime, Messages, Messages1),
-	run(Messages1, StartTime, Id, Options).
+	pengine_event(Event, [listen(Id), timeout(10)]),
+	(   Event == timeout
+	->  print_message(error, replay(Id, timeout(Messages)))
+	;   reply(Event, Id, StartTime, Messages, Messages1),
+	    run(Messages1, StartTime, Id, Options)
+	).
 
 reply(output(_Id, Prompt), Pengine, StartTime, [Time-pull_response|T], T) :- !,
 	debug(playback(event), 'Output ~p (pull_response)', [Prompt]),
@@ -313,6 +325,16 @@ assert_event(_).
 
 skip_pengine(Pengine) :-
 	assertz(skip_pengine_store(Pengine)).
+
+		 /*******************************
+		 *	       QUERY		*
+		 *******************************/
+
+pengine_source(Pengine, Src) :-
+	pengine(_Time, create(Pengine, _App, Options)),
+	memberchk(src_text(_Hash-Src), Options).
+
+
 
 		 /*******************************
 		 *	      MESSAGES		*

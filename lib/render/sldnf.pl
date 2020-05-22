@@ -78,8 +78,8 @@ term_rendering(Data, Vars, Options) -->
 %	It produces  inline   SVG
 
 render_latex(_LatexString,_Options) -->
-	{ \+ has_latex_renderer(pdflatex) }, !,
-	no_latex(pdflatex).
+	{ \+ has_latex_renderer(latex) }, !,
+	no_latex(latex).
 
 render_latex(LatexString, _Options) -->	% <svg> rendering
 	{ latex_stream(LatexString,SVG)
@@ -95,9 +95,8 @@ render_latex(LatexString, _Options) -->	% <svg> rendering
 %	class 'reactive-size'.
 
 svg(SVG, _Options) -->
-	html([ style('svg:not(:root) {
-    overflow: visible;
-  }'),\[SVG],
+	html([ 
+  \[SVG],
 	       \js_script({|javascript||
 (function() {
    if ( $.ajaxScript ) {
@@ -118,7 +117,7 @@ svg(SVG, _Options) -->
 	 }
        }
 
-       w = Math.max(w*0.85, 300);
+       w = Math.max(w*0.85, 100);
        if ( w < data.w0 ) {
 	 svg.width(w);
 	 svg.height(w = Math.max(w*data.h0/data.w0, w/4));
@@ -135,11 +134,13 @@ svg(SVG, _Options) -->
        updateSize()
        pan = svgPanZoom(svg[0], {
 			  // controlIconsEnabled: true
+			  minZoom: 0.1,
 			  maxZoom: 50
 			});
     });
    }
  })();
+
 		      |})
 	     ]).
 
@@ -149,7 +150,7 @@ latex_stream(Latex, SVG) :-
   write(Stream,
 "\\documentclass{article}
 \\pagestyle{empty}
-\\usepackage{epic}
+\\usepackage{epic,eepic}
 \\usepackage{ecltree}
 \\begin{document}
 "),
@@ -160,13 +161,15 @@ latex_stream(Latex, SVG) :-
   close(Stream),
   file_directory_name(File, Directory),
   atom_concat('-output-directory=',Directory,OutDirOp),
-	process_create(path(pdflatex), [OutDirOp,'-interaction=nonstopmode',File], [stdout(null)]),
+  process_create(path(latex), [OutDirOp,'-interaction=nonstopmode',File], [stdout(null)]),
   delete_file(File),
   atom_concat(File,'.aux',FileAux),
   atom_concat(File,'.log',FileLog),
   delete_file(FileAux),
   delete_file(FileLog),
+  atom_concat(File,'.dvi',FileDvi),
   atom_concat(File,'.pdf',FilePdf),
+  process_create(path(dvipdf),[FileDvi,FilePdf], [stdout(null)]),
   atom_concat(File,'cropped.pdf',FileCroppedPdf),
   atomic_list_concat([pdfcrop,FilePdf,FileCroppedPdf,'>/dev/null'],' ',ShellComm),
   shell(ShellComm),

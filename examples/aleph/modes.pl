@@ -17,9 +17,9 @@
 :- use_rendering(prolog).
 :- endif.
 :- aleph.
-:- set(i,2).
-:- set(clauselength,4).
-:- set(mode_overlap_threshold,0.95).
+:- aleph_set(i,2).
+:- aleph_set(clauselength,4).
+:- aleph_set(mode_overlap_threshold,0.95).
 
 % commented out -- Aleph has to learn these (or some approximation to them)
 % :- modeh(1,eastbound(+train)).
@@ -301,7 +301,7 @@ wheels(car_102,2).
 	% Cost is 1-(P+1)/(P+N+2).
 % 
 % 
-% :- set(refine,user).
+% :- aleph_set(refine,user).
 % 
 % refine(false,eastbound(X)):- !.
 % refine(Clause,Clause1):-
@@ -324,11 +324,11 @@ wheels(car_102,2).
 % refine(eastbound(X),(eastbound(X):-has_car(X,Y),short(Y))).
 % refine((eastbound(X):-has_car(X,Y),short(Y)),(eastbound(X):-has_car(X,Y),short(Y),closed(Y))).
 
-% :- set(portray_literals,true).
-% :- set(portray_search,true).
+% :- aleph_set(portray_literals,true).
+% :- aleph_set(portray_search,true).
 
 % :- [portray].
-
+/*
 portray(eastbound(A)):-
 	write('Train '), write(A),
 	write(' is eastbound').
@@ -375,7 +375,7 @@ portray(load(B,C,D)):-
 	write(' has '), write(D),
 	write(' '), write(C), write('-shaped load(s)').
 
-
+*/
 
 :-end_bg.
 :-begin_in_pos.
@@ -517,4 +517,4 @@ eastbound(west10).
 %westbound(east5).
 :-end_in_neg.
 
-:-aleph_read_all.
+

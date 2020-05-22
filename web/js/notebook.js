@@ -3,7 +3,7 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2015-2017, VU University Amsterdam
+    Copyright (C): 2015-2019, VU University Amsterdam
 			      CWI Amsterdam
     All rights reserved.
 
@@ -46,10 +46,13 @@
  */
 
 define([ "jquery", "config", "tabbed", "form",
-	 "preferences", "modal", "prolog", "links",
-	 "laconic", "runner", "storage", "sha1"
+	 "preferences", "modal", "prolog", "links", "utils",
+	 "cm/lib/codemirror",
+	 "editor", "laconic", "runner", "storage", "sha1",
+	 "printThis"
        ],
-       function($, config, tabbed, form, preferences, modal, prolog, links) {
+       function($, config, tabbed, form, preferences, modal, prolog, links,
+	        utils, CodeMirror) {
 
 var cellTypes = {
   "program":  { label:"Program",  prefix:"p"   },
@@ -57,6 +60,9 @@ var cellTypes = {
   "markdown": { label:"Markdown", prefix:"md"  },
   "html":     { label:"HTML",     prefix:"htm" }
 };
+
+/* Support ```eval using Prolog mode */
+CodeMirror.modes.eval = CodeMirror.modes.prolog;
 
 (function($) {
   var pluginName = 'notebook';
@@ -96,7 +102,11 @@ var cellTypes = {
 		"Move cell up":    function() { this.notebook('up'); },
 		"Move cell down":  function() { this.notebook('down'); },
 		"Insert cell":     function() { this.notebook('insertBelow'); },
-		"--":		   "Notebook actions",
+		"--":		   "Overall options",
+		"Clear all":       function() { this.notebook('clear_all'); },
+		"Play":            function() { this.notebook('run_all'); },
+		"Settings":        function() { this.notebook('settings'); },
+		"---":		   "Notebook actions",
 		"Exit fullscreen": function() { this.notebook('fullscreen',false)}
 	      }
 	    });
@@ -107,6 +117,7 @@ var cellTypes = {
 	elem.append(toolbar = $.el.div(
             {class:"nb-toolbar"},
 	    glyphButton("trash", "delete", "Delete cell", "warning"),
+	    sep(),
 	    glyphButton("copy", "copy", "Copy cell", "default"),
 	    glyphButton("paste", "paste", "Paste cell below", "default"),
 	    sep(),
@@ -114,6 +125,10 @@ var cellTypes = {
 	    glyphButton("chevron-down", "down", "Move cell down", "default"),
 	    sep(),
 	    glyphButton("plus", "insertBelow", "Insert cell below", "primary"),
+	    sep(),
+	    glyphButton("erase", "clear_all", "Clear all query output", "warning"),
+	    glyphButton("play", "run_all", "Run all queries", "primary"),
+	    glyphButton("wrench", "settings", "Settings", "default"),
 	    glyphButton("fullscreen", "fullscreen", "Full screen", "default")
 	    ));
 	elem.append(notebookMenu());
@@ -135,6 +150,58 @@ var cellTypes = {
 	  var action = a.data("action");
 	  cell.nbCell(action);
 	  ev.preventDefault();
+	  return false;
+	});
+
+	$(content).on("mouseenter mouseleave", ".nb-menu-sense", function(ev) {
+	  var mdiv = $(ev.target).closest(".nb-menu");
+
+	  if ( ev.type == "mouseenter" ) {
+	    var select = cell_type_select_div();
+
+	    mdiv.find(".nb-menu-line").css("background-color", "#333");
+
+	    function removeSelector() {
+	      select.remove();
+	      mdiv.find(".nb-menu-line").css("background-color", "#fff");
+	      data.menu_state = "idle";
+	    }
+
+	    select.hide();
+	    mdiv.append(select);
+	    data.menu_state = "waiting";
+	    setTimeout(function() {
+	      if ( mdiv.find(":hover").length > 0 ) {
+		data.menu_state = "showing";
+		select.on("mouseleave", removeSelector);
+		select.fadeIn(400);
+	      } else {
+		removeSelector();
+	      }
+	    }, 250);
+	  } else {
+	    if ( data.menu_state != "showing" )
+	      mdiv.find(".nb-menu-line").css("background-color", "#fff");
+	  }
+	});
+
+	$(content).on("click", ".nb-menu .btn", function(ev) {
+	  ev.preventDefault();
+	  var type = $(ev.target).data('type');
+	  var mdiv = $(ev.target).closest(".nb-menu");
+	  var nb   = mdiv.closest(".notebook");
+	  var cell = $.el.div({class:"nb-cell"});
+
+	  if ( mdiv.parent().hasClass("nb-placeholder") ) {
+	    nb.find(".nb-content").empty().append(cell);
+	  } else {
+	    mdiv.find(".nb-type-select").remove();
+	    mdiv.after(cell);
+	  }
+	  $(cell).nbCell({type: type});
+	  nb.notebook('organize');
+	  nb.notebook('active', $(cell), true);
+
 	  return false;
 	});
 
@@ -171,6 +238,13 @@ var cellTypes = {
 	  }
 	});
 
+	/* monitor output on runners */
+	elem.on("scroll-to-bottom", function(ev, arg) {
+	  if ( arg != true ) {
+	    $(ev.target).closest(".nb-cell").nbCell('ensure_in_view', 'bottom');
+	  }
+	});
+
 	elem.data(pluginName, data);	/* store with element */
 
 					/* restore content */
@@ -192,11 +266,13 @@ var cellTypes = {
 	  copyData("st_type");
 	  copyData("chats");
 
-	  var docid = elem.storage('docid', undefined, storage);
-	  var prefs = preferences.getVal(docid)||{fullscreen:true};
+	  var docid      = elem.storage('docid', undefined, storage);
+	  var fullscreen = preferences.getDocVal(
+					   docid, 'fullscreen',
+					   config.swish.notebook.fullscreen);
 
 	  elem.notebook('value', content.text(),
-			{ fullscreen: prefs.fullscreen
+			{ fullscreen: fullscreen
 			});
 	  content.remove();
 	} else {
@@ -212,9 +288,13 @@ var cellTypes = {
 	  }
 	});
 	elem.on("fullscreen", function(ev, val) {
-	  var prefs = preferences.getVal(docid)||{};
-	  prefs.fullscreen = val;
-	  preferences.setVal(docid, prefs);
+	  preferences.setDocVal(docid, 'fullscreen', val);
+	});
+	elem.on("print", function(ev) {
+	  if ( $(ev.target).hasClass("notebook") &&
+	       $(ev.target).is(":visible") )
+	    elem.notebook('print');
+	  ev.stopPropagation();
 	});
       }); /* end .each() */
     },
@@ -226,7 +306,8 @@ var cellTypes = {
     delete: function(cell) {
       cell = cell||currentCell(this);
       if ( cell ) {
-	this.notebook('active', cell.next()||cell.prev());
+	this.notebook('active',
+		      cell.nbCell('next')||cell.nbCell('prev'));
 	cell.nbCell('close');
 	this.notebook('updatePlaceHolder');
       }
@@ -272,7 +353,7 @@ var cellTypes = {
     up: function(cell) {
       cell = cell||currentCell(this);
       if ( cell ) {
-	cell.insertBefore(cell.prev());
+	cell.insertBefore(cell.nbCell('prev'));
 	this.notebook('checkModified');
       }
       return this;
@@ -281,7 +362,7 @@ var cellTypes = {
     down: function(cell) {
       cell = cell||currentCell(this);
       if ( cell ) {
-	cell.insertAfter(cell.next());
+	cell.insertAfter(cell. nbCell('next'));
 	this.notebook('checkModified');
       }
       return this;
@@ -303,20 +384,85 @@ var cellTypes = {
       return this;
     },
 
+    getSettings: function() {
+      var settings = { open_fullscreen:	this.hasClass('open-fullscreen'),
+		       hide_navbar:     this.hasClass('hide-navbar')
+		     };
+
+      return settings;
+    },
+
+    settings: function() {
+      var that = this;
+      var current = this[pluginName]('getSettings');
+
+      function notebookSettingsBody() {
+	this.append($.el.form(
+          { class:"form-horizontal"
+	  },
+	  form.fields.checkboxes(
+		[ { name: "open_fullscreen",
+		    label: "open in fullscreen mode",
+		    value: current.open_fullscreen,
+		    title: "Open in fullscreen mode"
+		  }
+		], {col:3, label:"Initial view"}),
+	  form.fields.checkboxes(
+		[ { name: "hide_navbar",
+		    label: "hide navigation bar",
+		    value: current.hide_navbar,
+		    title: "Hide navigation bar"
+		  }
+		], {col:3, label:"Full screen options"}),
+	  form.fields.buttons(
+	  { label: "Apply",
+	    offset: 3,
+	    action: function(ev, values) {
+	      function update(field, cls) {
+		if ( values[field] != current[field] ) {
+		  if ( values[field] )
+		    that.addClass(cls);
+		  else
+		    that.removeClass(cls);
+		}
+	      }
+
+	      update("hide_navbar",     "hide-navbar");
+	      update("open_fullscreen", "open-fullscreen");
+
+	      that.notebook('checkModified');
+	    }
+	  })));
+      }
+
+      form.showDialog({ title: "Set options for notebook",
+                        body: notebookSettingsBody
+                      });
+    },
+
     run: function(cell) {
       cell = cell||currentCell(this);
       if ( cell )
 	cell.nbCell("run");
     },
 
-    fullscreen: function(val) {
+    /**
+     * Set the notebook in fullscreen mode.
+     * @arg {Boolean} [val] if `true` or the notebook has the class
+     * `fullscreen`, go to fullscreen mode.
+     * @arg {Boolean} [hide_navbar] if `val = true` and this parameter
+     * is true, also hide the SWISH navigation bar.
+     */
+    fullscreen: function(val, hide_navbar) {
       if ( val == undefined )		/* default: toggle */
 	val = !this.hasClass("fullscreen");
+      if ( hide_navbar == undefined )
+	hide_navbar = this.hasClass("hide-navbar");
 
       if ( val ) {
 	var chat_container = this.closest(".chat-container");
 	var node = chat_container.length == 1 ? chat_container : this;
-	$("body.swish").swish('fullscreen', node, this);
+	$("body.swish").swish('fullscreen', node, this, hide_navbar);
       } else {
 	$("body.swish").swish('exitFullscreen');
       }
@@ -358,6 +504,7 @@ var cellTypes = {
 	var clean = store.cleanGeneration == nb.notebook('changeGen');
 
 	nb.notebook('markClean', clean);
+	nb.notebook('organize');
       });
     },
 
@@ -380,6 +527,25 @@ var cellTypes = {
 	  nb.find(".prolog-editor").prologEditor('setIsClean');
 	}
       });
+    },
+
+		 /*******************************
+		 *	      PRINT		*
+		 *******************************/
+
+    /**
+     * Print the content of the notebook through printThis().  Requires
+     * additional media rules to improve the styling.
+     */
+    print: function() {
+      var elem = $(this);
+
+      elem.find(".nb-content").printThis({
+        // debug: true,
+	printDelay: 2000
+      });
+
+      return this;
     },
 
 
@@ -405,8 +571,14 @@ var cellTypes = {
 	    removeNotForQuery(this);
 	    current.nbCell('active', false);
 	    cell.nbCell('active', true);
-	    if ( focus )
-	      cell.focus();
+	    if ( focus ) {
+	      var editors = cell.find(".prolog-editor");
+
+	      if ( editors.length > 0 )
+		editors.prologEditor('focus');
+	      else
+		cell.focus();
+	    }
 	  }
 	} else
 	{ removeNotForQuery(this);
@@ -477,6 +649,33 @@ var cellTypes = {
       return this;
     },
 
+    /**
+     * Organize the notebook.  This maintains the section hierarchy
+     * and places a hover menu to insert a new cell
+     */
+    organize: function() {
+      var notebook = this;
+      var content  = this.find(".nb-content");
+      var cells    = content.children(".nb-cell");
+
+      // ensure there is a menu before and after each cell
+      cells.each(function() {
+	var cell = $(this);
+
+	if ( !cell.prev().hasClass("nb-menu") )
+	  cell.before(notebook_menu());
+	if ( !cell.next().hasClass("nb-menu") )
+	  cell.after(notebook_menu());
+      });
+
+      // remove duplicate menus
+      content.children(".nb-menu").each(function() {
+	var menu = $(this);
+	if ( menu.next().hasClass("nb-menu") )
+	  menu.remove();
+      });
+    },
+
 		 /*******************************
 		 *	   SAVE/RESTORE		*
 		 *******************************/
@@ -538,7 +737,11 @@ var cellTypes = {
       options = options||{};
 
       if ( val == undefined ) {
-	var dom = $.el.div({class:"notebook"});
+	var classes = this[pluginName]('getClasses');
+	classes.unshift("notebook");
+	var dom = $.el.div({class: classes.join(" ")});
+
+	this.notebook('assignCellNames', false);
 	this.find(".nb-cell").each(function() {
 	  cell = $(this);
 	  if ( !(options.skipEmpty && cell.nbCell('isEmpty')) )
@@ -550,15 +753,27 @@ var cellTypes = {
 	var notebook = this;
 	var content  = this.find(".nb-content");
 	var dom = $.el.div();
+	var isnew = content.children(".nb-cell").length == 0;
 
 	content.html("");
 	dom.innerHTML = val;		/* do not execute scripts */
+	var outer_div = $(dom).find("div.notebook");
 
-	if ( options.fullscreen == undefined )
-	  options.fullscreen = $(dom).find("div.notebook").hasClass("fullscreen");
-	if ( options.fullscreen ) {
+	this.removeClass("fullscreen hide-navbar");
+	if ( outer_div.hasClass("open-fullscreen") ) {
+	  options.fullscreen = true;
+	  this.addClass("open-fullscreen");
+	} else if ( outer_div.hasClass("fullscreen") ) {
+	  options.fullscreen = true;
 	  this.removeClass("fullscreen");
-	  this.notebook('fullscreen', true);
+	}
+	if ( outer_div.hasClass("hide-navbar") )
+	{ options.hide_navbar = true;
+	  this.addClass("hide-navbar");
+	}
+
+	if ( isnew && options.fullscreen ) {
+	  this.notebook('fullscreen', true, options.hide_navbar);
 	}
 
 	$(dom).find(".nb-cell").each(function() {
@@ -568,8 +783,27 @@ var cellTypes = {
 	});
 
 	this.find(".nb-cell").nbCell('onload');
+	this.notebook('run_all', 'onload');
 	this.notebook('updatePlaceHolder');
+	this.notebook('assignCellNames', false);
+	this.notebook('organize');
       }
+    },
+
+    /**
+     * @return {Array} of class names that are preserved.
+     */
+    getClasses: function() {
+      var found = this.attr("class").split(" ");
+      var classes = [];
+      var allowed = ["open-fullscreen", "hide-navbar"];
+
+      for(var i=0; i<found.length; i++) {
+	if ( allowed.indexOf(found[i]) >= 0 )
+	  classes.push(found[i]);
+      }
+
+      return classes.sort();
     },
 
     /**
@@ -577,10 +811,10 @@ var cellTypes = {
      * @return {String} SHA1 fingerprint
      */
     changeGen: function() {
-      var list = [];
+      var list = this[pluginName]('getClasses');
       this.find(".nb-cell").each(function() {
-	cell = $(this);
-	list.push(cell.nbCell('changeGen'));
+	var cg = $(this).nbCell('changeGen');
+	list.push(cg);
       });
       return sha1(list.join());
     },
@@ -591,9 +825,11 @@ var cellTypes = {
      * if functions are used that require named cells.  Calling this
      * method has no effect if all cells already have a name.
      */
-    assignCellNames: function() {
-      this.find(".nbCell").nbCell('assignName');
-      return this.notebook('checkModified');
+    assignCellNames: function(check) {
+      this.find(".nb-cell").nbCell('assignName');
+      if ( check != false )
+	this.notebook('checkModified');
+      return this;
     },
 
 
@@ -602,22 +838,80 @@ var cellTypes = {
 		 *******************************/
 
     updatePlaceHolder: function() {
-      if ( this.find(".nb-content").children().length == 0 )
+      if ( this.find(".nb-content").find(".nb-cell").length == 0 )
 	this.notebook('placeHolder');
       else
 	this.find(".nb-placeholder").remove();
     },
 
     placeHolder: function() {
+      var menu	      = notebook_menu();
+      var select      = cell_type_select_div();
       var placeholder = $.el.div({class:"nb-placeholder"});
+      var a;
 
-      $.ajax({ url: config.http.locations.help + "/notebook.html",
-	       dataType: "html",
-	       success: function(data) {
-		 $(placeholder).html(data);
-	       }
-             });
+      $(menu).append(select);
+      placeholder.append(
+	menu,
+	$.el.div({class:"nb-help"},
+		 "New here?  See the notebook ",
+		 a=$.el.a("help page"),
+		 "."));
+      $(a).on("click", function() {
+	$(".swish-event-receiver").trigger("help", {file:"notebook.html"});
+      });
       this.find(".nb-content").append(placeholder);
+
+      return this;
+    },
+
+    /**
+     * Run the notebook
+     */
+    run_all: function(why) {
+      var queries = [];
+
+      why = why||'all';
+
+      this.notebook('clear_all');
+
+      this.find(".nb-cell.query").each(function() {
+	if ( why == 'all' || $(this).data('run') == why )
+	  queries.push(this);
+      });
+
+      function cont(pengine) {
+	switch(pengine.state) {
+	  case 'error':
+	  case 'aborted':
+	    return false;
+	}
+
+	return true;
+      }
+
+      if ( queries.length > 0 ) {
+	queries.current = 0;
+	var complete = function(pengine) {
+	  if ( cont(pengine) &&
+	       ++queries.current < queries.length ) {
+	    $(queries[queries.current]).nbCell('run', {
+	      complete: complete
+	    })
+	  }
+	};
+
+	$(queries[0]).nbCell('run', {
+	  complete: complete
+	});
+      }
+    },
+
+    /**
+     * Erase all query output, killing possibly running queries
+     */
+    clear_all: function() {
+      this.find(".prolog-runner").prologRunner('close');
     }
   }; // methods
 
@@ -717,10 +1011,10 @@ var cellTypes = {
   var methods = {
     /**
      * Create a new notebook cell
-     * @param {jQuery} [dom] initialise the new cell from the saved
-     * DOM
+     * @param {options} [jQuery|Object] initialise the new cell from the saved
+     * DOM or Object.
      */
-    _init: function(dom) {
+    _init: function(options) {
       return this.each(function() {
 	var elem = $(this);
 	var data = {};			/* private data */
@@ -730,8 +1024,10 @@ var cellTypes = {
 	elem.attr("tabIndex", -1);
 	elem.attr("id", "nbc"+id++);
 
-	if ( dom instanceof jQuery ) {
-	  elem.nbCell('restoreDOM', dom);
+	if ( options instanceof jQuery ) {
+	  elem.nbCell('restoreDOM', options);
+	} else if ( options && options.type ) {
+	  elem.nbCell('type', options.type);
 	} else {
 	  var close = glyphButton("remove-circle", "close", "Close",
 				  "default", "xs");
@@ -741,21 +1037,10 @@ var cellTypes = {
 	    elem.nbCell('close');
 	  });
 
-	  elem.append($.el.div({class:"nb-type-select"},
-			       $.el.label("Create a "),
-			       g=$.el.div({class:"btn-group",role:"group"}),
-			       $.el.label("cell here.")));
+	  var select = cell_type_select_div();
+	  elem.append(select);
 
-	  for(var k in cellTypes) {
-	    if ( cellTypes.hasOwnProperty(k) )
-	      $(g).append($.el.button({ type:"button",
-					class:"btn btn-default",
-					"data-type":k
-				      },
-				      cellTypes[k].label));
-	  }
-
-	  $(g).on("click", ".btn", function(ev) {
+	  select.find(".btn-group").on("click", ".btn", function(ev) {
 	    elem.nbCell('type', $(ev.target).data('type'));
 	  });
 
@@ -772,37 +1057,73 @@ var cellTypes = {
      * (de)activate the current cell.
      */
     active: function(val) {
-      var data = this.data(pluginName);
+      return this.each(function() {
+	var elem = $(this);
+	var data = elem.data(pluginName);
 
-      if ( val ) {
-	this.addClass("active");
-	switch( data.type ) {
-	  case "program":
-	    this.find(".editor").prologEditor('makeCurrent');
-	    break;
-	  case "query":
-	    var ed = this.prevAll(".program").first().find(".editor");
-	    if ( ed.length == 1 )
-	      ed.prologEditor('makeCurrent');
-	    this.closest(".notebook")
-                .find(".nb-cell.program")
-                .not(this.nbCell("program_cells"))
-                .addClass("not-for-query");
-	    break;
+	if ( val ) {
+	  elem.addClass("active");
+	  switch( data.type ) {
+	    case "program":
+	      elem.find(".editor").prologEditor('makeCurrent');
+	      break;
+	    case "query":
+	      var prevprog = elem.nbCell('prev', ".program");
+	      if ( prevprog )
+		prevprog.find(".editor").prologEditor('makeCurrent');
+	      elem.closest(".notebook")
+		  .find(".nb-cell.program")
+		  .not(elem.nbCell("program_cells"))
+		  .addClass("not-for-query");
+	      break;
+	  }
+	} else if ( elem.length > 0 ) {
+	  elem.removeClass("active");
+	  switch( data.type ) {
+	    case "markdown":
+	    case "html":
+	      if ( elem.hasClass("runnable") ) {
+		elem.nbCell('run');
+	      }
+	      break;
+	  }
 	}
-      } else if ( this.length > 0 ) {
-	this.removeClass("active");
-	switch( data.type ) {
-	  case "markdown":
-	  case "html":
-	    if ( this.hasClass("runnable") ) {
-	      this.nbCell('run');
-	    }
-	    break;
-	}
-      }
+      });
     },
 
+    /**
+     * Get the next/previous program cell.  Will eventually walk the
+     * hierarchy if we add sections to the notebook.
+     * @param String [selector] Add additional selection
+     */
+
+    next: function(sel) {
+      var next = this.nextAll(".nb-cell"+(sel||"")).first();
+      return next.length ? next : null;
+    },
+
+    prev: function(sel) {
+      var prev = this.prevAll(".nb-cell"+(sel||"")).first();
+      return prev.length ? prev : null;
+    },
+
+    ensure_in_view: function(where) {
+      var top  = this.position().top;
+      var view = this.closest(".nb-view");
+      var stop = view.scrollTop();
+      var vh   = view.height();
+
+      if ( top > stop &&
+	   top + this.height() < stop + vh )
+	return;
+
+      if ( where != 'top' ) {
+	top = top + this.height() - vh + 40;
+      }
+
+      this.nbCell('active', true);
+      view.scrollTop(top);
+    },
 
     type: function(type) {
       var data = this.data(pluginName);
@@ -1009,7 +1330,7 @@ var cellTypes = {
 	if ( !this.hasClass("background") )
 	  programs = programs.add(this);
       } else {
-	programs = programs.add(this.prevAll(".program").first());
+	programs = programs.add(this.nbCell('prev', ".program"));
       }
       return programs;
     },
@@ -1069,6 +1390,7 @@ var cellTypes = {
 
     options = options||{};
     options.mode = "markdown";
+    options.fencedCodeBlockHighlighting = true;
 
     function setAttr(name) {
       if ( options[name] != undefined ) {
@@ -1165,6 +1487,9 @@ var cellTypes = {
       { role: "query",
 	sourceID: function() {
 	  return cell.nbCell('programs').prologEditor('getSourceID');
+	},
+	prologQuery: function(q) {
+	  cell.nbCell('run');
 	}
       });
 
@@ -1189,18 +1514,7 @@ var cellTypes = {
 	  "Projection":		   wrapSolution,
 	  "Order by":              wrapSolution,
 	  "Distinct":              wrapSolution,
-	  "Limit":		   wrapSolution,
-	  "---":		   null,
-	  "Download answers as CSV": function() {
-	    var query  = cellText(this).replace(/\.\s*$/,"");
-	    var source = this.nbCell('programs')
-			     .prologEditor('getSource', "source", true);
-	    var options = {};
-	    var name   = this.attr("name");
-	    if ( name )
-	      options.disposition = name;
-	    prolog.downloadCSV(query, source, options);
-	  }
+	  "Limit":		   wrapSolution
         }
       });
 
@@ -1235,11 +1549,20 @@ var cellTypes = {
 
 
     function setHTML(data) {
+
       cell.html(data);
       cell.removeClass("runnable");
       cell.data('markdownText', markdownText);
       cell.on("dblclick", makeEditable);
       cell.on("click", "a", links.followLink);
+
+      // call post rendering hooks
+      var nbdata = cell.closest(".notebook").data('notebook');
+      if ( nbdata && nbdata.markdown_post_renderer ) {
+	for(var i=0; i<nbdata.markdown_post_renderer.length; i++) {
+	  nbdata.markdown_post_renderer[i].call(cell);
+	}
+      }
     }
 
     if ( markdownText.trim() != "" )
@@ -1250,7 +1573,7 @@ var cellTypes = {
 	       success: setHTML
 	     });
     } else
-    { setHTML("<div class='nb-placeholder'>"+
+    { setHTML("<div class='nb-empty-markdown'>"+
 	      "Empty markdown cell.  Double click to edit"+
 	      "</div>");
     }
@@ -1268,16 +1591,20 @@ var cellTypes = {
     htmlText = (htmlText||cellText(this)).trim();
 
     function makeEditable(ev) {
-      var cell = $(ev.target).closest(".nb-cell");
-      var text = cell.data('htmlText');
-      cell.removeData('htmlText');
-      methods.type.html.call(cell, {value:text});
-      cell.off("dblclick", makeEditable);
-      cell.off("click", links.followLink);
+      if ( !( $(ev.target).is("input") || /* allow double click inside these */
+	      $(ev.target).is("textarea")
+	    ) ) {
+	var cell = $(ev.target).closest(".nb-cell");
+	var text = cell.data('htmlText');
+	cell.removeData('htmlText');
+	methods.type.html.call(cell, {value:text});
+	cell.off("dblclick", makeEditable);
+	cell.off("click", links.followLink);
+      }
     }
 
     function runScripts() {
-      if ( (config.swish.notebook == undefined || config.swish.notebook.eval_script == true) &&
+      if ( config.swish.notebook.eval_script == true &&
 	   options.eval_script != false ) {
 	var scripts = [];
 
@@ -1332,9 +1659,13 @@ var cellTypes = {
    * Run a query cell.
    * @param {Object} [options]
    * @param {Any}    [options.bindings] Initial bindings.  If this is a
-		     string, it is simply prepended to the query.  If
-		     it is an object, it is translated into a sequence
-		     of Prolog unifications to bind the variables.
+   *		     string, it is simply prepended to the query.  If
+   *		     it is an object, it is translated into a sequence
+   *		     of Prolog unifications to bind the variables.
+   * @param {Function} [options.success] Function run on success.  See
+   *		     `prologRunner._init()`.
+   * @param {Function} [options.complete] Function run on complete.  See
+   *		     `prologRunner._init()`.
    */
   methods.run.query = function(options) {	/* query */
     var programs = this.nbCell('programs');
@@ -1366,8 +1697,9 @@ var cellTypes = {
 		  title:        false,
 		  query_editor: this.find(".prolog-editor.query")
                 };
-    if ( programs[0] )
-      query.editor = programs[0];
+    if ( programs[0]  )     query.editor   = programs[0];
+    if ( options.success  ) query.success  = options.success;
+    if ( options.complete ) query.complete = options.complete;
 
     var runner = $.el.div({class: "prolog-runner"});
     this.find(".prolog-runner").prologRunner('close');
@@ -1380,11 +1712,6 @@ var cellTypes = {
 		 *******************************/
 
 /* These methods are executed after all cells have been initialised */
-
-  methods.onload.query = function() {
-    if ( this.data("run") == "onload" )
-      this.nbCell("run");
-  };
 
   methods.onload.html = function() {
     return methods.run.html.call(this,
@@ -1577,17 +1904,17 @@ var cellTypes = {
   methods.changeGen.markdown = function() {	/* markdown */
     var text = this.data('markdownText') || cellText(this);
 
-    return sha1(text);
+    return sha1("M"+text.trim());
   };
 
   methods.changeGen.html = function() {	/* HTML */
     var text = this.data('htmlText') || cellText(this);
 
-    return sha1(text);
+    return sha1("H"+text.trim());
   };
 
   methods.changeGen.program = function() {	/* program */
-    var text = "";
+    var text = "P";
     var cell = this;
 
     function addClassAttr(name, key) {
@@ -1598,12 +1925,12 @@ var cellTypes = {
     addClassAttr("background", "B");
     addClassAttr("singleline", "S");
 
-    text += "V"+cellText(this);
+    text += "V"+cellText(this).trim();
     return sha1(text);
   };
 
   methods.changeGen.query = function() {	/* query */
-    var text = "";
+    var text = "Q";
     var cell = this;
 
     function addData(name, key) {
@@ -1623,7 +1950,7 @@ var cellTypes = {
     addData("chunk", "C");
     addData("run", "R");
     addAttr("name", "N");
-    text += "V"+cellText(this);
+    text += "V"+cellText(this).trim();
 
     return sha1(text);
   };
@@ -1764,8 +2091,34 @@ function glyphButtonGlyph(elem, action, glyph) {
 }
 
 function sep() {
-  return $.el.span({class:"thin-space"}, " ");
+  return $.el.span({class:"menu-space"}, " ");
 }
+
+function notebook_menu() {
+  return $.el.div({class:"nb-menu"},
+		  $.el.div({class:"nb-menu-sense"},
+			   $.el.div({class:"nb-menu-line"})));
+}
+
+function cell_type_select_div() {
+  var g;
+  var div = $.el.div({class:"nb-type-select"},
+		     $.el.label("Create a "),
+		     g=$.el.div({class:"btn-group",role:"group"}),
+		     $.el.label("cell here"));
+
+  for(var k in cellTypes) {
+    if ( cellTypes.hasOwnProperty(k) )
+      $(g).append($.el.button({ type:"button",
+				class:"btn btn-default",
+				"data-type":k
+			      },
+			      cellTypes[k].label));
+  }
+
+  return $(div);
+}
+
 
 		 /*******************************
 		 *	 NOTEBOOK ClASS		*
@@ -1842,7 +2195,86 @@ Notebook.prototype.submit = function(formsel, options) {
   });
 };
 
+/**
+  * Bind the query default button to this HTML cell.  The callback
+  * function is passed an object with a method `run(bindings)`, where
+  * `bindings` is an object holding `VarName: Value` keys.
+  */
+Notebook.prototype.bindQuery = function(a1, a2) {
+  var that = this;
+  var q;
+  var func;
+
+  if ( typeof(a1) == "function" && a2 == undefined ) {
+    q = this.cell().nbCell('next', ".query");
+    func = a1;
+  } else {
+    q = this.cell(a1);
+    func = a2;
+  }
+
+  if ( q.length > 0 ) {
+    q.find(".action-run").off("click").on("click", function(ev) {
+      var query = {
+        run: function(bindings) {
+	  q.nbCell('run', {bindings:bindings});
+	}
+      };
+
+      func.call(that, query);
+      ev.preventDefault();
+      return false;
+    });
+  } else {
+    alert("No query named '"+cell+"'");
+  }
+};
+
+/**
+ * Hide the query and buttons of a named query cell
+ * @param {String} cell is the name of the query cell to hide
+ * @param {Boolean} [on] If `true` (default), hide the cell.
+ */
+Notebook.prototype.hideQuery = function(cell, on) {
+  var q = this.cell(cell);
+  if ( on == undefined )
+    on = true;
+
+  if ( q.length > 0 ) {
+    if ( on == true ) {
+      q.find(".nb-cell-buttons").hide();
+      q.find(".query").hide();
+    } else {
+      q.find(".nb-cell-buttons").show();
+      q.find(".query").show();
+    }
+  } else {
+    alert("No query named '"+cell+"'");
+  }
+}
+
 Notebook.prototype.$ = function(selector) {
   return this.cell().find(selector);
 }
+
+Notebook.prototype.loadCSS = function(url) {
+  return utils.loadCSS(url);
+}
+
+/**
+ * Add a hook that is called after a markdown cell is filled with
+ * rendered HTML
+ */
+
+Notebook.prototype.markdown_post_renderer = function(f) {
+  var data = this.notebook().data('notebook');
+
+  if ( data ) {
+    if ( data.markdown_post_renderer != undefined )
+      data.markdown_post_renderer.push(f);
+    else
+      data.markdown_post_renderer = [f];
+  }
+}
+
 });

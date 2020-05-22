@@ -30,12 +30,7 @@
 :- module(swish_render_rdf,
 	  [ term_rendering//3			% +Term, +Vars, +Options
 	  ]).
-
-% Only load the rdf11 if we havent already loaded somthing else
-:- if( ( \+ current_predicate(rdf_db:rdf/3) , exists_source(library(semweb/rdf11)) )).
 :- use_module(library(semweb/rdf11)).
-:- endif.
-
 :- use_module(library(http/html_write)).
 :- use_module(library(option)).
 :- use_module(library(uri)).
@@ -43,15 +38,6 @@
 :- use_module(library(apply)).
 :- use_module(library(error)).
 :- use_module(library(broadcast)).
-
-% CLIOPATRIA MODE
-:- if(exists_source(components(label))).
-% Only load the rdf_db if we havent already loaded somthing else
-:- if( \+ current_predicate(rdf_db:rdf/3)).
-:- use_module(library(semweb/rdf_db)).
-:- endif.
-:- use_module(components(label)).
-:- endif.
 
 :- use_module('../render').
 
@@ -80,15 +66,6 @@ term_rendering(List, _Vars, Options) -->
 	},
 	html(span([class('rdf-list'), style('display:inline-block')],
 		  \rdf_list(Truncated, Options))).
-
-% CLIOPATRIA MODE
-:- if(exists_source(components(label))).
-term_rendering(Term, _Vars, Options) -->
-	{ ground(Term),
-	  is_rdf(Term)
-	}, !,
-	rdf_link(Term, [target('cliopatria-localview')|Options]),!.
-:- endif.
 term_rendering(Term, _Vars, Options) -->
 	{ is_rdf(Term) }, !,
 	rdf_link(Term, [target('rdf-link')|Options]).
@@ -132,11 +109,6 @@ is_rdf(literal(Value)) :-
 	is_literal(Value).
 is_rdf(^^(Value,Type)) :- atom(Type), ground(Value).
 is_rdf(@(Text,Lang)) :- atom(Lang), is_text(Text).
-% CLIOPATRIA MODE
-:- if(exists_source(components(label))).
-is_rdf(^^(_,Type)) :- atom(Type),!.
-is_rdf(@(_,Lang)) :- atom(Lang),!.
-:- endif.
 
 is_uri(Term) :-
 	atom(Term),
@@ -147,11 +119,7 @@ is_uri(Term) :-
 
 is_literal(Atomic) :- is_plain_literal(Atomic).
 is_literal(type(Type, Literal)) :- is_uri(Type), is_plain_literal(Literal).
-is_literal(lang(Lang, Literal)) :- atom(Lang),   is_text(Literal),!.
-% CLIOPATRIA MODE
-:- if(exists_source(components(label))).
-is_literal(lang(Lang, Literal)) :- atom(Lang),   is_plain_literal(Literal).
-:- endif.
+is_literal(lang(Lang, Literal)) :- atom(Lang),   is_text(Literal).
 
 is_plain_literal(Value) :-
 	atomic(Value).
@@ -161,18 +129,20 @@ is_text(Value) :- string(Value).
 
 %!	rdf_link(+Term, +Options)//
 
-rdf_link('@'(Text,Lang), _Options) --> !,
+rdf_link(Text@Lang, _Options) --> !,
 	html(span(class('rdf-lang-literal'),
 		  [ '"', span(class('rdf-lexical'), Text), '"@',
 		    span(class('rdf-lang'), Lang)
 		  ])).
-rdf_link('^^'(Value,Type), Options) --> !,
-	{ rdf_lexical_form('^^'(Value,Type), '^^'(String,Type))
+rdf_link(Value^^Type, Options) --> !,
+	{ rdf_lexical_form(Value^^Type, String^^Type)
 	},
 	html(span(class('rdf-typed-literal'),
 		  [ '"', span(class('rdf-lexical'), String), '"^^',
 		    \rdf_link(Type, Options)
 		  ])).
+rdf_link(literal(Literal), Options) --> !,
+	rdf_literal_link(Literal, Options).
 rdf_link(IRI, Options) -->
 	{ rdf_global_id(Prefix:Local, IRI),
 	  !,
@@ -190,6 +160,16 @@ rdf_link(IRI, Options) -->
 	       [ span(class('rdf-iri'), IRI)
 	       ])).
 
+
+rdf_literal_link(type(Type,Value), Options) --> !,
+	rdf_link(Value^^Type, Options).
+rdf_literal_link(lang(Lang,Value), Options) --> !,
+	rdf_link(Value@Lang, Options).
+rdf_literal_link(Plain, Options) -->
+	{ atom(Plain), !,
+	  rdf_equal(String, xsd:string)
+	},
+	rdf_link(Plain^^String, Options).
 
 a_options(IRI, Extra, Options) :-
 	(   broadcast_request(rdf_label(IRI, Label))

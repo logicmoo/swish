@@ -33,8 +33,8 @@ fault_rupture(stromboli).
 volcanic_eruption(stromboli).
 % there is a volcanic eruption at stromboli
 
-volcanic_eruption(eyjafjallajkull).
-% there is a volcanic eruption at eyjafjallajkull
+volcanic_eruption(eyjafjallajokull).
+% there is a volcanic eruption at eyjafjallajokull
 
 :- end_lpad.
 
@@ -46,23 +46,23 @@ volcanic_eruption(eyjafjallajkull).
 ?- prob(earthquake(stromboli,moderate),Prob).  % what is the probability of a moderate
 % earthquake at stromboli?
 % expected result 0.7999999999999998
-?- prob(earthquake(eyjafjallajkull,strong),Prob).  % what is the probability of a strong 
-% earthquake at eyjafjallajkull?
+?- prob(earthquake(eyjafjallajokull,strong),Prob).  % what is the probability of a strong 
+% earthquake at eyjafjallajokull?
 % expected result 0.2
-?- prob(earthquake(eyjafjallajkull,moderate),Prob). % what is the probability of a moderate
-% earthquake at eyjafjallajkull?
+?- prob(earthquake(eyjafjallajokull,moderate),Prob). % what is the probability of a moderate
+% earthquake at eyjafjallajokull?
 % expected result 0.6
-?- prob_bar_r(earthquake(stromboli,strong)).  % what is the probability of a strong 
+?- prob(earthquake(stromboli,strong),Prob),bar_r(Prob).  % what is the probability of a strong 
 % earthquake at stromboli?
 % expected result 0.43999999999999995
-?- prob_bar_r(earthquake(stromboli,moderate)).  % what is the probability of a moderate
+?- prob(earthquake(stromboli,moderate),Prob),bar_r(Prob).  % what is the probability of a moderate
 % earthquake at stromboli?
 % expected result 0.7999999999999998
-?- prob_bar_r(earthquake(eyjafjallajkull,strong)).  % what is the probability of a strong 
-% earthquake at eyjafjallajkull?
+?- prob(earthquake(eyjafjallajokull,strong),Prob),bar_r(Prob).  % what is the probability of a strong 
+% earthquake at eyjafjallajokull?
 % expected result 0.2
-?- prob_bar_r(earthquake(eyjafjallajkull,moderate)). % what is the probability of a moderate
-% earthquake at eyjafjallajkull?
+?- prob(earthquake(eyjafjallajokull,moderate),Prob),bar_r(Prob). % what is the probability of a moderate
+% earthquake at eyjafjallajokull?
 % expected result 0.6
 
 

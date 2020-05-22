@@ -7,7 +7,7 @@
 #
 # This code is un the public domain.
 
-server=${SWISH_SERVER-http://localhost:3050}
+server=${SWISH_SERVER-http://localhost:3020}
 srctext=
 curlarg=
 format=${SWISH_FORMAT-prolog}

@@ -216,8 +216,11 @@ user(_) -->
 %   modal dialog or inside a browser popup   window. This scripts adds a
 %   button to dismiss the browser popup window.
 
-/*
-{|javascript||
+login_continue_button -->
+    html(style(\[ 'div.login-continue { text-align: center; margin-top: 2em; }'
+                ])),
+
+    js_script({|javascript||
 function inIframe() {
   try {
     return window.self !== window.top;
@@ -239,15 +242,9 @@ if ( !inIframe() ) {
          '  </button>\n'+
          '</div>');
 }
-              |}
-*/
-js_code1(\['\nfunction inIframe() {\n  try {\n    return window.self !== window.top;\n  } catch (e) {\n    return true;\n  }\n}\n\nfunction append( elString, parent ) {\n  var div = document.createElement( "div" );\n  div.innerHTML = elString;\n  document.querySelector( parent || "body" ).appendChild( div.firstChild );\n}\n\nif ( !inIframe() ) {\n  append(\'<div class="login-continue">\\n\'+\n         \'  <button onclick="window.close()">\\n\'+\n         \'    Continue\\n\'+\n         \'  </button>\\n\'+\n         \'</div>\');\n}\n              ']).
+              |}).
 
-login_continue_button --> 
-  {js_code1(JS)},  
-    html(style(\[ 'div.login-continue { text-align: center; margin-top: 2em; }'
-                ])),    
-    js_script(JS).
+
 
 %!  reply_logged_out(+Options)
 %

@@ -18,10 +18,9 @@
 :- use_rendering(prolog).
 :- endif.
 :- aleph.
-
-:- set(evalfn,posonly).
-:- set(clauselength,2).
-:- set(gsamplesize,20).
+:- aleph_set(evalfn,posonly).
+:- aleph_set(clauselength,2).
+:- aleph_set(gsamplesize,20).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % class/2 learns the class (mammal/fish/reptile/bird) of various animals.
 
@@ -161,7 +160,6 @@ has_gills(shark).
 has_gills(eel).
 
 nhas_gills(X) :- animal(X), not(has_gills(X)).
-dynamic aleph_false/0.
 aleph_false:-class(X,Y),class(X,Z),Y\=Z.
 
 :-end_bg.
@@ -192,5 +190,5 @@ class(crocodile,reptile).
 
 :-end_in_neg.
 
-:-aleph_read_all.
+
 

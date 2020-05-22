@@ -1,0 +1,1 @@
+../config-available-swish/version_info.pl

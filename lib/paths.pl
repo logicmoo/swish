@@ -3,8 +3,8 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2017, VU University Amsterdam
-			 CWI Amsterdam
+    Copyright (C): 2017-2018, VU University Amsterdam
+			      CWI Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -46,27 +46,33 @@
     http:location/3.
 
 user:file_search_path(data,           data).
-user:file_search_path(config_enabled, 'config-enabled').
-user:file_search_path(config_enabled, swish('config-enabled')).
-user:file_search_path(config,         config_enabled(.)).
-user:file_search_path(config,         swish('config-available')).
+user:file_search_path(config_enabled_swish, 'config-enabled-swish').
+user:file_search_path(config_enabled_swish, swish('config-enabled-swish')).
+user:file_search_path(config,         config_enabled_swish(.)).
+user:file_search_path(config,         swish('config-available-swish')).
 user:file_search_path(swish_web,      swish(web)).
 user:file_search_path(swish_pack,     swish(pack)).
+user:file_search_path(js,             config('web/js')).
 user:file_search_path(js,             swish_web(js)).
 user:file_search_path(css,            swish_web(css)).
+user:file_search_path(icons,          config('web/icons')).
 user:file_search_path(icons,          swish_web(icons)).
-user:file_search_path(bower_components,   swish_web(bower_components)).
+user:file_search_path(plugin,         config('web/plugin')).
+% user:file_search_path(node_modules,   swish_web(node_modules)).
 
 %!  set_swish_path
 %
-%   Setup the swish search path.
+%   Setup the `swish` search path.
 
 set_swish_path :-
     absolute_file_name(swish('swish.pl'), _,
                        [file_errors(fail), access(read)]), !.
 set_swish_path :-
     prolog_load_context(directory, Dir),
+    !,
     asserta(user:file_search_path(swish, Dir)).
+set_swish_path :-
+    current_prolog_flag(saved_program, true).
 
 %!  attach_local_packs
 %
@@ -105,7 +111,7 @@ initialize_paths :-
 
 % HTTP paths
 
-http:location(swish, root(.), [priority(-100)]).
+%http:location(swish, root(swish), [priority(-100)]).
 
 
 

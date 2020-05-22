@@ -12,7 +12,7 @@ The transitive clauses for samebib have been removed to avoid loops.
 ?- prob(samebib(class_7,class_8),Prob). % what is the probability that citations class_7 
 % and class_8 refer to the same paper?
 % expected result 0.4616412208109999
-?- prob_bar(samebib(class_7,class_8),Prob). % what is the probability that citations class_7 
+?- prob(samebib(class_7,class_8),Prob),bar(Prob,C). % what is the probability that citations class_7 
 % and class_8 refer to the same paper?
 % expected result 0.4616412208109999
 
@@ -35,12 +35,12 @@ samebib(B,C):0.3 :-
 
 samebib(B,C):0.3 :-
         title(B,D),title(C,E),sameatitle(D,E).
-% citation B refers to same paper as C with probability 0.3 if theit titles are 
+% citation B refers to same paper as C with probability 0.3 if their titles are 
 % the same
 
 samebib(B,C):0.3 :-
         venue(B,D),venue(C,E),samevenue(D,E).
-% citation B refers to same paper as C with probability 0.3 if theit venues are 
+% citation B refers to same paper as C with probability 0.3 if their venues are 
 % the same
 
 samevenue(A,B):0.3 :-

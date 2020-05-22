@@ -36,8 +36,8 @@
 :- module(config_notifications, []).
 :- use_module(swish(lib/plugin/notify), []).
 :- use_module(config(user_profile)).
-:- if(exists_source(config_enabled(email))).
-:- use_module(config_enabled(email)).
+:- if(exists_source(config_enabled_swish(email))).
+:- use_module(config_enabled_swish(email)).
 :- else.
 :- use_module((email)).
 :- endif.

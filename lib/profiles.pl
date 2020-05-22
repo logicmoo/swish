@@ -60,7 +60,8 @@ swish_config:source_alias(profile, [access(read), search('*.{pl,swinb}')]).
 swish_config:config(profiles, Profiles) :-
 	findall(Profile, swish_profile(Profile), Profiles0),
 	sort(value, =<, Profiles0, Profiles1),
-	join_profiles(Profiles1, Profiles).
+	join_profiles(Profiles1, Profiles2),
+	sort(Profiles2,Profiles),!.
 
 join_profiles([], []).
 join_profiles([P1,P2|T0], [P|T]) :-

@@ -1,30 +1,50 @@
-# SWISH: A web based SWI-Prolog environment
+# SWISH: A web based SWI-Prolog environment integrated with examples from the Cplint suite
 
-## integrated with content and examples from:
-   
-   The Cplint suite
-   Trill-on-Swish
-   Logtalk
-   PFC/LogicMOO/PrologMUD
-   ClioPatria Integration
+There are three ways to use SWISH, which we list in increasing order of
+complexity:
 
+  1. [Use the online version](#online-versions)
+  2. [Deploy the Docker image](#docker-image)
+  3. [Install locally](#local-installation)
 
-## Online version
+## Online versions
 
 SWISH can be used to access [SWI-Prolog](http://www.swi-prolog.org) at
 the address below. We try to keep this server continuously online. You
-can use this server for playing, courses or sharing and discussing
-ideas. We have not yet dealt with scalable hosting nor with really
-reliable and scalable storage for saved programs. We hope to keep all
-your programs online for at least multiple years.
+can use these servers for playing, courses or sharing and discussing
+ideas.
 
-  - http://swish.swi-prolog.org/
+  - https://swish.swi-prolog.org/ (plain Prolog and R)
+  - http://cplint.ml.unife.it/ (probabilistic and machine learning
+    extensions)
+  - http://lpsdemo.interprolog.com/example/FirstStepswithLPS.swinb
+    (Logic Production Systems)
 
-## Installation
+We have not yet dealt with scalable hosting nor with really reliable and
+scalable storage for saved programs. We hope to keep all your programs
+online for at least multiple years.
+
+## Docker image
+
+We maintain [Docker](https://hub.docker.com) images at the [swipl
+organization at Docker Hub](https://hub.docker.com/u/swipl/).  A
+bluffer's guide to run SWISH with R if you have Docker installed
+is as simple as this:
+
+    docker run -d --net=none --name=rserve swipl/rserve
+    docker run -d -p 3020:3020 --volumes-from rserve -v $(pwd):/data swipl/swish
+
+There are many configuration options for SWISH, notably for
+authentication, email notifications and extension plugins. See the
+[docker-swish](https://github.com/SWI-Prolog/docker-swish) repo for
+details.
+
+
+## Local installation
 
 ### Get submodules
 
-`cd` to your swish root directory and
+`cd` to your swish root directory and run
 
     git submodule update --init
 
@@ -36,46 +56,36 @@ configure those that need to be configured.
 
 ### Get JavaScript requirements
 
-### Using the packages
+#### Using Yarn
 
-If you are under the GNU/Linux distribution
-of Arch Linux (or a derivative one) AUR packages
-are available. Please have a look
-[here](https://frnmst.github.io/swish-installer/)
-
-### Without using the packages: building
-#### Using bower
-
-Install [bower](http://bower.io) for your  platform.   On  Ubuntu,  this
+Install [Yarn](https://yarnpkg.com) for your platform.   On Ubuntu, this
 implies getting `node` and `npm` by installing two packages and next use
-`npm` to install `bower`:
+`npm` to install `yarn` (some older  Linux versions need `nodejs-legacy`
+instead of `nodejs`):
 
-    sudo apt-get install npm nodejs-legacy
-    sudo npm install -g bower
+    sudo apt install npm nodejs
+    sudo npm i yarn -g
 
-Once you have `bower`, run the following from the toplevel of `swish` to
+Once you have `yarn`, run the following from the toplevel of `swish` to
 get the dependencies:
 
-    bower install
+    yarn
     make src
 
-#### Download as zip
+##### Download as zip
 
-As installing node and bower is not a pleasure on all operating systems,
+As installing node and yarn is not a pleasure on all operating systems,
 you can also download  the  dependencies  as   a  single  zip  file from
-http://www.swi-prolog.org/download/swish/swish-bower-components.zip.
+http://www.swi-prolog.org/download/swish/swish-node-modules.zip.
 Unpack the zip file, maintaining the directory structure, from the swish
-root directory to create the directory web/bower_components. If you have
+root directory to create the directory web/node_modules. If you have
 `make` installed you can install the above `.zip` file using
 
-    make bower-zip
+    make yarn-zip
 
-Last updated: Apr 8, 2017: upgraded. Notably typeahead.js is forward nor
-backward compatible and you need SWISH with commit
-042d93a66409ef6460052c46394e4f83dcab3d90 (April 7, 2017) together with
-this zip file.
+Last updated: Dec 16, 2019: upgraded dependencies, new archive name
 
-### Get the latest SWI-Prolog
+#### Get the latest SWI-Prolog
 
 Install the latest  [SWI-Prolog](http://www.swi-prolog.org) _development
 version_. As SWISH is very  much  in   flux  and  depends  on the recent
@@ -85,15 +95,25 @@ you            need            the             [nightly            build
 system    from    the     current      git     development    repository
 [swipl-devel.git](https://github.com/SWI-Prolog/swipl-devel).
 
-Jun 18, 2017: SWI-Prolog 7.5.9 works fine.
+Apr 25, 2019: Works for a quite large range of SWI-Prolog versions.
+The current swipl-devel.git snapshot fixes an issue in CSV downloading,
+emitting CORS and cache control HTTP headers near the end of the CSV
+output.
 
 ### Other dependencies
 
-The   avatar   system   requires    the     `convert`    utility    from
-[ImageMagic](http://www.imagemagick.org). This is available as a package
-for virtually any Linux system, e.g., on Debian based systems do
+Rendering Prolog terms [as
+graphs](https://cplint.lamping.unife.it/example/render_graphviz.swinb)
+requires [Graphviz](https://www.graphviz.org/). The avatar system
+requires the `convert` utility from
+[ImageMagic](https://www.imagemagick.org). These are available as
+packages for virtually any Linux system, e.g., on Debian based systems
+do
 
     sudo apt-get install imagemagick
+    sudo apt-get install graphviz
+
+
 
 ## Running SWISH
 
@@ -101,10 +121,10 @@ With a sufficiently recent Prolog installed, start the system by opening
 `run.pl` either by running `swipl  run.pl`   (Unix)  or opening `run.pl`
 from the Windows explorer.
 
-Now direct your browser to http://localhost:3050/
+Now direct your browser to http://localhost:3020/
 
 If you want  to  know  what  the   latest  version  looks  like,  go  to
-http://swish.swi-prolog.org/
+https://cplint.lamping.unife.it/
 
 ### Configuring SWISH
 
@@ -127,7 +147,7 @@ config-available](https://github.com/SWI-Prolog/swish/tree/master/config-availab
 for details.
 
 
-### Running SWISH without sandbox limitations
+#### Running SWISH without sandbox limitations
 
 By default, SWISH does not require the user   to  login but lets you run
 only _safe_ commands.  If  you  want   to  use  SWISH  for  unrestricted
@@ -188,12 +208,20 @@ and    simplifies    running    as     an      HTTPS     server.     See
 https://github.com/triska/letswicrypt.
 
 
+## Running SWISH as additional local IDE
+
+You can run SWISH alongside your   normal  Prolog development tools. The
+cleanest way to do so is by using  `myswish.pl` and install this in your
+local Prolog library. See `myswish.pl` for details   on  how to set this
+up.
+
+
 ## Design
 
 Most of the application is realised  using client-side JavaScript, which
 can be found  in  the  directory   `web/js`.  The  JavaScript  files use
 [RequireJS](http://requirejs.org/)   for   dependency     tracking   and
-[jQuery](http://jquery.com/) for structuring the   JavaScript  as jQuery
+[jQuery](https://jquery.com/) for structuring the   JavaScript  as jQuery
 plugins. The accompanying CSS is in   `web/css`.  More details about the
 organization of the JavaScript is in `web/js/README.md`
 

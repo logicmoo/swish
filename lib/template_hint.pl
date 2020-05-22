@@ -3,7 +3,8 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (c)  2014-2016, VU University Amsterdam
+    Copyright (c)  2014-2018, VU University Amsterdam
+			      CWI, Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -30,6 +31,7 @@
     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
+
     Changes by:    Riccardo Zese
     E-mail:        riccardo.zese@unife.it
 */
@@ -58,6 +60,7 @@
 :- use_module(library(error)).
 
 :- use_module(render).
+:- use_module(highlight).
 
 /** <module> Generate template hints for CondeMirror
 
@@ -264,7 +267,7 @@ man_predicate_info(PI, Name-Value) :-
 	    Name-Value = name-PString
 	;   Name-Value = arity-Arity
 	;   Name-Value = (mode)-ModeLine
-	;   once(catch(predicate(PName, Arity, Summary, _, _), _, fail)),
+	;   once(man_predicate_summary(PName/Arity, Summary)),
 	    Name-Value = summary-Summary
 	;   predicate_property(system:PHead, iso),
 	    Name-Value = iso-true
@@ -341,6 +344,7 @@ m_same_name_arity(H1, H2) :-
 %
 %	Create a template for the TRILL queries.
 
+
 trill_template([     json{displayText:  "prob_instanceOf(+Class, +Individual, -Prob).",
  			  type:         "directive",
 			  template:     "prob_instanceOf(${Class},${Individual},Prob).",
@@ -348,7 +352,7 @@ trill_template([     json{displayText:  "prob_instanceOf(+Class, +Individual, -P
 			  
 		     json{displayText:  "prob_property_value(+Property, +Individual1, +Individual2, -Prob).",
  			  type:         "directive",
-			  template:     "prob_property_value(${Class},${Individual1},${Individual2},Prob).",
+			  template:     "prob_property_value(${Property},${Individual1},${Individual2},Prob).",
  			  varTemplates: json{'TRILL-Query': Template}},
 			  
 		     json{displayText:  "prob_sub_class(+Class1, +Class2, -Prob).",
@@ -373,7 +377,7 @@ trill_template([     json{displayText:  "prob_instanceOf(+Class, +Individual, -P
 			  
 		     json{displayText:  "property_value(+Property, +Individual1, +Individual2, -Expl).",
  			  type:         "directive",
-			  template:     "property_value(${Class},${Individual1},${Individual2},Expl).",
+			  template:     "property_value(${Property},${Individual1},${Individual2},Expl).",
  			  varTemplates: json{'TRILL-Query': Template}},
 			  
 		     json{displayText:  "sub_class(+Class1, +Class2, -Expl).",
@@ -398,7 +402,7 @@ trill_template([     json{displayText:  "prob_instanceOf(+Class, +Individual, -P
 			  
 		     json{displayText:  "property_value(+Property, +Individual1, +Individual2).",
  			  type:         "directive",
-			  template:     "property_value(${Class},${Individual1},${Individual2}).",
+			  template:     "property_value(${Property},${Individual1},${Individual2}).",
  			  varTemplates: json{'TRILL-Query': Template}},
 			  
 		     json{displayText:  "sub_class(+Class1, +Class2).",
@@ -622,14 +626,14 @@ swish_templates(Template) :-
 	setof(From, visible_lib(swish, From), FromList),
 	swish_templates(Template, [from(FromList)]).
 
-swish_templates(Template, _Options) :-
-	trill_template(Template).
 swish_templates(Template, Options) :-
 	library_template(Template, Options).
 swish_templates(Template, _Options) :-
 	rendering_template(Template).
 swish_templates(Templates, Options) :-
 	visible_predicate_templates(swish, Templates, Options).
+swish_templates(Template, _Options) :-
+	trill_template(Template).
 
 %%	visible_lib(+Module, -Lib) is nondet.
 %

@@ -1,26 +1,28 @@
 <div class="notebook">
+
 <div class="nb-cell html">
 <script type="text/javascript">
-$.getScript("https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML",function() {MathJax.Hub.Queue(["Typeset",MathJax.Hub]);});
+$.getScript("https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js"+
+             "?config=TeX-MML-AM_CHTML",function() {MathJax.Hub.Queue(["Typeset",MathJax.Hub]);});
 </script>
 <h2>Markov Logic Networks</h2>
 
 <p>Markov Networks (MN) and Markov Logic Networks (MLN) can be encoded with 
 Probabilistic Logic Programming. The encoding is based on the observation that
-a MN factor can be represented with a Bayesian Newtork (BN) with an extra node that
+a MN factor can be represented with a Bayesian Network (BN) with an extra node that
 is always observed.</p>
 <p>
 For example, the MLN clause
-<pre><code>1.5  Intelligent(x) => GoodMarks(x) 
+</p><pre><code>1.5  Intelligent(x) =&gt; GoodMarks(x) 
 </code></pre>
-for a single constant <code>anna</code> originates an edge betwenn the Boolean nodes  
+for a single constant <code>anna</code> originates an edge between the Boolean nodes  
 for  <code>Intelligent(anna)</code> and <code>GoodMarks(anna)</code>. This means that the two variables
-cannot be d-separated in any way. This dependence can be modelend with BNs by
+cannot be d-separated in any way. This dependence can be modeled with BNs by
 adding an extra Boolean node, <code>Clause(anna)</code>, that is a child of 
  <code>Intelligent(anna)</code> and <code>GoodMarks(anna)</code> and is observed. In this way,
  <code>Intelligent(anna)</code> and <code>GoodMarks(anna)</code> are not d-separated in the BN no 
 matter what other nodes the BN contains.
-</p><p>
+<p></p><p>
 In general, for a domain with Herbrand base \(X\) and an MLN ground clause 
 \(C\) 
 mentioning atom variables \(X'\), the 
@@ -107,7 +109,7 @@ This solution has the advantage that some clauses are certain, reducing the
 number of random variables.
 If \(\alpha\) is positive in formula \(\alpha \ C\), we can consider 
 \(-\alpha \ \neg C\).
-</p>
+<p></p>
 <p>MLN formulas can also be added to a regular probabilistic
 logic program, their effect is equivalent to a 
 soft form of evidence, where certain worlds are weighted more than others.
@@ -125,50 +127,57 @@ ruled out.
 </p>
 <p>
 Let see an example where we translate to LPADs the MLN
-<pre><code>1.5  Intelligent(x) => GoodMarks(x) 
-1.1 Friends(x, y) => (Intelligent(x) <=> Intelligent(y)) 
+</p><pre><code>1.5  Intelligent(x) =&gt; GoodMarks(x) 
+1.1 Friends(x, y) =&gt; (Intelligent(x) &lt;=&gt; Intelligent(y)) 
 </code></pre>
-</p>
+<p></p>
 </div>
+
 <div class="nb-cell markdown">
 ## Code
 
 Preamble:
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 :- use_module(library(pita)).
 
 :- pita.
 
 :- begin_lpad.
 </div>
+
 <div class="nb-cell html">
 The MLN formula
-<pre><code>1.5  Intelligent(x) => GoodMarks(x) 
+<pre><code>1.5  Intelligent(x) =&gt; GoodMarks(x) 
 </code></pre>
 is translated into the clauses
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 clause1(X): 0.8175744762:- \+intelligent(X).
 clause1(X): 0.1824255238:- intelligent(X), \+good_marks(X).
 clause1(X): 0.8175744762:- intelligent(X), good_marks(X).
 </div>
+
 <div class="nb-cell html">
 where \(0.8175744762=e^{1.5}/(1+e^{-1.5})\) and \(0.1824255238=1/(1+e^{-1.5})\).
 <p>
 The MLN formula
-<pre><code>1.1 Friends(x, y) => (Intelligent(x) <=> Intelligent(y)) 
+</p><pre><code>1.1 Friends(x, y) =&gt; (Intelligent(x) &lt;=&gt; Intelligent(y)) 
 </code></pre>
 is translated into the clauses
-</p>
+<p></p>
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 clause2(X,Y): 0.7502601056:- \+friends(X,Y).
 clause2(X,Y): 0.7502601056:- friends(X,Y), intelligent(X),intelligent(Y).
 clause2(X,Y): 0.7502601056:- friends(X,Y), \+intelligent(X),\+intelligent(Y).
 clause2(X,Y): 0.2497398944:- friends(X,Y), intelligent(X),\+intelligent(Y).
 clause2(X,Y): 0.2497398944:- friends(X,Y), \+intelligent(X),intelligent(Y).
 </div>
+
 <div class="nb-cell html">
 <p>
 where \(0.7502601056=e^{1.1}/(1+e^{1.1})\) and \(0.2497398944=1/(1+e^{1.1})\).
@@ -178,88 +187,108 @@ A priori we have a uniform distribution over student intelligence, good marks
 and friendship:
 </p>
 </div>
-<div class="nb-cell program prolog" data-background="true">
 
+<div class="nb-cell program" data-background="true">
 intelligent(_):0.5.
 
 good_marks(_):0.5.
 
 friends(_,_):0.5.
 </div>
+
 <div class="nb-cell markdown">
 and there are two students:
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 student(anna).
 student(bob).
 </div>
+
 <div class="nb-cell markdown">
 The evidence must include the truth of all groundings of the =clauseN= 
 predicates:
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 evidence_mln:- clause1(anna),clause1(bob),clause2(anna,anna),
     clause2(anna,bob),clause2(bob,anna),clause2(bob,bob).
 </div>
+
 <div class="nb-cell markdown">
 We want to query the probability that Anna gets good marks given that
 she is fried with Bob and Bob is intelligent:
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 ev_intelligent_bob_friends_anna_bob:-
     intelligent(bob),friends(anna,bob),evidence_mln.
 </div>
+
 <div class="nb-cell query">
 prob(good_marks(anna),ev_intelligent_bob_friends_anna_bob,P).
 </div>
+
 <div class="nb-cell markdown">
 The probability is higher than the prior probability of Anna getting
 good marks:
 </div>
+
 <div class="nb-cell query">
 prob(good_marks(anna),evidence_mln,P).
 </div>
+
 <div class="nb-cell html">
 In the alternative transformation, the MLN formula
-<pre><code>1.5  Intelligent(x) => GoodMarks(x) 
+<pre><code>1.5  Intelligent(x) =&gt; GoodMarks(x) 
 </code></pre>
 is translated into the clauses
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 clause1p(X):- \+intelligent(X).
 clause1p(X): 0.22313016014:- intelligent(X), \+good_marks(X).
 clause1p(X):- intelligent(X), good_marks(X).
 </div>
+
 <div class="nb-cell html">
 where \(0.22313016014=e^{-1.5}\).
 
 The new evidence is:
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 evidence_mln_p:- clause1p(anna),clause1p(bob),clause2(anna,anna),
     clause2(anna,bob),clause2(bob,anna),clause2(bob,bob).
 ev_intelligent_bob_friends_anna_bob_p:-
     intelligent(bob),friends(anna,bob),evidence_mln_p.
 </div>
+
 <div class="nb-cell markdown">
 The probability that Anna gets good marks given that
 she is fried with Bob and Bob is intelligent is computed by:
 </div>
+
 <div class="nb-cell query">
 prob(good_marks(anna),ev_intelligent_bob_friends_anna_bob_p,P).
 </div>
+
 <div class="nb-cell markdown">
 The probability is again higher than the prior probability of Anna getting
 good marks:
 </div>
+
 <div class="nb-cell query">
 prob(good_marks(anna),evidence_mln_p,P).
 </div>
+
 <div class="nb-cell markdown">
 ## Epilogue:
 </div>
-<div class="nb-cell program prolog" data-background="true">
 
+<div class="nb-cell program" data-background="true">
 :- end_lpad.
 </div>
+
 </div>
+

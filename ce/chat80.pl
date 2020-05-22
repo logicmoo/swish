@@ -1,0 +1,1 @@
+../config-available-swish/chat80.pl

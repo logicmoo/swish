@@ -1,27 +1,27 @@
 # Copyright: VU University of Amsterdam, CWI Amsterdam
 # License:   Simplified BSD license
 
-BOWER_ARCHIVE=swish-bower-components.zip
-BOWER_URL=http://www.swi-prolog.org/download/swish/${BOWER_ARCHIVE}
+YARN_ARCHIVE=swish-node-modules.zip
+YARN_URL=https://www.swi-prolog.org/download/swish/${YARN_ARCHIVE}
 SWIPL=swipl
 
 # Packs to download and configure.  Run `git submodule` to see the
 # available packs.
-PACKS=profile rserve_client smtp
+PACKS=profile rserve_client smtp pcache
 
 all:
 	@echo "Targets"
 	@echo
-	@echo "    bower-zip -- Download zip with bower dependencies"
-	@echo "    bower     -- Install dependencies using bower"
-	@echo "    src       -- Prepare bower dependencies for execution"
+	@echo "    yarn-zip  -- Download zip with dependencies"
+	@echo "    yarn	     -- Install dependencies using yarn"
+	@echo "    src       -- Prepare JavaScript dependencies for execution"
 	@echo "    min       -- Create minimized CSS and JavaScript"
 	@echo "    clean     -- Clean minimized CSS and JavaScript"
 	@echo "    packs     -- Download and configure packs"
 	@echo
 
-bower::
-	bower install
+yarn::
+	yarn
 	@$(MAKE) src
 
 src::
@@ -38,46 +38,44 @@ css::
 js::
 	@$(MAKE) -C web/js
 
-src::
-	@$(MAKE) -C web/js src
-
 clean::
 	@$(MAKE) -C web/css clean
 	@$(MAKE) -C web/js clean
 
-# Install dependencies from downloaded zip holding bower components
+# Install dependencies from downloaded zip holding JavaScript components
 
-bower-zip::
-	curl $(BOWER_URL) > $(BOWER_ARCHIVE)
-	unzip -u $(BOWER_ARCHIVE)
-	rm $(BOWER_ARCHIVE)
+yarn-zip: .yarn-senitel
+.yarn-senitel: $(YARN_ARCHIVE)
+	unzip -q -u $(YARN_ARCHIVE)
+	touch $@
 
-swish-bower-components.zip::
-	rm -f $@
-	zip -r $@ web/bower_components
-
-upload:	swish-bower-components.zip
-	rsync swish-bower-components.zip ops:/home/swipl/web/download/swish/swish-bower-components.zip
+$(YARN_ARCHIVE)::
+	@if [ -e $(YARN_ARCHIVE) ]; then \
+	  curl -o $(YARN_ARCHIVE) -z $(YARN_ARCHIVE) $(YARN_URL) ; \
+	else \
+	  curl -o $(YARN_ARCHIVE) $(YARN_URL) ;\
+	fi
 
 # Create the above
 
-$(BOWER_ARCHIVE)::
-	rm -f $@
-	zip -r $@ web/bower_components
-
-upload:	$(BOWER_ARCHIVE)
-	rsync $(BOWER_ARCHIVE) ops:/home/swipl/web/download/swish/$(BOWER_ARCHIVE)
+upload::
+	rm -f $(YARN_ARCHIVE)
+	zip -r $(YARN_ARCHIVE) web/node_modules
+	rsync $(YARN_ARCHIVE) ops:/home/swipl/web/download/swish/$(YARN_ARCHIVE)
 
 
-		 /*******************************
-		 *	       PACKS		*
-		 *******************************/
+################
+# PACKS
 
 PACKFILES=$(addprefix pack/, $(addsuffix /pack.pl, $(PACKS)))
 ATTACH_PACKDIR=-g 'attach_packs(pack,[duplicate(replace),search(first)])'
 
 packs: $(PACKFILES)
 
-$(PACKFILES):
-	git submodule update --init $(shell dirname $@)
-	$(SWIPL) $(ATTACH_PACKDIR) -g 'pack_rebuild($(shell basename $$(dirname $@)))' -t halt
+$(PACKFILES)::
+	@echo "Checking $(shell dirname $@) ..."
+	@if [ ! "`git submodule status $(shell dirname $@) | head -c 1`" = " " ]; then \
+	  echo "  Updating $(shell dirname $@) ..." ; \
+	  git submodule update --init $(shell dirname $@) ; \
+	  $(SWIPL) $(ATTACH_PACKDIR) -g 'pack_rebuild($(shell basename $$(dirname $@)))' -t halt ;\
+	fi

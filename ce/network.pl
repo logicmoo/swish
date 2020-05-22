@@ -22,5 +22,6 @@ automatically.
 % server under a specific location using a  proxy. It *does not work* to
 % proxy /my-swish-app to http://machine.running.swish/
 
-http:location(root, '/swish', []).
+http:location(root, '/', []).
+http:location(swish, '/swish', []).
 

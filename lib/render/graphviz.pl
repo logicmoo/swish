@@ -34,6 +34,7 @@
 
 :- module(swish_render_graphviz,
 	  [ term_rendering//3,			% +Term, +Vars, +Options
+	    render_dot//3,			% DOTString, Program, Options)
 	    svg//2				% +String, +Options
 	  ]).
 :- use_module(library(http/html_write)).
@@ -95,8 +96,6 @@ as follows:
 
 :- dynamic
 	dot_data/3.				% +Hash, +Data, +Time
-
-:- nodebug.
 
 %%	term_rendering(+Term, +Vars, +Options)//
 %

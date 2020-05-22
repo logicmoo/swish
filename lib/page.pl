@@ -3,7 +3,8 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (c)  2014-2017, VU University Amsterdam
+    Copyright (c)  2014-2018, VU University Amsterdam
+			      CWI, Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -34,6 +35,7 @@
 
 :- module(swish_page,
 	  [ swish_reply/2,			% +Options, +Request
+	    swish_reply_resource/1,		% +Request
 	    swish_page//1,			% +Options
 
 	    swish_navbar//1,			% +Options
@@ -80,10 +82,6 @@ grammer rules. This allows for server-side   generated  pages to include
 swish or parts of swish easily into a page.
 */
 
-
-:- multifile http:location/3.
-:- dynamic http:location/3.
-
 http:location(pldoc, swish(pldoc), [priority(100)]).
 
 :- http_handler(swish(.), swish_reply([]), [id(swish), prefix]).
@@ -92,6 +90,7 @@ http:location(pldoc, swish(pldoc), [priority(100)]).
 
 :- multifile
 	swish_config:logo//1,
+	swish_config:title//1,
 	swish_config:source_alias/2,
 	swish_config:reply_page/1,
 	swish_config:li_login_button//1.
@@ -113,17 +112,23 @@ http:location(pldoc, swish(pldoc), [priority(100)]).
 %	  Use Query as the initial query.
 %	  - show_beware(Boolean)
 %	  Control showing the _beware limited edition_ warning.
+%	  - preserve_state(Boolean)
+%	  If `true`, save state on unload and restore old state on load.
 
 swish_reply(Options, Request) :-
-	authenticate(Request, Auth),
-	swish_reply2([identity(Auth)|Options], Request).
+	(   option(identity(_), Options)
+	->  Options2 = Options
+	;   authenticate(Request, Auth),
+	    Options2 = [identity(Auth)|Options]
+	),
+	swish_reply2(Options2, Request).
 
 swish_reply2(Options, Request) :-
 	option(method(Method), Request),
 	Method \== get, Method \== head, !,
 	swish_rest_reply(Method, Request, Options).
 swish_reply2(_, Request) :-
-	serve_resource(Request), !.
+	swish_reply_resource(Request), !.
 swish_reply2(Options, Request) :-
 	swish_reply_config(Request, Options), !.
 swish_reply2(SwishOptions, Request) :-
@@ -136,11 +141,12 @@ swish_reply2(SwishOptions, Request) :-
 		 ],
 	http_parameters(Request, Params),
 	params_options(Params, Options0),
-	merge_options(Options0, SwishOptions, Options1),
-	add_show_beware(Options1, Options2),
-	source_option(Request, Options2, Options3),
-	option(format(Format), Options3),
-	swish_reply3(Format, Options3).
+	add_show_beware(Options0, Options1),
+	add_preserve_state(Options1, Options2),
+	merge_options(Options2, SwishOptions, Options3),
+	source_option(Request, Options3, Options4),
+	option(format(Format), Options4),
+	swish_reply3(Format, Options4).
 
 swish_reply3(raw, Options) :-
 	option(code(Code), Options), !,
@@ -150,22 +156,13 @@ swish_reply3(json, Options) :-
 	option(code(Code), Options), !,
 	option(meta(Meta), Options, _{}),
 	option(chat_count(Count), Options, 0),
-	reply_json_dict(json{data:Code, meta:Meta, chats:_{count:Count}}).
+	reply_json_dict(json{data:Code, meta:Meta, chats:_{total:Count}}).
 swish_reply3(_, Options) :-
 	swish_config:reply_page(Options), !.
 swish_reply3(_, Options) :-
 	reply_html_page(
 	    swish(main),
-	    [ title('cplint on SWISH -- Probabilistic Logic Programming'),
-	      link([ rel('shortcut icon'),
-		     href('/icons/favicon.ico')
-		   ]),
-	      link([ rel('apple-touch-icon'),
-		     href('/icons/cplint-touch-icon.png')
-		   ]),
-              meta([name('msvalidate.01'),
-                content('A9C78799EC9EDC7CE041CB7CD8E2D76E')])
-	    ],
+	    \swish_title(Options),
 	    \swish_page(Options)).
 
 params_options([], []).
@@ -201,6 +198,18 @@ implicit_no_show_beware(Options) :-
 	option(examples(_), Options).
 implicit_no_show_beware(Options) :-
 	option(background(_), Options).
+
+%!	add_preserve_state(+Options0, -Option) is det.
+%
+%	Add preserve_state(false) when called with code.
+
+add_preserve_state(Options0, Options) :-
+	option(preserve_state(_), Options0), !,
+	Options = Options0.
+add_preserve_state(Options0, Options) :-
+	option(code(_), Options0), !,
+	Options = [preserve_state(false)|Options0].
+add_preserve_state(Options, Options).
 
 
 %%	source_option(+Request, +Options0, -Options)
@@ -309,11 +318,11 @@ confirm_access(_, _).
 eval_condition(loaded, Path) :-
 	source_file(Path).
 
-%%	serve_resource(+Request) is semidet.
+%%	swish_reply_resource(+Request) is semidet.
 %
 %	Serve /swish/Resource files.
 
-serve_resource(Request) :-
+swish_reply_resource(Request) :-
 	option(path_info(Info), Request),
 	resource_prefix(Prefix),
 	sub_atom(Info, 0, _, _, Prefix), !,
@@ -324,6 +333,7 @@ resource_prefix('help/').
 resource_prefix('form/').
 resource_prefix('icons/').
 resource_prefix('js/').
+resource_prefix('node_modules/').
 resource_prefix('bower_components/').
 
 %%	swish_page(+Options)//
@@ -334,69 +344,72 @@ swish_page(Options) -->
 	swish_navbar(Options),
 	swish_content(Options).
 
-%%	cplint_navbar(+Options)//
-%
-%	Generate the swish navigation bar.
-
-cplint_navbar(_Options) -->
-	html(div([id('navbarhelp'),style('height:40px;margin: 10px 5px;text-align:center;')],
-        [span([style('color:maroon')],['cplint on ']),
-        span([style('color:darkblue')],['SWI']),
-        span([style('color:maroon')],['SH']),
-        ' is a web application for probabilistic logic programming',
-        ' with a Javascript-enabled browser.',
-        &(nbsp), &(nbsp),
-        a([href('/help/about.html'),target('_blank')],['About']),
-        &(nbsp), &(nbsp),
-        a([href('/help/help-cplint.html'),target('_blank')],['CPLINT-Help']),
-        &(nbsp), &(nbsp),
-        a([href('/help/credits.html'),target('_blank')],['Credits']),
-        &(nbsp), &(nbsp),
-        a([id('dismisslink'),href('')],['Dismiss']),
-	p([span([style('color:red')],['New']),': ',
-  a([href('/help/help-cplint.html#using-r'),target('_blank')],['Graphics with R']),': ',
-  a([href('/example/inference/inference_examples_R.swinb')],['inference examples']),
-  ', ',
-  a([href('/example/learning/exauc.swinb')],['ROC and PR curves']),
-  ', ',
-  a([href('/example/iris.swinb')],['EM clustering']),
-  '; ',
-  a([href('/example/inference/tile_map.swinb')],['Tile map generation']),
-  '; ',
-   a([href('/example/inference/path_tabling.swinb')],['Tabling']),
-  '; ',
-   'Event calculus: ',
-  a([href('/example/inference/tiny_event_calculus.pl')],['inference']),
-  ', ',
-%	a([href('/help/help-cplint.html#cont'),target('_blank')],
-%	['continuous random variables']),' and ',
-%	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
-%	['likelihood weighting']),': ',
-%	a([href('/example/inference/gaussian_mixture.pl')],
-%	['Gaussian mixture']),', ',
-%	a([href('/example/inference/kalman_filter.pl')],
-%	['Kalman filter']),', ',
-%	a([href('/example/inference/seven_scientists.pl')],['Bayesian estimation']),', ',
-%	a([href('/example/inference/indian_gpa.pl')],['Indian GPA problem']),
-  a([href('/example/learning/learn_effect_axioms.pl')],['learning'])
-       ])])
-        ).
-
 %%	swish_navbar(+Options)//
 %
 %	Generate the swish navigation bar.
 
 swish_navbar(Options) -->
-   {current_predicate(cp_menu:cp_menu/2)},
-        cp_menu:cp_menu,
-        was_swish_navbar(Options),!.
+    swish_resources,
+     ({current_predicate(cp_menu:cp_menu/2)} -> cp_menu:cp_menu ; []),
+    % cplint_navstuff(Options),
+    swish_navbar_pt3(Options).
 
-swish_navbar(Options) -->
-        was_swish_navbar(Options),!.
 
-was_swish_navbar(Options) -->
-	swish_resources,
-    cplint_navbar(Options),
+cplint_navstuff(_Options) -->
+	html(div([id('navbarhelp'),style('height:40px;margin: 10px 5px;text-align:center')], %;line-height: 40px')],
+        [span([style('color:maroon')],['cplint/TRILL on ']),
+        span([style('color:darkblue')],['Logic']),
+        span([style('color:maroon')],['MOO']),
+        ' is a web application for probabilistic logic programming',
+        ' with a Javascript-enabled browser.',
+        &(nbsp), &(nbsp),
+        a([id('about')],['About']),
+        &(nbsp), &(nbsp),
+        a([href('http://friguzzi.github.io/cplint/'),target('_blank')],['Help']),
+	&(nbsp), &(nbsp),
+	a([href('http://arnaudfadja.github.io/phil/'),target('_blank')],['PHIL-Help']),
+        &(nbsp), &(nbsp),
+        a([href('/help/credits.html'),target('_blank')],['Credits']),
+        &(nbsp), &(nbsp),
+		a([href('https://edu.swi-prolog.org/'),target('_blank')],['Online course']),
+		&(nbsp), &(nbsp),
+		a([href('/help/help-trill.html'),target('_blank')],['Help']),
+		&(nbsp), &(nbsp),
+        a([id('dismisslink'),href('')],['Dismiss']),
+p(['Updated: ',
+a([href('/e/phil_examples.swinb')],['PHIL examples']),', ',
+a([href('/e/diabetes.swinb')],['diabetes']),', ',
+a([href('/e/fruit.swinb')],['fruit selling']),', ',
+a([href('/e/ship.swinb')],['fire on a ship']),', ',
+a([href('/e/decision_theory.swinb')],['DTProbLog']),', ',
+a([href('http://ml.unife.it/plp-book/'),target('_blank')],["book"])
+	])
+       ])).
+        
+
+swish_navbar_pt2_old(_Options) -->
+	p([span([style('color:red')],['New']),': ',
+	'new api: ',
+  a([href('/help/help-cplint.html#uncondq'),target('_blank')],['inference']),', ',
+  a([href('/help/help-cplint.html#graphing'),target('_blank')],['graphics']),'; ',
+        'Figaro examples: ',
+  a([href('/example/figaro_printer.swinb')],['printer']),', ',
+  a([href('/example/figaro_product.swinb')],['product']),', ',
+  a([href('/example/figaro_coin.swinb')],['coin']),', ',
+  a([href('/example/figaro_coin_bag.swinb')],['coin bag']),
+	a([href('/help/help-cplint.html#cont'),target('_blank')],
+	['continuous random variables']),' and ',
+	a([href('/help/help-cplint.html#condqcont'),target('_blank')],
+	['likelihood weighting']),': ',
+	a([href('/example/inference/gaussian_mixture.pl')],
+	['Gaussian mixture']),', ',
+	a([href('/example/inference/kalman_filter.pl')],
+	['Kalman filter']),', ',
+	a([href('/example/inference/seven_scientists.pl')],['Bayesian estimation']),', ',
+	a([href('/example/inference/indian_gpa.pl')],['Indian GPA problem'])]).
+        
+        
+swish_navbar_pt3(Options) -->
 	html(nav([ class([navbar, 'navbar-default']),
 		   role(navigation)
 		 ],
@@ -411,7 +424,9 @@ was_swish_navbar(Options) -->
 			 ul([class([nav, 'navbar-nav', 'navbar-right'])],
 			    [ li(\notifications(Options)),
 			      li(\search_box(Options)),
-			      \li_login_button(Options)
+			      \li_login_button(Options),
+			      li(\broadcast_bell(Options)),
+			      li(\updates(Options))
 			    ])
 		       ])
 		 ])).
@@ -433,6 +448,37 @@ collapsed_button -->
 		      span(class('icon-bar'), [])
 		    ])).
 
+updates(_Options) -->
+	html([ a(id('swish-updates'), []) ]).
+
+
+		 /*******************************
+		 *	      BRANDING		*
+		 *******************************/
+
+%!	swish_title(+Options)// is det.
+%
+%	Emit the HTML header options dealing with the title and shortcut
+%	icons.  This can be hooked using swish_config:title//1.
+
+swish_title(_Options) -->
+	html([ title('LOGICMOO/LPS/TRILL/cplint on SWISH -- Probabilistic Logic Programming'),
+	       link([ rel('shortcut icon'),
+		      href('/icons/favicon.ico')
+		    ]),
+	       link([ rel('apple-touch-icon'),
+		     href('/icons/swish-touch-icon.png')
+		   ])
+		   % , meta([name('msvalidate.01'), content('A9C78799EC9EDC7CE041CB7CD8E2D76E')])
+	     ]), !.
+swish_title(Options) -->
+	swish_config:title(Options), !.
+
+%!	swish_logos(+Options)// is det.
+%
+%	Emit the navbar branding logos at   the  top-left. Can be hooked
+%	using swish_config:swish_logos//1.
+
 swish_logos(Options) -->
 	swish_config:logo(Options), !.
 swish_logos(Options) -->
@@ -443,7 +489,8 @@ swish_logos(Options) -->
 %
 %	Hook  to  include  the  top-left    logos.   The  default  calls
 %	pengine_logo//1 and swish_logo//1.  The   implementation  should
-%	emit zero or more <a> elements.
+%	emit     zero     or      more       <a>      elements.      See
+%	`config_available/branding.pl` for an example.
 
 %!	pengine_logo(+Options)// is det.
 %!	swish_logo(+Options)// is det.
@@ -462,6 +509,10 @@ swish_logo(_Options) -->
 	html(a([href(HREF), class('swish-logo')], &(nbsp))).
 
 
+		 /*******************************
+		 *	     CONTENT		*
+		 *******************************/
+
 %%	swish_content(+Options)//
 %
 %	Generate the SWISH editor, Prolog output  area and query editor.
@@ -473,6 +524,8 @@ swish_logo(_Options) -->
 %	  Indicate the presense of Count chat messages
 
 swish_content(Options) -->
+	{ document_type(Type, Options)
+	},
 	swish_resources,
 	swish_config_hash(Options),
 	swish_options(Options),
@@ -480,7 +533,9 @@ swish_content(Options) -->
 		 [ div([class([tile, horizontal]), 'data-split'('50%')],
 		       [ div([ class([editors, tabbed])
 			     ],
-			     [ \editor_content(Options) ]),
+			     [ \source(Type, Options),
+			       \notebooks(Type, Options)
+			     ]),
 			 div([class([tile, vertical]), 'data-split'('70%')],
 			     [ div(class('prolog-runners'), []),
 			       div(class('prolog-query'), \query(Options))
@@ -489,15 +544,6 @@ swish_content(Options) -->
 		   \background(Options),
 		   \examples(Options)
 		 ])).
-
-editor_content(Options) -->
-       { document_type(Type, Options)
-       },
-       editor_content_typed(Type,Options),!.
-
-editor_content_typed(pl, Options) --> source(pl, Options).
-editor_content_typed(swinb, Options) --> notebooks(swinb, Options).
-editor_content_typed(_, Options) --> source(pl, Options).
 
 
 %%	swish_config_hash(+Options)//
@@ -521,15 +567,26 @@ swish_config_hash(Options) -->
 %	The options are set per session.
 
 swish_options(Options) -->
-	{ option(show_beware(Show), Options),
-	  JSShow = @(Show)
-	}, !,
-	js_script({|javascript(JSShow)||
+	js_script({|javascript||
 		   window.swish = window.swish||{};
-		   window.swish.option = window.swish.options||{};
-		   window.swish.option.show_beware = JSShow;
+		   window.swish.option = window.swish.option||{};
+		  |}),
+	swish_options([show_beware, preserve_state], Options).
+
+swish_options([], _) --> [].
+swish_options([H|T], Options) -->
+	swish_option(H, Options),
+	swish_options(T, Options).
+
+swish_option(Name, Options) -->
+	{ Opt =.. [Name,Val],
+	  option(Opt, Options),
+	  JSVal = @(Val)
+	}, !,
+	js_script({|javascript(Name, JSVal)||
+		   window.swish.option[Name] = JSVal;
 		   |}).
-swish_options(_Options) -->
+swish_option(_, _) -->
 	[].
 
 %%	source(+Type, +Options)//
@@ -710,7 +767,7 @@ load_error(E, Source) :-
 %
 %	Determine the type of document.
 %
-%	@arg Type is one of `notebook` or `prolog`
+%	@arg Type is one of `swinb` or `pl`
 
 document_type(Type, Options) :-
 	(   option(type(Type0), Options)
@@ -719,8 +776,16 @@ document_type(Type, Options) :-
 	    file_name_extension(_, Type0, Meta.name),
 	    Type0 \== ''
 	->  Type = Type0
+	;   option(st_type(external), Options),
+	    option(url(URL), Options),
+	    file_name_extension(_, Ext, URL),
+	    ext_type(Ext, Type)
+	->  true
 	;   Type = pl
 	).
+
+ext_type(swinb, swinb).
+
 
 		 /*******************************
 		 *	     RESOURCES		*
@@ -734,30 +799,32 @@ document_type(Type, Options) :-
 
 swish_resources -->
 	swish_css,
-        swish_js.
+	swish_js.
 
 swish_js  --> html_post(head, \include_swish_js).
 swish_css --> html_post(head, \include_swish_css).
 
-include_swish_js -->
+google_analytics-->
 	html(script([],[
-      '      (function(i,s,o,g,r,a,m){i[''GoogleAnalyticsObject'']=r;i[r]=i[r]||function(){
+      '(function(i,s,o,g,r,a,m){i[''GoogleAnalyticsObject'']=r;i[r]=i[r]||function(){
        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
         m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
         })(window,document,''script'',''//www.google-analytics.com/analytics.js'',''ga'');
 
         ga(''create'', ''UA-16202613-9'', ''auto'');
-        ga(''send'', ''pageview'');'])),
-        { swish_resource(js, JS),
+        ga(''send'', ''pageview'');'])).
+        
+include_swish_js -->
+    % google_analytics,
+	{ swish_resource(js, JS),
 	  swish_resource(rjs, RJS),
 	  http_absolute_location(swish(js/JS), SwishJS, []),
 	  http_absolute_location(swish(RJS),   SwishRJS, [])
-	},       
+	},
 	rjs_timeout(JS),
-        html(script([ src(SwishRJS),
+	html(script([ src(SwishRJS),
 		      'data-main'(SwishJS)
-		    ], [])),
-      filesystems_res.
+		    ], [])).
 
 rjs_timeout('swish-min') --> !,
 	js_script({|javascript||
@@ -781,62 +848,47 @@ swish_resource(Type, ID) :-
 	;   absolute_file_name(File, _P, [file_errors(fail), access(read)])
 	), !.
 
-% alt(js,  'swish-min',     swish_web('js/swish-min.js')) :- \+ debugging(nominified).
+alt(js,  'swish-min',     swish_web('js/swish-min.js')) :-
+	\+ debugging(nominified).
 alt(js,  'swish',         swish_web('js/swish.js')).
 alt(css, 'swish-min.css', swish_web('css/swish-min.css')) :-
 	\+ debugging(nominified).
 alt(css, 'swish.css',     swish_web('css/swish.css')).
 alt(rjs, 'js/require.js', swish_web('js/require.js')) :-
 	\+ debugging(nominified).
-alt(rjs, 'bower_components/requirejs/require.js', -).
-
-
-filesystems_res -->
-   html({|html||
-      <script src="/swish/bower_components/ace-builds/src/ace.js" data-ace-base="/swish/bower_components/ace-builds/src" type="text/javascript" charset="utf-8"></script> 
-      <script src="/swish/bower_components/ace-builds/src/keybinding-vim.js"></script>
-      <script src="/swish/bower_components/ace-builds/src/keybinding-emacs.js"></script>
-      
-       <!--
-      <script src="/swish/bower_components/ace-builds/src/keybinding-ace.js"></script>
-       <link rel="stylesheet" href="/swish/bower_components/ace-builds/demo/kitchen-sink/styles.css" type="text/css" media="screen"  />
-       <script src="https://use.edgefonts.net/source-code-pro.js" ></script>
-      <script src="/swish/bower_components/ace-builds/demo/kitchen-sink/demo.js"></script>
-      <script type="text/javascript" charset="utf-8">
-         require("kitchen-sink/demo");
-      </script>
-         -->
-    
-    <script>
-	window.addEventListener("DOMContentLoaded", 
-	  function(){
-            //This function is called once the DOM is ready.. 
-            //It will be safe to query the DOM and manipulate DOM nodes in this function.
-					  // addEventListener support for IE8
-					  function bindEvent(element, eventName, eventHandler) {
-						if (element.addEventListener){
-						  element.addEventListener(eventName, eventHandler, false);
-						} else if (element.attachEvent) {
-						 element.attachEvent('on' + eventName, eventHandler);
-						}
-					  }
-					  // Listen to message from child window
-					  // bindEvent(window, 'edit', function (e) { alert("edit: " + e.data); });
-					  // Listen to message from child window
-                                             bindEvent(window, 'message', function (e) {
-                                                             // results.innerHTML = e.data;                         
-                                                             var navto = '/swish/filesystem/opt/logicmoo_workspace/html/ef/'+ e.data;
-                                                             if(!navto.endsWith("]")) {
-                                                                    // window.document.body.closest(".swish").swish('playURL', {url: navto});
-                                                                    $.fn.swish('playURL', {url: navto});
-                                                             }
-                                            });
-
-	}); 
-     </script>
-
-    |}),!.
-
+alt(rjs, 'node_modules/requirejs/require.js', -).
+% alt(rjs, 'bower_components/requirejs/require.js', -).
+filesystems_res_file_explorer_js --> 
+     html({|html||         
+        <script>
+            window.addEventListener("DOMContentLoaded", function(){
+                  // addEventListener support for IE8
+                  function bindEvent(element, eventName, eventHandler) {
+                    if (element.addEventListener){
+                      element.addEventListener(eventName, eventHandler, false);
+                    } else if (element.attachEvent) {
+                     element.attachEvent('on' + eventName, eventHandler);
+                    }
+                  }
+                  // Listen to message from child window
+                  bindEvent(window, 'edit', function (e) {
+                          // results.innerHTML = e.data;
+                  //        alert("edit: " + e.data); 
+                  });
+                  // Listen to message from child window
+                  bindEvent(window, 'message', function (e) {
+                          // results.innerHTML = e.data;                         
+                          // var navto = '/swish/filesystem/home/prologmud_server/lib/elFinder/'+ e.data;
+                          var navto = '/swish/filesystem/opt/logicmoo_workspace/html/ef/'+ e.data;
+                          if(!navto.endsWith("]")) {
+                             // window.document.body.closest(".swish").swish('playURL', {url: navto});
+                             $.fn.swish('playURL', {url: navto});
+                          }
+                          //  
+                 });
+                });      
+       </script>
+     |}),!.
 
 
 		 /*******************************
@@ -867,4 +919,3 @@ read_data(media(Type,_), Request, Data, Meta) :-
 	del_dict(data, Dict, Data, Meta).
 read_data(media(text/_,_), Request, Data, _{}) :-
 	http_read_data(Request, Data, [to(string)]).
-

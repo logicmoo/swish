@@ -15,16 +15,18 @@ infinite.
 
 How many turns does a walk take?
 </div>
+
 <div class="nb-cell query">
 mc_sample_arg_first(walk(T),1,T,[NT-_]).
 </div>
-<div class="nb-cell markdown">
 
+<div class="nb-cell markdown">
 ## Code
 
 Preamble:
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 :- use_module(library(mcintyre)).
 
 :- if(current_predicate(use_rendering/1)).
@@ -35,42 +37,53 @@ Preamble:
 
 :- begin_lpad.
 </div>
+
 <div class="nb-cell markdown">
 The walk starts at time=0 and X=0.
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 walk(T):-
   walk(10,0,T).
 </div>
+
 <div class="nb-cell markdown">
 If X is 0, the walk ends.
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 walk(0,T,T).
 </div>
+
 <div class="nb-cell markdown">
-If X>0, the particle makes a move.
+If X&gt;0, the particle makes a move.
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 walk(X,T0,T):-
-  X>0,
+  X&gt;0,
   move(T0,Move),
   T1 is T0+1,
   X1 is X+Move,
   walk(X1,T1,T).
 </div>
+
 <div class="nb-cell markdown">
 The move is either one step to the left or to the right with equal probability.
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 move(T,1):0.5; move(T,-1):0.5.
 </div>
+
 <div class="nb-cell markdown">
 Epilogue:
 </div>
-<div class="nb-cell program prolog" data-background="true">
+
+<div class="nb-cell program" data-background="true">
 :-end_lpad.
 </div>
+
 <div class="nb-cell markdown">
 ## References
 
@@ -81,4 +94,6 @@ Springer, Heidelberg (2016)
 Munoz, C.A., Tahar, S. (eds.) TPHOLs 2002. LNCS, vol. 2410, pp. 230-245,
 Springer, Heidelberg (2002)
 </div>
+
 </div>
+

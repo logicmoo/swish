@@ -34,7 +34,6 @@
 
 :- module(swish_filesystems, [fs_write_html/1,list_filesystems/1,
   get_fs_title/2,file_shorter_name/2,fs_write_file/4]).
-
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_json)).
 :- use_module(library(http/json)).
@@ -71,7 +70,7 @@
 :- use_module(library(pldoc/doc_htmlsrc)).
 :- use_module(library(prolog_xref)).
 
-% :- use_module(pack(plweb/pack_info)).
+:- use_module(pack(plweb/pack_info)).
 
 
 /** <module> Serve filesystem files
@@ -82,7 +81,7 @@ two sources:
   - Prolog files in the file search path `filesystems`
   - Gitty files marked as `filesystem`.
 */
-
+                         
 :- multifile
 	user:file_search_path/2,
 	swish_config:config/2,
@@ -111,7 +110,7 @@ http:status_page(Term, Context, HTML):- wdmsg(http:status_page(Term, Context, HT
    
 % handler(swish(help), swish_help:serve_files_in_directory(swish_help), true, [id(help)]).
 
-:- asserta((http_dispatch:handler(root(example), http_server_files:serve_files_in_directory(example), true, [id(example_serv)]))).
+:- asserta((http_dispatch:handler(swish(example), http_server_files:serve_files_in_directory(example), true, [id(example_serv)]))).
 
 
 		 /*******************************
@@ -198,8 +197,8 @@ filesystem_files(AllFilesystems) :-
 				   [ access(read),
 				     file_type(directory),
 				     file_errors(fail),
-				     solutions(all)
-				   ]),
+			     solutions(all)
+			   ]),
 		ExDirs),
 	maplist(fs_inx_json(HREF), ExDirs, JSON),
 	append(JSON, AllFilesystems).
@@ -386,7 +385,7 @@ gfst_rest(List, List, []).
 % :- pack_info:update_pack_metadata.
 
 % mirror_packs.
-
+	
 
 :- multifile(cp_menu:menu_items/3).
 :- multifile(cp_menu:menu_item/2).

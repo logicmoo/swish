@@ -108,5 +108,3 @@ cp_logged_in(User) :-
 
 cp_logged_out(_User) :-
     swish_config:reply_logged_out([reply(none)]).
-
-%^:- throw(wrong_files).

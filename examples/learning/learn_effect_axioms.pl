@@ -145,7 +145,7 @@ begin(model(f4)).
 holds_at([fluent:located, pers:sue, loc:hallway], tp:1).
 happens_at([event:arrive, pers:sue, loc:office], tp:3).
 holds_at([fluent:located, pers:sue, loc:office], tp:5).
-end(model(f5)).
+end(model(f4)).
 
 begin(model(f5)).
 holds_at([fluent:located, pers:sue, loc:bedroom], tp:1).

@@ -2,7 +2,7 @@
 Factory producing widgets.
 Consider a factory with two machines a and b. Each machine produces a widget
 with a continuous feature. A widget is produced by machine a with probability
-0.7 and by machine b with probability b.
+0.3 and by machine b with probability 0.7.
 If the widget is produced by machine a, the feature is distributed as a
 Gaussian with mean 2.0 and variance 1.0.
 If the widget is produced by machine b, the feature is distributed as a
@@ -10,7 +10,7 @@ Gaussian with mean 3.0 and variance 1.0.
 The widget then is processed by a third machine that adds a random quantity to
 the feature distributed as a Gaussian with mean 0.5 and variance 1.5.
 What is the distribution of the feature?
-What is the distribution of the feature given that the widget was procuded
+What is the distribution of the feature given that the widget was produced
 by machine a?
 What is the distribution of the feature given that the third machine added a
 quantity greater than 0.2?
@@ -48,7 +48,7 @@ set_sw(pt, norm(0.5, 0.1)).
 
 hist_uncond(Samples,NBins):-
   mc_sample_arg(widget(X),Samples,X,L0),
-  histogram_r(L0,NBins).
+  histogram_r(L0,[nbins(NBins)]).
 % What is the distribution of the feature?
 
 

@@ -33,6 +33,12 @@
 
   - Show stack and choice-points?
   - Display constraints.  How?
+  - breakpoints in notebooks (mostly needs to deal with source locations)
+
+## Highlighting
+
+  - Deal with multiple sources from a notebook (background programs).
+    - Analyse all programs and queries using a single callback?
 
 ## Rendering framework
 
@@ -41,6 +47,10 @@
     - Allow generating HTML?  How to deal with security?
 
 ## Dashboard
+
+  - Complete type support for parameters/1
+  - Allow replacing the query with the dialog.  Can use query settings to
+    switch between the two modes.
 
 Dashboard entry is basically a query. We will specify the parameters as
 
@@ -63,7 +73,7 @@ Possibly we can implement that as part of the server-side highlighting?
 
 ## Sharing
 
-First option was TogetherJS.  Now doubting, as it my be much better to
+First option was TogetherJS.  Now doubting, as it may be much better to
 _not_ see exactly the same UI for cooperation.  What about
 
   - Allow for sharing editors
@@ -112,9 +122,10 @@ _not_ see exactly the same UI for cooperation.  What about
   - Small installations can automatically add all users to the
     one team.
 
-
 ## Saving files
 
+  - Look at [Dillinger markup editor](http://dillinger.io/)
+    - Save to github
   - Save/Info dialogs
     - Fork from history
       - Now: Play, Save, clear/fill name.
@@ -153,8 +164,14 @@ _not_ see exactly the same UI for cooperation.  What about
 ## Notebooks
 
   - Save notebook/program as new profile?
-  - Collapsible sections?
-  - Move sections (or select multiple)
+  - Organize in sections
+    - Group by ## in markdown sections using super-divs.
+      - Allow for collapsing a group.
+    - Insert dynamic menu around cells.
+  - Section actions
+    - Collapse (keeps title)
+    - Collapse all
+    - Move (drag and drop)
   - Delete query from menu?  Better: undo for delete.
 
 ## SWISH as Prolog frontend for local usage
@@ -184,9 +201,20 @@ _not_ see exactly the same UI for cooperation.  What about
     - Only send pengine_src with pengines.
     - Detect pengine_src based on alias?
 
+### Chat
+
+  - Get Anna's new avatars
+
+### Permalinks
+
+  - Handle external storage state
+  - Add permalink as metadata
+    - To generated PDF (R integration)
+    - To CSV
+
 ### Bugs
 
   - Colouring of /library/http/html_write.pl.  Broken sequences:
     - DCG exports
     - ?- [file].
-
+    - Variable as goal.

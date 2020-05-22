@@ -3,7 +3,7 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2014-2017, VU University Amsterdam
+    Copyright (C): 2014-2018, VU University Amsterdam
 			      CWI Amsterdam
     All rights reserved.
 
@@ -62,6 +62,7 @@ define([ "jquery",
 	 "laconic",
 	 "login",
 	 "chatroom",
+	 "version",
 	 "d3",
 	 "c3",
 	 "svg-pan-zoom"
@@ -69,7 +70,9 @@ define([ "jquery",
 
 preferences.setDefault("semantic-highlighting", true);
 preferences.setDefault("emacs-keybinding", false);
-preferences.setDefault("reuse-editor", false);
+preferences.setDefault("new-tab", true);
+preferences.setDefault("preserve-state", true);
+preferences.setInform("preserve-state", ".unloadable");
 
 (function($) {
   var pluginName = 'swish';
@@ -109,15 +112,6 @@ preferences.setDefault("reuse-editor", false);
 		      glyph("eye-open", function() {
 	  menuBroadcast("follow-file");
 	}) : undefined,
-	"Chat ...": icon("chat", function() {
-	  menuBroadcast("chat-about-file");
-	}),
-	"Chat help room ...": icon("chathelp", function() {
-	  $("body").swish('playFile', {
-	    file:"Help.swinb",
-	    chat:'large'
-	  });
-	}),
 	"Start TogetherJS ...": icon("togetherjs", function() {
 	  $("body").swish('collaborate');
 	}),
@@ -157,41 +151,87 @@ preferences.setDefault("reuse-editor", false);
 	  type: "checkbox",
 	  value: "false"
 	},
-	"Reuse Editors": {
-	  preference: "reuse-editor",
+	"Open document in new tab": {
+	  preference: "new-tab",
 	  type: "checkbox",
-	  value: "false"
+	  value: "true"
 	},
+	"Preserve state in browser": {
+	  preference: "preserve-state",
+	  type: "checkbox",
+	  value: "true"
+	}
       },
-      "Examples": function(navbar, dropdown) {
+     "Examples": function(navbar, dropdown) {
 	$("body").swish('populateExamples', navbar, dropdown);
       },
+ 	
+     "CPLINT": function(navbar, dropdown) {
+     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+     config.http.locations.swish_extended_examples+"/learning");      },
+           
+     "CPLINT-I": function(navbar, dropdown) {
+     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+     config.http.locations.swish_extended_examples+"/inference/*.swinb");      },
+     "CPLINT-IP": function(navbar, dropdown) {
+     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+     config.http.locations.swish_extended_examples+"/inference/*pl");      },
+           
+     "Logicmoo": function(navbar, dropdown) {
+     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+     config.http.locations.swish_extended_examples+"/logicmoo");      },
+           
+     "PFC": function(navbar, dropdown) {
+     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+     config.http.locations.swish_extended_examples+"/pfc");      },
+           
+     "PrologMUD": function(navbar, dropdown) {
+     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+     config.http.locations.swish_extended_examples+"/prologmud");      },
+           
+     "Trill": function(navbar, dropdown) {
+     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+     config.http.locations.swish_extended_examples+"/trill");      },      
+
+     "Aleph": function(navbar, dropdown) {
+     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+     config.http.locations.swish_extended_examples+"/aleph");      },      
+
+     "Phil": function(navbar, dropdown) {
+     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+     config.http.locations.swish_extended_examples+"/phil");      },      
+
+     "LPS": function(navbar, dropdown) {
+     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+     config.http.locations.swish_extended_examples+"/lps_corner");      },      
+     
+//     "LPS Survival": function(navbar, dropdown) {
+//     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+//     config.http.locations.swish_extended_examples+"/lps_corner/survival_game");      },      
+
+//     "LPS Testing": function(navbar, dropdown) {
+//     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+//     config.http.locations.swish_extended_examples+"/lps_corner/forTesting");      },      
+
+//     "LPS CLOUT": function(navbar, dropdown) {
+//     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+//     config.http.locations.swish_extended_examples+"/lps_corner/CLOUT_workshop");      },      
+
+     "Top NB": function(navbar, dropdown) {
+     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+     config.http.locations.swish_extended_examples+"/*.swinb");      },    
+       
+
+//     "Extended Examples": function(navbar, dropdown) {
+//     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+//     config.http.locations.swish_extended_examples);      },      
+
       "Help": function(navbar, dropdown) {
 	$("body").swish('populateHelp', navbar, dropdown);
-      }
-     ,
-     "Extensions Menu":
-      { 
-      	"Help on cplint...": function() {
-      	  menuBroadcast("help", {file:"help-cplint.html"});
-      	},
-		"Pldoc on cplint...": function() {
-		  var win = window.open("http://cplint.lamping.unife.it/pldoc/doc/home/trill/lib/swipl/pack/cplint/prolog/", '_blank');
-		  win.focus();
-		 },
-		"Help on aleph...": function(){
-		  menuBroadcast("help", {file:"help-aleph.html"});
-		},
-        "PLP Tutorial":      
-          function() {
-            var win = window.open("http://ds.ing.unife.it/~gcota/plptutorial/", '_blank');
-            win.focus();
-            //console.log("click on tutorial");
-            //methods.playURL.call($("body"), {url:"/tutorial/tutorial.swinb"});
-          }
-         ,
-	}
-
+      },
+//      "Extended Help": function(navbar, dropdown) {
+//	$("body").swish('populateExtendedHelp', navbar, dropdown);
+//      },      
     }
   }; // defaults;
 
@@ -212,6 +252,7 @@ preferences.setDefault("reuse-editor", false);
       setupModal();
       setupPanes();
       setupResize();
+      setupUnload();
       $("#search").search();
 
       options = options||{};
@@ -237,6 +278,8 @@ preferences.setDefault("reuse-editor", false);
 	    runner:   data.runner,
 	    editor:   editor[0]
 	  });
+	elem.data(pluginName, data);	/* store with element */
+	data.restoring = true;
 
 	$(".notebook").notebook();
 
@@ -244,18 +287,93 @@ preferences.setDefault("reuse-editor", false);
 	     !(swish.option && swish.option.show_beware == false) )
 	  menuBroadcast("help", {file:"beware.html", notagain:"beware"});
 
-	elem.data(pluginName, data);	/* store with element */
-
 	if ( window.location.href.indexOf("&togetherjs=") > 0 )
 	  elem.swish('collaborate');
 
 	$("#chat").chat('');
+	$("#broadcast-bell")
+		.chatbell({
+		  empty_title: "Click to open chat"
+		});
+	$("#chat-menu").on("click", "a", function(ev) {
+	  var a = $(ev.target).closest("a");
+	  switch ( a.data('action') ) {
+	  case 'chat-shared':
+	    $("body").swish('playFile', {
+	      file: config.swish.hangout,
+	      chat: 'large'
+	    });
+	    break;
+	  case 'chat-about-file':
+	    menuBroadcast("chat-about-file");
+	  }
+	});
 
 	setInterval(function(){
 	  $(".each-minute").trigger("minute");
 	}, 60000);
+
+	if ( elem[pluginName]('preserve_state') )
+	{ $(".unloadable").trigger("restore");
+	}
+
+	delete data.restoring;
+	elem[pluginName]('runDelayedRestore');
+	$().version('checkForUpdates');
       });
     },
+
+    /**
+     * @return {Boolean} `true` when we should save and restore
+     * the state to the browser local store.
+     */
+    preserve_state: function() {
+      if ( swish.option.preserve_state == false )
+	return false;
+      if ( preferences.getVal("preserve-state") == false )
+	return false;
+
+      function getQueryVariable(variable) {
+	var query = window.location.search.substring(1);
+	var vars = query.split('&');
+	for (var i = 0; i < vars.length; i++) {
+	  var pair = vars[i].split('=');
+	  if (decodeURIComponent(pair[0]) == variable) {
+	    return decodeURIComponent(pair[1]);
+	  }
+	}
+      }
+
+      if ( getQueryVariable("restore") == "false" )
+	return false;
+
+      return true;
+    },
+
+    afterRestore: function(f) {
+      var data = this.data("swish");
+
+      if ( data.after_restore )
+	data.after_restore.push(f);
+      else
+	data.after_restore = [f];
+
+      return this;
+    },
+
+    runDelayedRestore: function() {
+      var swish = this;
+      var data = this.data("swish");
+
+      if ( data.after_restore ) {
+	var f;
+	while( (f = data.after_restore.pop()) )
+	  f.call(swish);
+      }
+
+      return this;
+    },
+
 
     /**
      * Trigger a global event in SWISH.  Currently defined events are:
@@ -297,11 +415,10 @@ preferences.setDefault("reuse-editor", false);
       if ( typeof(options) == "string" )
 	options = {file:options};
 
-    if(preferences.getVal("reuse-editor")) { 
       var existing = this.find(".storage").storage('match', options);
       if ( existing && existing.storage('expose', "Already open") )
 	return this;				/* FIXME: go to line */
-    }
+
       var url = config.http.locations.web_storage + options.file;
       $.ajax({ url: url,
 	       type: "GET",
@@ -395,14 +512,18 @@ preferences.setDefault("reuse-editor", false);
     /**
      * Open a source.  If we are in fullscreen mode and the current
      * object cannot be opened by the current fullscreen node, we
-     * leave fullscreen mode and retry.  Called by playFile and playURL.
+     * leave fullscreen mode.  Called by playFile and playURL.
      */
-    setSource: function(options) {
-      menuBroadcast("source", options);
-      if ( !this.find(".storage").storage('match', options) ) {
-	if ( this.swish('exitFullscreen') )
-	  menuBroadcast("source", options);
+    setSource: function(src) {
+      var st = this.swish('isFullscreen');
+
+      if ( !(st && st.storage('setSource', src)) ) {
+	if ( st )
+	  this.swish('exitFullscreen');
+	this.find(".tabbed").tabbed('tabFromSource', src);
       }
+
+      return this;
     },
 
 
@@ -451,25 +572,134 @@ preferences.setDefault("reuse-editor", false);
 		   var ex = data[i];
 		   var title;
 		   var options;
-
-		   if ( ex == "--" || ex.type == "divider" ) {
+           if ( ex == "--" || ex.type == "divider" ) {
 		     title = "--";
 		     options = "--";
-		   } else {
+		  } else {
 		     var name = ex.file || ex.href;
+		     if (!name) {
+                 continue ;	
+    		     title = ex;
+	             options.typeIcon = name.split('.').pop();
+	             options = that.swish('populateExtendedHelp', navbar, dropdown);    		     
+    		     $("#navbar").navbar('extendDropdown', dropdown,
+				       title, options);				       
+				     
+		         continue ;
+		     } else {
 		     title = ex.title;
 		     options = that.swish('openExampleFunction', ex);
 		     if ( name )
 		       options.typeIcon = name.split('.').pop();
+		    }
 		   }
 
 		   $("#navbar").navbar('extendDropdown', dropdown,
 				       title, options);
 		 }
+	       },
+	       error: function(jqXHR22) {
+		 modal.ajaxError(jqXHR22);
 	       }
 	     });
       return this;
     },
+    
+    
+    /**
+     * populateExtendedExamples
+     */
+    populateExtendedExamples: function(navbar, dropdown, where) {
+      var that = this;
+
+    
+      	
+      $.ajax(where,
+	     { dataType: "json",
+	       success: function(data) {
+		 for(var i=0; i<data.length; i++) {
+		   var ex = data[i];
+		   var title;
+		   var options;
+
+		   if ( ex == "--" || ex.type == "divider" ) {
+		     title = "--";
+		     options = "--";
+		   } else {
+		   	
+		   	   var name = ex.file || ex.href;
+		     if (!name) {
+	
+    		     title = ex;
+    		     
+    		     	     
+		         continue ;
+	             options = that.swish('populateExamples', navbar, dropdown);    		     
+    		     $("#navbar").navbar('extendDropdown', dropdown,
+				       title, options);				       
+		         continue ;
+		     } else {
+		     title = ex.title;
+		     options = that.swish('openExampleFunction', ex);
+		     if ( name )
+		       options.typeIcon = name.split('.').pop();
+		    }
+		   }
+		   $("#navbar").navbar('extendDropdown', dropdown,
+				       title, options);
+				       
+				       
+		 }
+	       },
+	       error: function(jqXHR1) {
+		 modal.ajaxError(jqXHR1);
+	       }
+	     });
+      return this;
+    },
+    
+
+    /**
+     * Extended Help
+     */
+    populateExtendedHelp: function(navbar, dropdown) {
+      var that = this;
+
+      function openHelpFunction(help) {
+	return function() {
+	  menuBroadcast("help", {file:help.file});
+	};
+      }
+
+      $.ajax(config.http.locations.swish_extended_help_index,
+	     { dataType: "json",
+	       success: function(data) {
+		 for(var i=0; i<data.length; i++) {
+		   var help = data[i];
+		   var title;
+		   var options;
+
+		   if ( help == "--" || help.type == "divider" ) {
+		     title = "--";
+		     options = "--";
+		   } else {
+		     var name = help.file;
+		     title = help.title;
+		     options = openHelpFunction(help);
+		   }
+
+		   $("#navbar").navbar('extendDropdown', dropdown,
+				       title, options);
+		 }
+	       },
+	       error: function(jqXHR33) {
+		 modal.ajaxError(jqXHR33);
+	       }
+	     });
+      return this;
+    },
+
+
 
     /**
      * Populate the help dropdown of the navigation bar. This
@@ -482,12 +712,7 @@ preferences.setDefault("reuse-editor", false);
 
       function openHelpFunction(help) {
 	return function() {
-		if(help.url !== undefined) {
-            var win = window.open(help.url, '_blank');
-            win.focus();
-				}
-		else
- 	    menuBroadcast("help", {file:help.file});
+	  menuBroadcast("help", {file:help.file});
 	};
       }
 
@@ -503,7 +728,7 @@ preferences.setDefault("reuse-editor", false);
 		     title = "--";
 		     options = "--";
 		   } else {
-		     //var name = help.file;
+		     var name = help.file;
 		     title = help.title;
 		     options = openHelpFunction(help);
 		   }
@@ -511,6 +736,9 @@ preferences.setDefault("reuse-editor", false);
 		   $("#navbar").navbar('extendDropdown', dropdown,
 				       title, options);
 		 }
+	       },
+	       error: function(jqXHR) {
+		 modal.ajaxError(jqXHR);
 	       }
 	     });
       return this;
@@ -586,13 +814,29 @@ preferences.setDefault("reuse-editor", false);
      * Make DOM element fullscreen
      * @param {jQuery} node is the element to turn into fullscreen.
      * Currently this only works for a notebook.
-     * @patam {jQuery} main is the node getting the `fullscreen
+     * @param {jQuery} main is the node getting the `fullscreen
      * hamburger` class.
+     * @param {Boolean} [hide_navbar] if `true`, also hide
+     * the navigation bar.
      */
-    fullscreen: function(node, main) {
+    fullscreen: function(node, main, hide_navbar) {
+      var swish = this;
       var content = this.find(".container.tile-top");
+      var swishdata = this.data("swish");
+
+      if ( swishdata.restoring ) {
+	this[pluginName]('afterRestore', function() {
+	  swish.swish('fullscreen', node, main, hide_navbar);
+	});
+	return this;
+      }
 
       if ( !content.hasClass("fullscreen") ) {
+	if ( hide_navbar == true ||
+	     ( config.swish.fullscreen &&
+	       config.swish.fullscreen.hide_navbar == true ) )
+	  this[pluginName]('showNavbar', false);
+
 	var data = this.data("fullscreen");
 	if ( !data ) {
 	  data = {};
@@ -624,6 +868,8 @@ preferences.setDefault("reuse-editor", false);
 	var node = $(content.children()[1]);
 	var main = data.fullscreen_main;
 
+	this[pluginName]('showNavbar', true);
+
 	content.removeClass("fullscreen");
 	$(data.fullscreen_main).removeClass("fullscreen hamburger");
 	$(data.fullscreen_origin).append(node);
@@ -639,6 +885,34 @@ preferences.setDefault("reuse-editor", false);
     },
 
     /**
+     * Detect fullscreen mode
+     * @return {jQuery} storage object that is running in fullscreen
+     * mode.
+     */
+    isFullscreen: function() {
+      var content = this.find(".container.tile-top");
+
+      if ( content.hasClass("fullscreen") ) {
+	var st = content.find(".storage");
+	if ( st.length != 0 )
+	  return st;
+      }
+    },
+
+    /**
+     * Control visibility of the navbar
+     * @param {Boolean} show controls whether or not the navbar
+     * is visible.
+     */
+    showNavbar: function(show) {
+      if ( show ) {
+	$("nav.navbar").attr("style", "display:block !important")
+      } else {
+	$("nav.navbar").attr("style", "display:none !important")
+      }
+    },
+
+    /**
      * Open TogetherJS after lazy loading.
      */
     collaborate: function() {
@@ -650,6 +924,18 @@ preferences.setDefault("reuse-editor", false);
 		TogetherJS(elem);
 	      });
       return this;
+    },
+
+    /**
+     * Show showUpdates
+     */
+    showUpdates: function(options) {
+      modal.show({
+        title: options.title || "Recent SWISH updates",
+	body: function() {
+	  this.version(options);
+	}
+      });
     }
   }; // methods
 
@@ -668,10 +954,8 @@ preferences.setDefault("reuse-editor", false);
    */
   function swishLogo() {
     $(".swish-logo")
-      .append($.el.b($.el.span({style:"color:darkblue"}, "cplint + TRILL "),
-                     $.el.span({style:"color:maroon"}, "on "),
-      		     $.el.span({style:"color:darkblue"}, "SWI"),
-		     $.el.span({style:"color:maroon"}, "SH")))
+      .append($.el.b($.el.span({style:"color:darkblue"}, "LOGIC"),
+		     $.el.span({style:"color:maroon"}, "MOO")))
       .css("margin-left", "30px")
       .css("font-size", "24px")
       .addClass("navbar-brand");
@@ -701,6 +985,20 @@ preferences.setDefault("reuse-editor", false);
   function setupResize() {
     $(window).resize(function() {
       $(".reactive-size").trigger('reactive-resize');
+    });
+  }
+
+  function setupUnload() {
+    $(window).bind("beforeunload", function(ev) {
+      var rc;
+
+      $(".unloadable").each(function() {
+	var r = {};
+	$(this).trigger("unload", r);
+	rc = rc||r.rc;
+      });
+
+      return rc;
     });
   }
 

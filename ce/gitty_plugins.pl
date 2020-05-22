@@ -1,0 +1,1 @@
+../config-available-swish/gitty_plugins.pl

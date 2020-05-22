@@ -22,7 +22,7 @@ Original program by Torbjorn Lager, adapted to MCINTYRE by Fabrizio Riguzzi
 % sequence of states S
 
 hmm(O):-hmm(_,O).
-% O is an output sequence if there is a state seuqnece S such that hmm(S,O) 
+% O is an output sequence if there is a state sequence S such that hmm(S,O) 
 % holds
 
 hmm(S,O):-trans(start,Q0,[]),hmm(Q0,[],S0,O),reverse(S0,S).
@@ -98,7 +98,7 @@ state_diagram(digraph(G)):-
     maplist(nodelab,Nodes,NodesLab),
     findall(edge(A -> B,[label=P]),
       (clause(trans(A,B,_),
-        sample_head(_,_,Probs,N)),
+        sample_head(_,_,_,Probs,N)),
         nth0(N,Probs,_:P)),
       Edges),
     append(NodesLab,Edges,G).
@@ -111,11 +111,11 @@ nodelab(N,node(N,[label=Lab])):-
 /** <examples>
 
 ?- mc_sample_arg(hmm(S,[he,can,can,a,can]),20,S,O).
-% sample the state sequence corresonding to the phrase "he can can a can"
+% sample the state sequence corresponding to the phrase "he can can a can"
 % the most frequent state sequence is an approximate POS tagging for the 
 % sentence. It corresponds to the Viterbi path of the HMM.
 % expected result: the most frequent tagging should be [pron, aux, v, det, n]
-?- mc_sample_arg_bar(hmm(S,[he,can,can,a,can]),20,S,O).
+?- mc_sample_arg(hmm(S,[he,can,can,a,can]),20,S,O),argbar(O,C).
 
 ?- state_diagram(G).
 % show the state diagram

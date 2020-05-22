@@ -183,13 +183,13 @@ sq_exp_p(X,XP,K):-
 
 l(L):uniform(L,[1,2,3]).
 
-sigma(Sigma):uniform(Sigma,-2,2).
+sigma(Sigma):uniform_dens(Sigma,-2,2).
 
 % squared exponential kernel with fixed parameters: sigma=1, l=1.
 sq_exp(X,XP,K):-
   K is exp(-((X-XP)^2)/2).
 
-% squared exponential with linear and constant compoonent, 
+% squared exponential with linear and constant component, 
 % from Bishop, page 307 eq 6.63.
 sq_exp_const_lin(Theta0,Theta1,Theta2,Theta3,X,XP,K):-
   K is Theta0*exp(-((X-XP)^2)*Theta1/2)+Theta2+Theta3*X*XP.
@@ -216,7 +216,7 @@ ou(X,XP,K):-
 % draws 5 functions sampled from the Gaussian process with kernel Kernel
 % at points X=[-3,-2,-1,0,1,2,3].
 draw_fun(Kernel,C):-
-  X=[-3,-2,-1,0,1,2,3],
+  numlist(0,10,X),
   draw_fun(X,Kernel,C).
   
 %! draw_fun(+X:list,+Kernel:atom,-C:dict) is det

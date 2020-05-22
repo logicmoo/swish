@@ -3,7 +3,8 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (c)  2014-2017, VU University Amsterdam
+    Copyright (c)  2014-2018, VU University Amsterdam
+			      CWI, Amsterdam
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -30,16 +31,30 @@
     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
+
+    Changes by:    Riccardo Zese
+    E-mail:        riccardo.zese@unife.it
 */
 
 :- module(swish_app,
 	  [
 	  ]).
+
+:- use_module(library(logicmoo_utils_all)).
+
+:- use_module(library(pldoc), []).
 :- use_module(library(pengines)).
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(option)).
 :- use_module(library(apply)).
 :- use_module(library(settings)).
+
+:- if(exists_source(rdfql(sparql_csv_result))).
+:- use_module(rdfql(sparql_csv_result)).
+:- endif.
+
+:- prolog_load_context(directory,Dir),
+   asserta(user:file_search_path(swish, Dir)).
 
 :- use_module(lib/messages).
 :- use_module(lib/paths).
@@ -50,6 +65,8 @@
 :- use_module(lib/swish_csv).
 :- use_module(lib/examples).
 :- use_module(lib/profiles).
+%:- use_module(lib/filesystems).
+%:- use_module(lib/filesystems_priv).
 :- use_module(lib/highlight).
 :- use_module(lib/markdown).
 :- use_module(lib/chat, []).
@@ -57,6 +74,34 @@
 :- use_module(lib/tutorial).
 :- use_module(library(aleph)).
 :- use_module(library(sldnfdraw)).
+:- if(exists_source(library(http/http_dyn_workers))).
+:- use_module(library(http/http_dyn_workers)).
+:- else.
+:- use_module(lib/plugin/http_dyn_workers, []).
+:- endif.
+:- use_module(lib/web).
+:- use_module(lib/version).
+
+
+		 /*******************************
+		 *	      VERSION		*
+		 *******************************/
+setup_versions :- !.
+setup_versions :-
+	prolog_load_context(directory, Dir),
+	register_git_module(swish,
+			    [ directory(Dir),
+			      home_url('https://github.com/friguzzi/swish')
+			    ]),
+	pack_property(cplint,directory(CplintDir)),
+	register_git_module(cplint,[directory(CplintDir),
+	home_url('https://github.com/friguzzi/cplint')]),
+    pack_property(trill,directory(TrillDir)),
+	register_git_module(trill,[directory(TrillDir),
+	home_url('https://github.com/rzese/trill')]),
+	nop(check_prolog_version(070717)).
+
+:- initialization setup_versions.
 
 
 		 /*******************************
@@ -72,29 +117,26 @@
 		 *         LOCAL CONFIG		*
 		 *******************************/
 
+% create the application first, so we can modify it inside the
+% configuration files.
+:- pengine_application(swish).
+
 %!	load_config
 %
 %	Load files from config-enabled if  present. Currently loads from
 %	a single config-enabled directory, either  found locally or from
 %	the swish directory.
 
-:- meta_predicate
-    ensure_loaded_safely(:).
-
-ensure_loaded_safely(H):- catch(ensure_loaded(H),_,true).
-
-load_config :-!.
 load_config :-
-	absolute_file_name(config_enabled(.), Path,
+	absolute_file_name(config_enabled_swish(.), Path,
 			   [ file_type(directory),
 			     access(read),
 			     file_errors(fail)
 			   ]), !,
 	atom_concat(Path, '/*.pl', Pattern),
 	expand_file_name(Pattern, Files),
-	maplist(ensure_loaded_safely, Files).
+	maplist(user:ensure_loaded, Files).
 load_config.
-
 
 :- initialization(load_config, now).
 
@@ -140,84 +182,51 @@ load_config.
 %	  Ping pengine status every N seconds.  Updates sparkline
 %	  chart with stack usage.
 %	  - notebook
-%	  Dict holding options for notebooks.
-%        - eval_script
-%        Evaluate scripts in HTML cells of notebooks?
+%	  Dict holding options for notebooks:
+%	    - eval_script
+%	    Whether or not to evaluate JavaScript in cells
+%	    - fullscreen
+%	    Whether or not to start in fullscreen mode by default
+%	  - fullscreen
+%	  Dict holding options for fullscreen mode:
+%	    - hide_navbar: hide the navigation bar when in fullscreen
+%	      mode.
 %	  - chat
 %	  Activate the chat interface
+%	  - chat_spam_protection
+%	  Perform protection against spamming on chat messages.
+%	  - default_query
+%	  Initial query for the source search in an empty tab
+%
+%	These config options are commonly  overruled   using  one of the
+%	configuration files. See `config-available` and `config-enabled`
+%	directories.
+%
+%	The  defaults  below   are   for    small   installations.   See
+%	`config-available/dim_large.pl` for a default   config for large
+%	communities.
 
 % Allow other code to overrule the defaults from this file.
 term_expansion(swish_config:config(Config, _Value), []) :-
-	clause(swish_config:config(Config, _), _),!.
+	clause(swish_config:config(Config, _), _).
 
-
-% swish_config:config(show_beware,        false).
+swish_config:config(show_beware,        false).
 swish_config:config(tabled_results,     false).
 swish_config:config(application,        swish).
-
-
-:- if(true).
 swish_config:config(csv_formats,    [rdf, prolog]).
-:- else.
-swish_config:config(csv_formats,        [prolog]).
-:- endif.
 
-
-:- if(true).  % non vanilla SWISH
-% Allows users to extend the Examples menu by ticking the Example
-% checkbox.
-% swish_config:config(community_examples, true).
-
-% Include elFinder server explorer
-swish_config:config(filesystem_browser,   true).
-% Use ace-editor to edit unknown file types (like .kif files)
-swish_config:config(edit_any,   true).
-
-:- else.
-swish_config:config(community_examples, false).
-:- endif.
-
-:- if(true).
-
-:- use_module(lib/filesystems).
-
-:- if(exists_source(rdfql(sparql_csv_result))).
-:- use_module(rdfql(sparql_csv_result)).
-:- endif.
-
-
-		 /*******************************
-		 *	       PATHS		*
-		 *******************************/
-
-user:file_search_path(swish_web, swish(web)).
-user:file_search_path(js,        swish_web(js)).
-user:file_search_path(css,       swish_web(css)).
-user:file_search_path(icons,     swish_web(icons)).
-
-
-set_swish_path :-
-	absolute_file_name(swish('swish.pl'), _,
-			   [file_errors(fail), access(read)]), !.
-
-% Make this a swish(..) root?
-set_swish_path :-
-	prolog_load_context(directory, Dir),
-	asserta(user:file_search_path(swish, Dir)).
-
-:- set_swish_path.
-
-http:location(swish, root(.), [priority(-100)]).
-
-:- endif.
-
-
-
+swish_config:config(community_examples, true).
 swish_config:config(public_access,      false).
 swish_config:config(include_alias,	example).
-swish_config:config(ping,		10).
-swish_config:config(notebook,		_{eval_script: true}).
+swish_config:config(ping,		2).
+swish_config:config(notebook,		_{ eval_script: true,
+					   fullscreen: false
+					 }).
+swish_config:config(fullscreen,		_{ hide_navbar: true
+					 }).
 swish_config:config(chat,		true).
+swish_config:config(chat_spam_protection, false).
+swish_config:config(default_query,	'').
 
 %%	swish_config:source_alias(Alias, Options) is nondet.
 %
@@ -234,7 +243,6 @@ swish_config:config(chat,		true).
 % setup HTTP session management
 :- use_module(lib/session).
 
-:- if(true).
 		 /*******************************
 		 *	        CSV		*
 		 *******************************/
@@ -278,7 +286,6 @@ swish_csv:write_answers(Answers, VarTerm, Options) :-
 swish_csv:write_answers(Answers, VarTerm, _Options) :-
 	swish_csv:write_answers(Answers, VarTerm).
 
-:- endif.
 
                  /*******************************
                  *   CREATE SWISH APPLICATION   *
@@ -287,26 +294,19 @@ swish_csv:write_answers(Answers, VarTerm, _Options) :-
 :- multifile
 	pengines:prepare_module/3.
 
-:- pengine_application(swish).
 :- use_module(swish:lib/render).
 :- use_module(swish:lib/trace).
 :- use_module(swish:lib/projection).
+:- use_module(swish:lib/attvar).
 :- use_module(swish:lib/jquery).
 :- use_module(swish:lib/dashboard).
+:- use_module(swish:lib/md_eval).
+:- use_module(swish:lib/html_output).
 :- use_module(swish:lib/swish_debug).
 :- use_module(swish:library(pengines_io)).
-
-:- if(true).
-:- use_module(swish:library(semweb/rdf_db)).
-:- use_module(swish:library(semweb/rdfs)).
-% :- use_module(swish:library(semweb/rdf_optimise)).
-:- use_module(swish:library(semweb/rdf_litindex)).
-:- endif.
-
 :- use_module(swish:library(solution_sequences)).
 :- use_module(swish:library(aggregate)).
-:- use_module(swish:lib/r_swish).
-:- if(exists_source(library(tabling))).
+:- if((\+current_predicate((table)/1),exists_source(library(tabling)))).
 :- use_module(swish:library(tabling)).
 :- endif.
 
@@ -322,21 +322,35 @@ pengines:prepare_module(Module, swish, _Options) :-
 % them here, so they only need to be imported, which is just fine.
 
 :- use_module(library(clpfd), []).
-:- use_module(library(clpb), []).
 
-:- if(true).
+:-use_module(library(trill)).
+:- use_module(library(clpb), []).
+:- use_module(library(clpr)).
+
+:- use_module(swish:library(semweb/rdf_db)).
+:- use_module(swish:library(semweb/rdfs)).
+% :- use_module(swish:library(semweb/rdf_optimise)).
+:- use_module(swish:library(semweb/rdf_litindex)).
+:- use_module(swish:lib/r_swish).
+:- use_module(library(cplint_r)).
+:- use_module(library(r/r_sandbox)).
+:- multifile sandbox:safe_primitive/1.
+sandbox:safe_primitive(nf_r:{_}).
+
+
 :- if(exists_source(library(semweb/rdf11))).
 :- use_module(library(semweb/rdf11), []).
 :- endif.
+
+
+:- if(exists_source(library(dcg/high_order))).
+:- use_module(library(dcg/high_order), []).
 :- endif.
 :- use_module(lib/swish_chr, []).
 
 % load rendering modules
 
-:- if(exists_source(swish(lib/render/html))).
-% Dmiles - fav render (only works if unsandboxed)
 :- use_module(swish(lib/render/html),	  []).
-:- endif.
 :- use_module(swish(lib/render/sudoku),	  []).
 :- use_module(swish(lib/render/chess),	  []).
 :- use_module(swish(lib/render/table),	  []).
@@ -346,36 +360,200 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(swish(lib/render/c3),	  []).
 :- use_module(swish(lib/render/url),	  []).
 :- use_module(swish(lib/render/bdd),	  []).
+:- use_module(swish(lib/render/mathjax),  []).
 :- use_module(swish(lib/render/lpad),	  []).
 :- use_module(swish(lib/render/prolog),	  []).
 :- use_module(swish(lib/render/tiles),	  []).
 :- use_module(swish(lib/render/sldnf),	  []).
-:- use_module(library(r/r_sandbox)).
 
 :- use_module(library(pita)).
 :- use_module(library(mcintyre)).
 :- use_module(library(slipcover)).
+:- use_module(library(phil),[]).
+%:- use_module(library(phil),[induce_hplp_par/2,induce_hplp/2,sample_hplp/4,inference_hplp/3,inference_hplp/4,
+%  test_hplp/7,set_hplp/2]). % ,op(500,fx,#),op(500,fx,'-#')
 :- use_module(library(lemur),[]).
 :- use_module(library(auc)).
 :- use_module(library(matrix)).
-:- use_module(library(clpr)).
-:- use_module(library(cplint_r)).
-:- multifile sandbox:safe_primitive/1.
-
-sandbox:safe_primitive(nf_r:{_}).
 
 
+:- use_module(swish(lib/render/gvterm),   []).
 
-:- if(exists_source(library(trill))).
-% :- use_module(library(trill)).
-:- endif.
+               /*******************************
+               *         ADD COLOURING        *
+               *******************************/
+
+:- multifile prolog_colour:term_colours/2.
+
+prolog_colour:term_colours((:- trill),
+	neck(directive)-[trill_directive]):-!.
+
+prolog_colour:term_colours((:- trillp),
+	neck(directive)-[trill_directive]):-!.
+
+prolog_colour:term_colours((:- tornado),
+	neck(directive)-[trill_directive]):-!.
+
+prolog_colour:term_colours(owl_rdf(_), olwrdf_predicate-[classify]):-!.
+
+
+prolog_colour:term_colours((:- begin_lpad),
+             neck(directive)-[cplint_directive]):-!.
+
+prolog_colour:term_colours((:- end_lpad),
+             neck(directive)-[cplint_directive]):-!.
+
+prolog_colour:term_colours((:- begin_plp),
+             neck(directive)-[cplint_directive]):-!.
+
+prolog_colour:term_colours((:- end_plp),
+             neck(directive)-[cplint_directive]):-!.
+
+prolog_colour:term_colours((:- pita),
+             neck(directive)-[cplint_directive]):-!.
+
+prolog_colour:term_colours((:- mc),
+             neck(directive)-[cplint_directive]):-!.
+
+prolog_colour:term_colours((:- sc),
+             neck(directive)-[cplint_directive]):-!.
+
+prolog_colour:term_colours((:- lemur),
+             neck(directive)-[cplint_directive]):-!.
+
+prolog_colour:term_colours((:- begin_in),
+             neck(directive)-[cplint_directive]):-!.
+
+prolog_colour:term_colours((:- end_in),
+             neck(directive)-[cplint_directive]):-!.
+
+prolog_colour:term_colours((:- begin_bg),
+             neck(directive)-[cplint_directive]):-!.
+
+prolog_colour:term_colours((:- end_bg),
+             neck(directive)-[cplint_directive]):-!.
+
+prolog_colour:term_colours(begin(model(_)), model_delim - [model_delim - [classify]]):-!.
+
+prolog_colour:term_colours(end(model(_)), model_delim - [model_delim - [classify]]):-!.
+
+
+prolog_colour:term_colours((H:-Body), neck(clause)-
+  [C,body(Body)]):-
+	(H=(_:_;_);(H=(_:P),is_annotation(P))),!,
+	build_color(H,C).
+
+prolog_colour:term_colours(H,C):-
+	(H=(_:_;_);(H=(_:P),is_annotation(P))),!,
+	build_color(H,C).
+
+prolog_colour:term_colours((H:-Body), neck(clause)-
+  [C,body(Body)]):-
+	(H=(_::_;_);H=(_::_)),!,
+	build_color_pb(H,C).
+
+prolog_colour:term_colours(H,C):-
+	(H=(_::_;_);H=(_::_)),!,
+	build_color_pb(H,C).
+
+is_annotation(A):-
+	number(A),!.
+
+is_annotation(A):-
+	var(A),!.
+
+is_annotation(A):-
+	functor(A,F,_Ar),
+	is_func(F),!.
+
+is_annotation(A):-
+	functor(A,F,_Ar),
+	is_cont_ann(F).
+
+
+is_cont_ann(F):-
+	member(F,[
+	  uniform,gaussian,dirichlet,discrete,
+		gamma,beta,poisson,binomial,geometric]),!.
+
+is_func(F):-
+	member(F,[/,+,-,*,**,^]),!.
+
+build_color(H:P,annotation_symbol-[head(head,H),A]):-!,
+  ann_colour(P,A).
+
+build_color((H:P;Rest),disjunction-[annotation_symbol-[head(head,H),A],RC]):-
+  ann_colour(P,A),
+	build_color(Rest,RC).
+
+build_color_pb(P::H,annotation_symbol-[A,head(head,H)]):-!,
+  ann_colour(P,A).
+
+build_color_pb((P::H;Rest),disjunction-[annotation_symbol-[A,head(head,H)],RC]):-
+  ann_colour(P,A),
+	build_color_pb(Rest,RC).
+
+ann_colour(A,annotation):-
+	number(A),!.
+
+ann_colour(A,annotation_function):-
+	var(A),!.
+
+ann_colour(A,annotation_function):-
+	functor(A,F,_Ar),
+	is_cont_ann(F),!.
+
+ann_colour(A,annotation_function-Cols):-
+	A=..[F|Ar],
+	is_func(F),!,
+	maplist(exp_col,Ar,Cols).
+
+exp_col(A,annotation):-
+	number(A),!.
+
+exp_col(A,annotation_function):-
+	var(A),!.
+
+exp_col(A,annotation_function-Cols):-
+	A=..[F|Ar],
+	is_func(F),!,
+	maplist(exp_col,Ar,Cols).
+
+:- multifile prolog_colour:style/2.
+
+prolog_colour:style(trill_directive,                  [colour(firebrick),bold(true)]).
+prolog_colour:style(olwrdf_predicate,                  [colour(firebrick),bold(true)]).
+
+
+prolog_colour:style(annotation,                  [colour(maroon), bold(true)]).
+prolog_colour:style(annotation_function,                  [colour(maroon), bold(true)]).
+prolog_colour:style(annotation_symbol,                  [colour(dark_red)]).
+prolog_colour:style(disjunction,                  [colour(deep_pink),bold(true)]).
+prolog_colour:style(cplint_directive,                  [colour(firebrick),bold(true)]).
+prolog_colour:style(model_delim,                  [colour(firebrick),bold(true)]).
+
+:- multifile swish_highlight:style/3.
+
+swish_highlight:style(trill_directive,  trill_directive, [text, base(atom)]).
+swish_highlight:style(olwrdf_predicate, olwrdf_predicate, [text, base(symbol)]).
+
+swish_highlight:style(annotation,  annotation, [base(number)]).
+swish_highlight:style(annotation_function,   annotation_function,  [text, base(functor)]).
+swish_highlight:style(annotation_symbol,   annotation_symbol,  [text, base(symbol)]).
+swish_highlight:style(disjunction,  disjunction, [text, base(symbol)]).
+swish_highlight:style(cplint_directive,  cplint_directive, [text, base(atom)]).
+swish_highlight:style(model_delim,  model_delim, [text, base(symbol)]).
+
+
 
 :- if(exists_source(library(must_trace))).
 %:- use_module(library(must_trace)).
 :- endif.
+
 :- if(exists_source(library(pfc))).
 %:- use_module(library(pfc)).
 :- endif.
+
 :- if(exists_source(library(logicmoo_user))).
 % :- use_module(library(logicmoo_user)).
 :- endif.

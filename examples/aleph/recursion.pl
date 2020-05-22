@@ -17,13 +17,13 @@
 :- mode(*,mem(+any,+list)).
 :- mode(1,((+list) = ([-any|-list]))).
 
-:- set(i,3).
-:- set(noise,0).
+:- aleph_set(i,3).
+:- aleph_set(noise,0).
 
 
 :- determination(mem/2,mem/2).
 :- determination(mem/2,'='/2).
-:-aleph.
+
 :-begin_bg.
 
 :-end_bg.
@@ -57,4 +57,4 @@ mem(2,[]).
 mem(2,[3]).
 :-end_in_neg.
 
-:-aleph_read_all.
+

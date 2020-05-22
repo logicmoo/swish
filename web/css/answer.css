@@ -57,6 +57,13 @@ pre.console
   margin: 0px;
 }
 
+pre.measure
+{ padding: 0px;
+  border: 0px;
+  margin: 0px;
+  display: inline;
+}
+
 span.format
 { white-space: pre;
   font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
@@ -70,6 +77,26 @@ a.download span.glyphicon
 { margin-left: 1ex;
 }
 
+
+		 /*******************************
+		 *	       WFS		*
+		 *******************************/
+
+div.wfs-residual-program
+{ margin-left: 10%;
+  margin-right: 10%;
+}
+
+div.wfs-title
+{ font-style: italic;
+  font-size: 80%;
+  color: #060;
+}
+
+pre.wfs-residual-program
+{ padding-top: 3px;
+  padding-bottom: 3px;
+}
 
 		 /*******************************
 		 *	GENERAL RENDERERS	*
@@ -118,4 +145,24 @@ but that is rather expensive.
 /* R */
 div.R.svg svg
 { overflow: visible;
+}
+
+/* Download */
+
+div.download {
+  padding: 5px;
+  border: 1px solid #000;
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: 5px 5px 5px #888;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  z-index: 1000;
+}
+
+div.download button.close {
+  position: relative;
+  top: -3px;
+  font-size: 150%;
 }

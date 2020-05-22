@@ -19,7 +19,7 @@
 :- endif.
 :- aleph.
 :-style_check(-discontiguous).
-:- set(i,2).
+:- aleph_set(i,2).
 
 :- modeh(1,eastbound(+train)).
 :- modeb(1,short(+car)).
@@ -281,4 +281,3 @@ eastbound(west9).
 eastbound(west10).
 :-end_in_neg.
 
-:-aleph_read_all.

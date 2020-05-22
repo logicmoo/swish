@@ -3,7 +3,7 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2014-2017, VU University Amsterdam
+    Copyright (C): 2014-2018, VU University Amsterdam
 			      CWI Amsterdam
     All rights reserved.
 
@@ -43,353 +43,37 @@
  * @requires jquery
  */
 
-/* ***** BEGIN LICENSE BLOCK *****
- * Distributed under the BSD license:
- *
- * Copyright (c) 2010, Ajax.org B.V.
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
- *       notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
- *       notice, this list of conditions and the following disclaimer in the
- *       documentation and/or other materials provided with the distribution.
- *     * Neither the name of Ajax.org B.V. nor the
- *       names of its contributors may be used to endorse or promote products
- *       derived from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL AJAX.ORG B.V. BE LIABLE FOR ANY
- * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * ***** END LICENSE BLOCK ***** */
-
 define([ "jquery", "form", "config", "preferences", "modal",
-	 "laconic", "search"],
+	 "laconic", "search", "chatbell", "sourcelist" ],
        function($, form, config, preferences, modal) {
-
-var modes = [];
-/**
- * Suggests a mode based on the file extension present in the given path
- * @param {string} path The path to the file
- * @returns {object} Returns an object containing information about the
- *  suggested mode.
- */
-function getModeForPathAlt(path) {
-    var mode = modesByName.text;
-    var fileName = path.split(/[\/\\]/).pop();
-    for (var i = 0; i < modes.length; i++) {
-        if (modes[i].supportsFile(fileName)) {
-            mode = modes[i];
-            break;
-        }
-    }
-    return mode;
-}
-
-var Mode = function(name, caption, extensions) {
-    this.name = name;
-    this.caption = caption;
-    this.mode = "ace/mode/" + name;
-    this.extensions = extensions;
-    var re;
-    if (/\^/.test(extensions)) {
-        re = extensions.replace(/\|(\^)?/g, function(a, b) {
-            return "$|" + (b ? "^" : "^.*\\.");
-        }) + "$";
-    } else {
-        re = "^.*\\.(" + extensions + ")$";
-    }
-
-    this.extRe = new RegExp(re,"gi");
-};
-
-Mode.prototype.supportsFile = function(filename) {
-    return filename.match(this.extRe);
-}
-;
-
-// todo firstlinematch
-var supportedModesAlt = {
-    ABAP: ["abap"],
-    ABC: ["abc"],
-    ActionScript: ["as"],
-    ADA: ["ada|adb"],
-    Apache_Conf: ["^htaccess|^htgroups|^htpasswd|^conf|htaccess|htgroups|htpasswd"],
-    AsciiDoc: ["asciidoc|adoc"],
-    Assembly_x86: ["asm|a"],
-    AutoHotKey: ["ahk"],
-    BatchFile: ["bat|cmd"],
-    Bro: ["bro"],
-    C_Cpp: ["cpp|c|cc|cxx|h|hh|hpp|ino"],
-    C9Search: ["c9search_results"],
-    Cirru: ["cirru|cr"],
-    Clojure: ["clj|cljs"],
-    Cobol: ["CBL|COB"],
-    coffee: ["coffee|cf|cson|^Cakefile"],
-    ColdFusion: ["cfm"],
-    CSharp: ["cs"],
-    CSS: ["css"],
-    Curly: ["curly"],
-    D: ["d|di"],
-    Dart: ["dart"],
-    Diff: ["diff|patch"],
-    Dockerfile: ["^Dockerfile"],
-    Dot: ["dot"],
-    Drools: ["drl"],
-    Dummy: ["dummy"],
-    DummySyntax: ["dummy"],
-    Eiffel: ["e|ge"],
-    EJS: ["ejs"],
-    Elixir: ["ex|exs"],
-    Elm: ["elm"],
-    Erlang: ["erl|hrl"],
-    Forth: ["frt|fs|ldr|fth|4th"],
-    Fortran: ["f|f90"],
-    FTL: ["ftl"],
-    Gcode: ["gcode"],
-    Gherkin: ["feature"],
-    Gitignore: ["^.gitignore"],
-    Glsl: ["glsl|frag|vert"],
-    Gobstones: ["gbs"],
-    golang: ["go"],
-    GraphQLSchema: ["gql"],
-    Groovy: ["groovy"],
-    HAML: ["haml"],
-    Handlebars: ["hbs|handlebars|tpl|mustache"],
-    Haskell: ["hs"],
-    Haskell_Cabal: ["cabal"],
-    haXe: ["hx"],
-    Hjson: ["hjson"],
-    HTML: ["html|htm|xhtml"],
-    HTML_Elixir: ["eex|html.eex"],
-    HTML_Ruby: ["erb|rhtml|html.erb"],
-    INI: ["ini|conf|cfg|prefs"],
-    Io: ["io"],
-    Jack: ["jack"],
-    Jade: ["jade|pug"],
-    Java: ["java"],
-    JavaScript: ["js|jsm|jsx"],
-    JSON: ["json"],
-    JSONiq: ["jq"],
-    JSP: ["jsp"],
-    JSX: ["jsx"],
-    Julia: ["jl"],
-    Kotlin: ["kt|kts"],
-    LaTeX: ["tex|latex|ltx|bib"],
-    LESS: ["less"],
-    Liquid: ["liquid"],
-    Lisp: ["lisp|pddl|clif|lsp|kif|cycl"],
-    // dmiles:  + pddl + clif + lsp + kif + cycl
-    LiveScript: ["ls"],
-    LogiQL: ["logic|lql"],
-    LSL: ["lsl"],
-    Lua: ["lua"],
-    LuaPage: ["lp"],
-    Lucene: ["lucene"],
-    Makefile: ["^Makefile|^GNUmakefile|^makefile|^OCamlMakefile|make"],
-    Markdown: ["md|markdown"],
-    Mask: ["mask"],
-    MATLAB: ["matlab"],
-    Maze: ["mz"],
-    MEL: ["mel"],
-    MUSHCode: ["mc|mush"],
-    MySQL: ["mysql"],
-    Nix: ["nix"],
-    NSIS: ["nsi|nsh"],
-    ObjectiveC: ["m|mm"],
-    OCaml: ["ml|mli"],
-    Pascal: ["pas|p"],
-    Perl: ["perl|pm"],
-    // dmiles pl -> perl
-    pgSQL: ["pgsql"],
-    PHP: ["php|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp|module"],
-    Pig: ["pig"],
-    Powershell: ["ps1"],
-    Praat: ["praat|praatscript|psc|proc"],
-    Prolog: ["plg|pro|pfc|plt|prolog|pl|chr"],
-    Logtalk: ["lgt"],
-    // dmiles: + pl + chr
-    Properties: ["properties"],
-    Protobuf: ["proto"],
-    Python: ["py"],
-    R: ["r"],
-    Razor: ["cshtml|asp"],
-    RDoc: ["Rd"],
-    RHTML: ["Rhtml"],
-    RST: ["rst"],
-    Ruby: ["rb|ru|gemspec|rake|^Guardfile|^Rakefile|^Gemfile"],
-    Rust: ["rs"],
-    SASS: ["sass"],
-    SCAD: ["scad"],
-    Scala: ["scala"],
-    Scheme: ["scm|sm|rkt|oak|scheme"],
-    SCSS: ["scss"],
-    SH: ["sh|bash|^.bashrc"],
-    SJS: ["sjs"],
-    Smarty: ["smarty|tpl"],
-    snippets: ["snippets"],
-    Soy_Template: ["soy"],
-    Space: ["space"],
-    SQL: ["sql"],
-    SQLServer: ["sqlserver"],
-    Stylus: ["styl|stylus"],
-    SVG: ["svg"],
-    Swift: ["swift"],
-    Tcl: ["tcl"],
-    Tex: ["tex"],
-    Text: ["txt"],
-    Textile: ["textile"],
-    Toml: ["toml"],
-    TSX: ["tsx"],
-    Twig: ["twig|swig"],
-    Typescript: ["ts|typescript|str"],
-    Vala: ["vala"],
-    VBScript: ["vbs|vb"],
-    Velocity: ["vm"],
-    Verilog: ["v|vh|sv|svh"],
-    VHDL: ["vhd|vhdl"],
-    Wollok: ["wlk|wpgm|wtest"],
-    XML: ["xml|rdf|rss|wsdl|xslt|atom|mathml|mml|xul|xbl|xaml|owl"],
-    // dmiles: + owl
-    XQuery: ["xq"],
-    YAML: ["yaml|yml"],
-    // Add the missing mode "Django" to ext-modelist
-    Django: ["html"]
-};
-
-var nameOverrides = {
-    ObjectiveC: "Objective-C",
-    CSharp: "C#",
-    golang: "Go",
-    C_Cpp: "C and C++",
-    coffee: "CoffeeScript",
-    HTML_Ruby: "HTML (Ruby)",
-    HTML_Elixir: "HTML (Elixir)",
-    FTL: "FreeMarker"
-};
-
-var modesByName = {};
-for (var name in supportedModesAlt) {
-    var data = supportedModesAlt[name];
-    var displayName = (nameOverrides[name] || name).replace(/_/g, " ");
-    var filename = name.toLowerCase();
-    var mode = new Mode(filename,displayName,data[0]);
-    modesByName[filename] = mode;
-    modes.push(mode);
-}
-
-var recurse = 0;
-
 var tabbed = {
-    tabTypes: {},
-    type: function(from) {
+  tabTypes: {},
+  type: function(from) {
+    var ext = from.split('.').pop();
 
-        recurse++;
-        if(recurse>10) {
-            debugger;
-            recurse = 0;
-           // return null;
-        }
-        if(from=="prolog") from="pl";
-        //if(from=="program") from="pl";
-        var ret = null;
-        var ext = from.split('.').pop();
-        
-        for (var k in tabbed.tabTypes) {
-            if (tabbed.tabTypes.hasOwnProperty(k) && tabbed.tabTypes[k].dataType == ext) {
-                ret = tabbed.tabTypes[k];
-                if (ret != undefined)
-                    return ret;
-            }
-        }
-        ret = tabbed.tabTypes[ext];
-        if (ret != undefined)
-            return ret;
-
-        var mode = getModeForPathAlt(from).mode
-        
-        if(! mode.endsWith("/prolog")) {
-            if(true) return undefined;
-
-            if(true) return tabbed.tabTypes.program;
-        }
-        
-        tabbed.tabTypes[ext] = {
-            dataType: ext,
-            typeName: ext,
-            label: (ext + " Program"),
-            contentType: "text/x-prolog",
-            order: false,
-            create: function(dom, options) {
-                 $(dom).addClass("prolog-editor")
-                       .prologEditor({placeholder: "Your "+ext+ " program rules and facts go here ...", 
-                      save:true, codeType: ext}, options)
-                   .prologEditor('makeCurrent');    
-        
-             // $(dom).addClass("prolog-editor")
-              //      .prologEditor($.extend({save:true}, options))
-        	  //  .prologEditor('makeCurrent'); //
-            }  
-          }; 
-
-        
-        return tabbed.tabTypes[ext];
-    }// must soften the blow or it breaks UI 
+    for(var k in tabbed.tabTypes) {
+      if ( tabbed.tabTypes.hasOwnProperty(k) &&
+	   tabbed.tabTypes[k].dataType == ext )
+	return tabbed.tabTypes[k];
+    }
+  }
 };
 
-function clone(obj) {
-    var copy;
+tabbed.tabTypes.permalink = {
+  dataType: "lnk",
+  typeName: "program",
+  label: "Program",
+  create: function(dom, options) {
+    $(dom).addClass("prolog-editor printable")
+	  .prologEditor($.extend({save:true}, options))
+	  .prologEditor('makeCurrent');
+  }
+};
 
-    // Handle the 3 simple types, and null or undefined
-    if (null == obj || "object" != typeof obj) return obj;
-
-    // Handle Date
-    if (obj instanceof Date) {
-        copy = new Date();
-        copy.setTime(obj.getTime());
-        return copy;
-    }
-
-    // Handle Array
-    if (obj instanceof Array) {
-        copy = [];
-        for (var i = 0, len = obj.length; i < len; i++) {
-            copy[i] = clone(obj[i]);
-        }
-        return copy;
-    }
-
-    // Handle Object
-    if (obj instanceof Object) {
-        copy = {};
-        for (var attr in obj) {
-            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
-        }
-        return copy;
-    }
-
-    throw new Error("Unable to copy obj! Its type isn't supported.");
-}
 
 (function($) {
   var pluginName = 'tabbed';
   var tabid = 0;
-
-    var editorList = {};
-    var openingSrcFile = null;
-    var openingSrcFileTab = null;
-
-    // array containing all the editors we will create
 
   /** @lends $.fn.tabbed */
   var methods = {
@@ -412,12 +96,8 @@ function clone(obj) {
 	data.tabTypes = options.tabTypes || tabbed.tabTypes;
 	elem.data(pluginName, data);	/* store with element */
 
-	elem.addClass("tabbed");
+	elem.addClass("tabbed unloadable");
 	elem.tabbed('makeTabbed');
-	// Current tab could not handle source, create a new one
-	elem.on("source", function(ev, src) {
-	  elem.tabbed('tabFromSource', src);
-	});
 	elem.on("trace-location", function(ev, prompt) {
 	  elem.tabbed('showTracePort', prompt);
 	});
@@ -430,6 +110,35 @@ function clone(obj) {
 	      a.removeClass("data-dirty");
 	    else
 	      a.addClass("data-dirty");
+	  }
+	});
+	elem.on("unload", function(ev) {
+	  if ( ev.target == elem[0] &&
+	       elem.closest(".swish").swish('preserve_state') ) {
+	    var state = elem[pluginName]('getState');
+	    localStorage.setItem("tabs", JSON.stringify(state));
+	  }
+	});
+	elem.on("restore", function(ev) {
+	  var state;
+
+	  if ( ev.target == elem[0] ) {
+	    try {
+	      var str = localStorage.getItem("tabs");
+	      if ( str )
+		state = JSON.parse(str);
+	    } catch(err) {
+	    }
+
+	    if ( state && typeof(state) == "object" ) {
+	      elem[pluginName]('setState', state);
+	    }
+	  }
+	});
+	elem.on("preference", function(ev, pref) {
+	  if ( pref.name == "preserve-state" &&
+	       pref.value == false ) {
+	    localStorage.removeItem("tabs");
 	  }
 	});
       });
@@ -478,7 +187,7 @@ function clone(obj) {
 			    title: "Open a new tab"
 			  },
 			  glyphicon("plus"));
-      $(ul).append($.el.li({ role:"presentation" }, create));
+      $(ul).append($.el.li({ class: "tab-new", role:"presentation" }, create));
       $(create).on("click", function(ev) {
 	var tabbed = $(ev.target).parents(".tabbed").first();
 
@@ -491,6 +200,7 @@ function clone(obj) {
       $(ul).on("shown.bs.tab", "a", function(ev) {
 	var newContentID  = $(ev.target).data("id");
 	$("#"+newContentID+" .swish-event-receiver").trigger("activate-tab");
+	$("#"+newContentID+" .storage").storage("activate");
       });
 
       if ( this.tabbed('navContent').children().length == 0 ) {
@@ -507,53 +217,193 @@ function clone(obj) {
      * `tabSelect`.
      * @return {jQuery} object representing the created tab
      */
-    newTab: function(dom) {
+    newTab: function(dom, active) {
       var data = this.data(pluginName);
 
       if ( dom == undefined ) {
 	if ( data.newTab ) {
 	  dom = data.newTab();
 	} else {
+	  var sl;
 	  dom = this.tabbed('tabSelect');
-      var ssid = 'ilfs' + new Date().getTime() + "" + Math.floor(Math.random() * 10000);
-
-	  $(dom).append(this.tabbed('profileForm'));
-	  $(dom).append(this.tabbed('searchForm'));
-	  var ss = $('<div><div id="' + ssid + '"></div></div>');
-                    $(ss).css('height', $(window).height() - 20);
-                    $(ss).css('width', "100%");
-      $(dom).append(ss);
-		$.get("/js/filesystems.html?t=" + ssid, {}, function(data2, status, xhr) {
-			if (status == "error") {
-				data2 = status + ": " + xhr + " " + data2;
-			}
-			$("#" + ssid).html(data2);
-		});
+	  $(dom).append(this.tabbed('profileForm'),
+			$.el.hr(),
+			//this.tabbed('searchForm'),
+		        sl = $.el.div({class:"sourcelist"}));
+	  $(sl).sourcelist();
 	}
       }
 
-      return this.tabbed('addTab', dom, {active:true,close:true});
+      if ( active == undefined )
+	active = true;
+
+      return this.tabbed('addTab', dom, {active:active,close:true});
     },
+
+    getState: function() {
+      var state = this[pluginName]('get_ordered_storage').storage('getState');
+
+      state.pathname = window.location.pathname;
+      state.time     = new Date().getTime();
+
+      return state;
+    },
+
+    setState: function(state) {
+      var elem = this;
+      var fromURL = this.find(".storage").length > 0;
+
+      for(var i=0; i<state.tabs.length; i++) {
+	var data = state.tabs[i];
+	this[pluginName]('restoreTab', data, fromURL);
+      }
+    },
+
+    restoreTab: function(data, fromURL) {
+      var elem = this;
+      var tab;
+
+      data.query = null;		/* null keeps query */
+      data.noHistory = true;		/* do not update window path */
+
+      var existing = this.find(".storage").storage('match', data);
+      if ( existing ) {
+	existing.data('storage').url = data.url;
+	tab = existing.closest(".tab-pane");
+	elem.tabbed('move_right', tab);
+      } else
+      { tab = undefined;
+      }
+
+      function restoreData(into, from) {
+	if ( from.data ) {
+	  into.find(".storage").storage('setValue', {
+	    data: from.data,
+	    role: 'source'
+	  });
+	}
+	if ( from.chatroom ) {
+	  into.find(".storage").storage('chat', from.chatroom);
+	}
+      }
+
+      if ( existing ) {
+	restoreData(tab, data);
+      } else if ( existing ) {
+	/* nothing to do? */
+      } else {				/* TBD: Centralise */
+	var select = this.find("div.tabbed-select");
+	var newtab;
+	var restoring = '<div class="restore-tab">Restoring ' +
+	                   (data.file||data.url) + " ..." +
+			'</div>';
+
+	if ( select.length > 0 )  {
+	  newtab = select.first().closest(".tab-pane");
+	  newtab.html(restoring);
+	} else {
+	  var active = (!fromURL && Boolean(data.active));
+	  newtab = elem.tabbed('newTab', $(restoring), active);
+	}
+
+	if ( data.st_type == "gitty" ) {
+	  var url = config.http.locations.web_storage + data.file;
+	  $.ajax({ url: url,
+		   type: "GET",
+		   data: {format: "json"},
+		   success: function(reply) {
+		     reply.url = url;
+		     reply.st_type = "gitty";
+		     reply.noHistory = true;
+		     if ( !elem.tabbed('setSource', newtab, reply) ) {
+		       console.log("Failed to restore", data.file);
+		       elem.tabbed('removeTab', tab.attr("id"));
+		     }
+		     restoreData(newtab, data);
+		     if ( !fromURL && newtab.hasClass("active") )
+		       newtab.find(".storage").storage("activate");
+		   },
+		   error: function(jqXHR) {
+		     modal.ajaxError(jqXHR);
+		   }
+	  });
+	} else if ( data.url ) {
+	  $.ajax({ url: data.url,
+		   type: "GET",
+		   data: {format: "json"},
+		   success: function(source) {
+		     var msg;
+
+		     if ( typeof(source) == "string" ) {
+		       msg = { data: source };
+		       msg.st_type = "external";
+		     } else if ( typeof(source) == "object" &&
+				 typeof(source.data) == "string" ) {
+		       msg = source;
+		       msg.st_type = "filesys";
+		     } else {
+		       alert("Invalid data");
+		       return;
+		     }
+		     msg.noHistory = true;
+		     msg.url = data.url;
+		     if ( !elem.tabbed('setSource', newtab, msg) ) {
+		       console.log("Failed to restore", data.url);
+		       elem.tabbed('removeTab', newtab.attr("id"));
+		     }
+		     restoreData(newtab, data);
+		     if ( !fromURL && newtab.hasClass("active") )
+		       newtab.find(".storage").storage("activate");
+		   },
+		   error: function(jqXHR) {
+		     modal.ajaxError(jqXHR);
+		   }
+	  });
+	} else {
+	  console.log("Cannot restore ", data);
+	}
+      }
+    },
+
 
     /**
      * Add a new tab from the provided source.  If there is a _select_
      * (new) tab, open the data in this tab.
      */
     tabFromSource: function(src) {
+      var elem = this;
       var select = this.find("div.tabbed-select");
-      if ( select.length > 0 ) {
-	var tab = $(select[0]).closest(".tab-pane");
-	this.tabbed('show', tab.attr("id"));
-	if ( typeof(src) == "object" )
-	  delete src.newTab;
-	this.tabbed('setSource', tab, src);
-      } else {
-	var tab = this.tabbed('newTab', $("<span></span>"));
-	if ( typeof(src) == "object" )
-	  delete src.newTab;
-	if ( !this.tabbed('setSource', tab, src) ) {
-	  this.tabbed('removeTab', tab.attr("id"));
+
+      if ( typeof(src) == "string" )
+	src = {data:src};
+
+      function inNewTab() {
+	var tab = elem.tabbed('newTab', $("<span></span>"));
+	if ( !elem.tabbed('setSource', tab, src) ) {
+	  elem.tabbed('removeTab', tab.attr("id"));
 	}
+      }
+
+      if ( select.length > 0 ) {
+	var tab = select.first().closest(".tab-pane");
+	this.tabbed('show', tab.attr("id"));
+	this.tabbed('setSource', tab, src);
+      } else if ( src.newTab || preferences.getVal("new-tab") ) {
+	inNewTab();
+      } else
+      { var tab;
+
+	this.find(".storage").each(function(i, st) {
+	  if ( $(st).storage('setSource', src) ) {
+	    tab = $(st).closest(".tab-pane");
+	    return false;
+	  }
+        });
+
+	if ( tab )
+	  this.tabbed('show', tab.attr("id"));
+	else
+	  inNewTab();
       }
 
       return this;
@@ -565,164 +415,25 @@ function clone(obj) {
      * @return {Boolean} `true` if a suitable type was found
      */
     setSource: function(tab, src) {
+      if ( typeof(src) == "object" &&
+	   ((src.meta && src.meta.name) || src.url) )
+      { var name = (src.meta && src.meta.name) ? src.meta.name : src.url;
+	var tabType = tabbed.type(name);
+	var content = $.el.div();
+	var options = {};
 
-         if(openingSrcFileTab!=null) {
-            debugger;
-        	if(openingSrcFile==src.url) {
-                openingSrcFile = null;
-                openingSrcFileTab = null;
-                return true;
-            }
-        }
-        openingSrcFile = src.url;
+	if ( src.noHistory )
+	  options.noHistory = true;
 
-       if (typeof (src) == "object" && ((src.meta && src.meta.name) || src.url)) {
+	tab.html("");
+	tab.tabbed('title', tabType.label, tabType.dataType);
+	tab.append(content);
+	tabType.create(content, options);
+	$(content).storage('setSource', src);
+	return true;
+      }
 
-            var name = (src.meta && src.meta.name) ? src.meta.name : src.url;
-            var tabType = tabbed.type(name);
-        
-            if (tabType == undefined) {
-                openingSrcFile = null;
-                openingSrcFileTab = null;
-                this.tabbed('newAceEditor',tab,name,src);
-                return true;
-            }
-
-            openingSrcFile=src.url;
-            openingSrcFileTab=tab;
-            tab.html("");
-            var content = $.el.div();
-        	tab.append(content);
-        	tabType.create(content);
-            var tital = src.url.split('/').pop();
-        	tab.tabbed('title', tital, tabType.dataType);
-            debugger;
-            // @TODO DMiles  Figuire out why .pfc dont work with  $(content).trigger("source", src);
-            $(content).trigger("source", src.data);
-            openingSrcFile = null;
-            openingSrcFileTab = null;
-            return true;
-        }
-        debugger;
-        return false;
-   },
-
-   destroyEditor: function(prompt) {
-
-            console.log('close a tab and destroy the ace editor instance');
-
-            console.log($(this).parent());
-
-            var tabUniqueId = $(this).parent().attr('data-tab-id');
-
-            console.log(tabUniqueId);
-
-            var resultArray = $.grep(editors, function(n, i) {
-                return n.id === tabUniqueId;
-            }, true);
-
-            var editor = resultArray[0].instance;
-
-            // destroy the editor instance
-            editor.destroy();
-
-            // remove the panel and panel nav dom
-            $('#tabs').find('#panel_nav_' + tabUniqueId).remove();
-            $('#tabs').find('#panel_' + tabUniqueId).remove();
-
-    },
-
-  newAceEditor: function(tab,name,src) {
-
-         var tabUniqueId = new Date().getTime() + "" + Math.floor(Math.random() * 10000);
-            var ssid = 'editor' + tabUniqueId;
-            var extra = `
-<form action=''><div id='file_controls' style='white-space: nowrap; color: #4245f4; font-weight: bold; font-size:90%;'>
-<strong> <label><input type='radio' name='runnermode' value='ignore'>Ignore</label>
-<label><input type='radio' name='runnermode' value='pengine' checked>Send</label>
-<label><input type='radio' name='runnermode' value='save_only'>Save</label>
-<label><input type='radio' name='runnermode' value='save_consult'>Reconsult</label>
-<label>(<input type='checkbox' name='even_inactive' value='true'>even if tab inactive)</label>
-&nbsp;&nbsp;Show:
-<label><input type='checkbox' name='show_line_numbers' value='true' CHECKED>line-numbers</label>
-<label><input type='checkbox' name='show_formating' value='true'>formating</label></strong></div><div id='ace_controls' style='white-space: nowrap; font-size:90%; display: none;' >
-<br>
-
-<label>Mode<select id='mode' size='1'></select></label>
-
-<label>Split<select id='split' size='1'>
-<option value='none'>None</option>
-<option value='below'>Below</option>
-<option value='beside'>Beside</option>
-</select></label>
-<label>Theme<select id='theme' size='1'></select></label>
-<label>Text
-<select id='fontsize' size='1'>
-<option value='10px'>10px</option>
-<option value='11px'>11px</option>
-<option value='12px' selected='selected'>12px</option>
-<option value='13px'>13px</option>
-<option value='14px'>14px</option>
-<option value='16px'>16px</option>
-<option value='18px'>18px</option>
-<option value='20px'>20px</option>
-<option value='24px'>24px</option>
-</select></label>
-<label for='folding'>Folding</label>
-
-<select id='folding' size='1'>
-<option value='manual'>manual</option>
-<option value='markbegin' selected='selected'>mark begin</option>
-<option value='markbeginend'>mark begin and end</option>
-</select>
-<label for='keybinding'>Keys</label>
-
-<select id='keybinding' size='1'>
-<option value='ace'>Ace</option>
-<option value='vim'>Vim</option>
-<option value='emacs'>Emacs</option>
-<option value='custom'>Custom</option>
-</select>
-</div></form>
-`;
-
-            tab.html('<div class="myeditor" id="' + ssid + '">' + extra + '</div>');
-            var tital = name.split('/').pop();
-
-            var newEditorElement = $('<div id="editor_' + tabUniqueId + '">' + src.data + '</div>');
-
-            tab.append(newEditorElement);
-
-            var mode = getModeForPathAlt(name).mode
-                if (mode == null) {
-                    // mode = modelist.getModeForPath(name).mode
-                    if (mode == null) {
-                        mode = "ace/mode/lisp";
-                    }
-                }
-
-            // initialize the editor in the tab
-            var editor = ace.edit('editor_' + tabUniqueId);
-            editor.setTheme("ace/theme/chrome");
-            editor.renderer.setOption('showLineNumbers', true);
-            editor.renderer.setShowGutter(true);
-            editor.getSession().setUseWrapMode(false);
-
-            //editorList.push({ id: tabUniqueId, instance: editor });
-
-            if (mode != null) {
-                tital = mode.split('/').pop() + ":" + tital;
-                editor.getSession().setMode(mode);
-                // $("<a href='"+src.url+"'>"+tital+"</a>")
-            }
-            tab.tabbed('title', tital, mode);
-
-            // set the size of the editor
-            newEditorElement.width('100%');
-            newEditorElement.height('100%');
-
-            // resize the editor
-            editor.resize();
+      return false;
     },
 
     /**
@@ -801,7 +512,7 @@ function clone(obj) {
     addTab: function(content, options) {
       var ul  = this.tabbed('navTabs');
       var id  = genId();
-      var tab =	wrapInTab(content, id, options.close);
+      var tab =	wrapInTab(content, id, options.active);
 
       this.tabbed('navContent').append(tab);
 
@@ -864,6 +575,24 @@ function clone(obj) {
     },
 
     /**
+     * Move the argument tab or tab id to the right of all
+     * tabs.
+     */
+    move_right: function(tab) {
+      var id;
+      var ul = this.find(">ul");
+
+      if ( typeof(tab) == "string" )
+	id = tab;
+      else
+	id = tab.attr('id');
+
+      ul.find("a[data-id="+id+"]")
+        .closest("li")
+        .insertBefore(ul.children().last());
+    },
+
+    /**
      * Create a label (`li`) for a new tab.
      * @param {String} id is the identifier of the new tab
      * @param {String} label is the textual label of the new tab
@@ -887,16 +616,13 @@ function clone(obj) {
 		      $.el.span({class:"tab-dirty",
 		                 title:"Tab is modified. "+
 				       "See File/Save and Edit/View changes"}),
-	       chat = $.el.a({class:"tab-chat",
-			      title:"Chat messages available"
-			     },
-			     form.widgets.glyphIcon("bell"),
-			     $.el.span({class:"tab-chat-count"})),
+	       chat = $.el.a({class:'tab-chat'}),
 		      $.el.span({class:"tab-title"}, label),
 		      close_button);
       var li = $.el.li({role:"presentation"}, a1);
 
-      $(chat).on("click", function(ev) {
+      $(chat).chatbell()
+             .on("click", function(ev) {
 	var id = $(ev.target).closest("a.compact").data("id");
 	$("#"+id).find(".storage").storage('chat');
 	return false;
@@ -907,7 +633,7 @@ function clone(obj) {
 
     /**
      * Calling obj.tabbed('anchor') finds the <a> element
-     * represeting the tab label from the node obj that appears
+     * representing the tab label from the node obj that appears
      * somewhere on the tab
      */
     anchor: function() {
@@ -925,6 +651,24 @@ function clone(obj) {
       return a;
     },
 
+    /**
+     * Find the storage objects in the tabbed environment in the
+     * order of the tabs.  Note that the content divs maye be ordered
+     * differently.
+     */
+    get_ordered_storage: function() {
+      var elem = this;
+      var result = [];
+
+      this.find(">ul>li").each(function() {
+	var id = $(this).find(">a").data('id');
+	elem.find(">div.tab-content>div[id="+id+"] .storage").each(function() {
+	  result.push(this);
+	});
+      });
+
+      return $(result);
+    },
 
     /**
      * This method is typically _not_ called on the tab, but on some
@@ -950,24 +694,35 @@ function clone(obj) {
     /**
      * Set the chat message feedback for this tab
      * @param {Object} [chats]
-     * @param {Number} [chats.count] number of pending chat messages
+     * @param {Number} [chats.count] number of available chat messages
+     * on the document.
      */
     chats: function(chats) {
       var a = this.tabbed('anchor');
 
       if ( a ) {
-	var span = a.find(".tab-chat");
-
-	if ( chats && chats.count ) {
-	  span.find(".tab-chat-count").text(chats.count);
-	  span.addClass('chat-alert');
-	} else {
-	  span.removeClass('chat-alert');
-	}
+	a.find(".chat-bell").chatbell('update', chats);
       }
 
       return this;
     },
+
+    /**
+     * Increment the chat count and possibly associate the bell
+     * with the document identifier.
+     * @param {String} [docid] is the document identifier to associate
+     * with.
+     */
+    'chats++': function(docid) {
+      var a = this.tabbed('anchor');
+
+      if ( a ) {
+	a.find(".chat-bell").chatbell('chats++', docid);
+      }
+
+      return this;
+    },
+
 
     /**
      * Default empty tab content that allows the user to transform
@@ -994,8 +749,7 @@ function clone(obj) {
       });
 
       for(var i = 0; i<types.length; i++) {
-
-        var type = data.tabTypes[types[i]];
+	var type = data.tabTypes[types[i]];
 
 	$(g).append($.el.button({ type:"button",
 				  class:"btn btn-primary",
@@ -1009,13 +763,13 @@ function clone(obj) {
 	var type    = $(ev.target).data('type');
 	var tab     = $(ev.target).closest(".tab-pane");
 	var content = $.el.div();
-    var options = $.extend({}, tabbed.type(type));
+	var options = $.extend({}, tabbed.tabTypes[type]);
 	var profile = tab.find("label.active > input[name=profile]").val();
 
 	if ( profile ) {
 	  options.profile = profile;
 	  options.value   = tab.tabbed('profileValue', profile,
-                             tabbed.type(type).dataType);
+				       tabbed.tabTypes[type].dataType);
 	  if ( options.value != undefined )
 	    preferences.setVal("default-profile", profile);
 	}
@@ -1023,7 +777,7 @@ function clone(obj) {
 	tab.html("");
 	tab.tabbed('title', options.label, options.dataType);
 	tab.append(content);
-	tabbed.type(type).create(content, options);
+	tabbed.tabTypes[type].create(content, options);
       });
       $(g).addClass("swish-event-receiver");
       $(g).on("download save fileInfo print", function(ev) {
@@ -1049,6 +803,9 @@ function clone(obj) {
       return dom;
     },
 
+    /**
+     * Find sources
+     */
     searchForm: function() {
       var sform = $.el.form({class: "search-sources"},
 	$.el.label({class:"control-label"}, 'Open source file containing'),
@@ -1073,9 +830,15 @@ function clone(obj) {
       return sform;
     },
 
+    sourceList: function() {
+
+
+    },
+
     profileForm: function() {
       if ( config.swish.profiles && config.swish.profiles.length > 0 ) {
 	var def;
+
 	for(var i=0; i<config.swish.profiles.length; i++) {
 	  delete config.swish.profiles[i].active;
 	}
@@ -1106,7 +869,6 @@ function clone(obj) {
 	});
 
 	return pform;
-
       }
     },
 
@@ -1205,13 +967,3 @@ function clone(obj) {
 
   return tabbed;
 });
-
-
-
-
-
-
-
-
-
-

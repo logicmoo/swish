@@ -24,7 +24,7 @@ We use the predicates <code>safe/1</code> and <code>tell_executed/1</code>:
 </ul>
 </p>
 </div>
-<div class="nb-cell program prolog" data-background="true">
+<div class="nb-cell program" data-background="true">
 :- use_module(library(pita)).
 
 :- if(current_predicate(use_rendering/1)).
@@ -58,20 +58,25 @@ tell:-
 
 :- end_lpad.
 </div>
+
 <div class="nb-cell html">
 <p>What is the probability that A is not executed before the warden has spoken?
 </p>
 </div>
+
 <div class="nb-cell query">
 prob(safe(a),Prob).
 </div>
+
 <div class="nb-cell html">
 <p>What is the probability that A is not executed after the warden has spoken?
 </p>
 </div>
+
 <div class="nb-cell query">
 prob(safe(a),tell,Prob).
 </div>
+
 <div class="nb-cell html">
 <p>As you can see, the probability of A being safe is the same before and after
 the warden communication.
@@ -79,16 +84,20 @@ the warden communication.
 <p>What is the probability that C is not executed before the warden and A have spoken?
 </p>
 </div>
+
 <div class="nb-cell query">
 prob(safe(c),Prob).
 </div>
+
 <div class="nb-cell html">
 <p>What is the probability that C is not executed after the warden has said B to A?
 </p>
 </div>
+
 <div class="nb-cell query">
 prob(safe(c),tell_executed(b),Prob).
 </div>
+
 <div class="nb-cell html">
 <p>As you can see, the probability of C being safe increases from 1/2 to 2/3.
 </p>
@@ -100,18 +109,23 @@ the second clause and rerunning the queries.
 <p>You can also visualize these values with:
 </p>
 </div>
+
 <div class="nb-cell query">
-prob_bar(safe(a),Prob).
+prob(safe(a),Prob),bar(Prob,C).
 </div>
+
 <div class="nb-cell query">
-prob_bar(safe(a),tell,Prob).
+prob(safe(a),tell,Prob),bar(Prob,C).
 </div>
+
 <div class="nb-cell query">
-prob_bar(safe(c),Prob).
+prob(safe(c),Prob),bar(Prob,C).
 </div>
+
 <div class="nb-cell query">
-prob_bar(safe(c),tell_executed(b),Prob).
+prob(safe(c),tell_executed(b),Prob),bar(Prob,C).
 </div>
+
 <div class="nb-cell html">
 <p>The problem is also explained in this nice video:</p>
 <div><iframe src="https://www.youtube.com/embed/5d_3IEofXfY?ecver=2" width="640" height="360" frameborder="0" allowfullscreen></iframe></div>
@@ -121,4 +135,5 @@ prob_bar(safe(c),tell_executed(b),Prob).
 Peter D. Grunwald and Joseph Y. Halpern. "Updating Probabilities." Journal of Artificial Intelligence Research 19 (2003): 243-278.</a>
 </p>
 </div>
+
 </div>

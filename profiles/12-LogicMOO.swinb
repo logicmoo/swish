@@ -1,7 +1,7 @@
 <div class="notebook">
 
 <div class="nb-cell markdown">
-# LogicMOO Programming/Prolog Forward Chaining
+# LogicMOO Programming
 
 Defeasible logic is a non-monotonic logic proposed by Donald Nute to formalize defeasible reasoning. In defeasible logic, there are three different types of propositions:
 

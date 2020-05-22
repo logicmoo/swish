@@ -3,7 +3,7 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2014-2017, VU University Amsterdam
+    Copyright (C): 2014-2019, VU University Amsterdam
 			      CWI Amsterdam
     All rights reserved.
 
@@ -89,9 +89,6 @@ define([ "cm/lib/codemirror",
 (function($) {
   var pluginName = 'prologEditor';
 
-  var tos_mode = true;
-  var tos_mode_exact = false;
-
   var modeDefaults = {
     prolog: {
       mode: "prolog",
@@ -104,6 +101,7 @@ define([ "cm/lib/codemirror",
       matchBrackets: true,
       textHover: true,
       prologKeys: true,
+      codeType: "prolog",
       extraKeys: {
 	"Ctrl-Space": "autocomplete",
 	"Alt-/": "autocomplete",
@@ -271,10 +269,12 @@ define([ "cm/lib/codemirror",
 	elem.on("preference", function(ev, pref) {
 	  elem.prologEditor('preference', pref);
 	});
-	elem.on("print", function() {
-	  if ( data.role != "query" )
-	    elem.prologEditor('print');
-	});
+	if ( elem.hasClass("printable") ) {
+	  elem.on("print", function() {
+	    if ( data.role != "query" )
+	      elem.prologEditor('print');
+	  });
+	}
 	elem.on("clearMessages", function(ev) {
 	  elem.prologEditor('clearMessages');
 	});
@@ -290,11 +290,17 @@ define([ "cm/lib/codemirror",
 	  elem.prologEditor('setupStorage', storage);
 	}
 
+	// Refresh all editors when opening a tab as they are often
+	// not shown correctly when created in the background or after
+	// the window was resized while these editors were hidden.
+	elem.on("activate-tab", function(ev) {
+	  data.cm.refresh();
+	});
+
 	if ( options.mode == "prolog" && data.role == "source" ) {
 	  elem.on("activate-tab", function(ev) {
 	    if ( options.autoCurrent )
 	      elem.prologEditor('makeCurrent');
-	    data.cm.refresh();		/* needed if a tab has been opened */
 	  });
 
 	  elem.on("source-error", function(ev, error) {
@@ -311,9 +317,11 @@ define([ "cm/lib/codemirror",
 	      data.traceMark = null;
 	    }
 	  });
-	  elem.on('addExample', function(ev, query) {
-	    elem.prologEditor('addExample', query);
-	  });
+	  if ( options.save ) {		/* not for notebook cells */
+	    elem.on('addExample', function(ev, query) {
+	      elem.prologEditor('addExample', query);
+	    });
+	  }
 	  data.cm.on("gutterClick", function(cm, n) {
 	    var info = cm.lineInfo(n);
 
@@ -554,14 +562,9 @@ define([ "cm/lib/codemirror",
      * message is never delegated to the storage
      */
     setSource: function(source, direct) {
-        debugger;
-		this.prologEditor('setEdSource', source, direct);
-    },
-
-    setEdSource: function(source, direct) {
-          debugger;
       if ( typeof(source) == "string" )
 	source = {data:source};
+
       if ( this.data('storage') && direct != true ) {
 	this.storage('setSource', source);
       } else {
@@ -578,8 +581,12 @@ define([ "cm/lib/codemirror",
 	  }
 	}
 
-	if ( data.role == "source" )
-	  $(".swish-event-receiver").trigger("program-loaded", this);
+	if ( data.role == "source" && !source.noHistory ) {
+	  $(".swish-event-receiver").trigger("program-loaded",
+					     { editor: this,
+					       query: source.query
+					     });
+	}
       }
       return this;
     },
@@ -588,8 +595,20 @@ define([ "cm/lib/codemirror",
      * Advertise this editor as the current editor.  This is the
      * one used by the default query editor.
      */
-    makeCurrent: function() {
-      $(".swish-event-receiver").trigger("current-program", this);
+    makeCurrent: function(options) {
+      if ( !options || !options.noHistory ) {
+	$(".swish-event-receiver").trigger("current-program", this);
+      }
+      return this;
+    },
+
+    /**
+     * Grab the focus
+     */
+    focus: function() {
+      var data = this.data(pluginName);
+      if ( data )
+	data.cm.focus();
       return this;
     },
 
@@ -616,6 +635,7 @@ define([ "cm/lib/codemirror",
 	var elem = $(this);
 	var data = elem.data(pluginName);
 	data.cleanGeneration = data.cm.changeGeneration();
+	data.clean_signalled = true;
       });
     },
 
@@ -661,10 +681,7 @@ define([ "cm/lib/codemirror",
 	iframe.contentWindow.print();
       }
 
-     var cssurl = "css/print.css";
-     if (tos_mode_exact || tos_mode) cssurl = "js/codemirror/theme/prolog.css"; 
-
-      $.ajax({ url: config.http.locations.swish + cssurl,
+      $.ajax({ url: config.http.locations.swish+"js/codemirror/theme/prolog.css",
 	       dataType: "text",
 	       success: function(data) {
 		 printWithIframe($.el.div($.el.style(data),
@@ -759,7 +776,7 @@ define([ "cm/lib/codemirror",
      */
     refreshHighlight: function() {
       var data = this.data(pluginName);
-      if (!tos_mode_exact) data.cm.serverAssistedHighlight(true);
+      data.cm.serverAssistedHighlight(true);
       return this;
     },
 
@@ -925,12 +942,17 @@ define([ "cm/lib/codemirror",
 	      return {line:pos.line, ch:pos.ch};
 	    }
 
-	    if ( cmploc(s.anchor, s.head) ) {
-	      sr.from = cppos(s.anchor);
-	      sr.to   = cppos(s.head);
-	    } else {
-	      sr.to   = cppos(s.anchor);
-	      sr.from = cppos(s.head);
+	    switch ( cmploc(s.anchor, s.head) )
+	    { case -1:
+		sr.from = cppos(s.anchor);
+	        sr.to   = cppos(s.head);
+		break;
+	      case 1:
+		sr.to   = cppos(s.anchor);
+	        sr.from = cppos(s.head);
+		break;
+	      case 0:
+		continue;
 	    }
 
 	    sr.string  = data.cm.getRange(sr.from, sr.to);
@@ -1120,10 +1142,6 @@ define([ "cm/lib/codemirror",
 	    for(var j=0; j<exl.length; j++) {
 	      var ex = exl[j].replace(/^ *\?-\s*/, "")
 			     .replace(/\s*$/, "");
-		  if (tos_mode) ex = ex 
-			     .replace(/\\'/g, "'")
-				 .replace(/\\"/g, "'");//esempi in xml
-
 	      exlist.push(ex);
 	    }
 	  }
@@ -1144,21 +1162,30 @@ define([ "cm/lib/codemirror",
 				     /\/\*\* *<?examples>?/igm, {dir:-1,max:1});
       var end    = this.prologEditor('search', /\*\//, {start:start.line,max:1});
 
-      if ( start.length == 1 && end.length == 1 ) {
+      if ( start.length == 1 )
+      { var end = this.prologEditor('search', /\*\//,
+				    {start:start[0].line, max:1});
 	var current = this.prologEditor('getExamples', source);
 
 	if ( current && current.indexOf(query) != -1 )
 	{ modal.alert("Query is already in examples");
 	  return this;
 	}
+	if ( end.length != 1 )
+	{ modal.alert("/** <examples> block is not terminated with */");
+	  return this;
+	}
 
+	query = query.split("\n").join("\n   ");
 	cm.setSelection({line:end[0].line-1, ch:0});
 	cm.replaceSelection("?- "+query+"\n");
-      } else
-      { cm.setSelection({line:cm.lastLine(), ch:0});
-	cm.replaceSelection("/** <examples>\n" +
-			    "?- "+query+"\n" +
-			    "*/\n");
+      } else				/* add to the end of the file */
+      { var lineno = cm.lastLine();
+	var line   = cm.getLine(lineno);
+
+	cm.replaceRange("\n\n/** <examples>\n" +
+		        "?- "+query+"\n" +
+			"*/\n", {line:lineno, ch:line.length});
       }
 
       return this;
@@ -1168,25 +1195,25 @@ define([ "cm/lib/codemirror",
      * @param {RegExp} re is the regular expression to search for
      * @param {Object} [options]
      * @param {number} [options.max] is the max number of hits to return
-     * @returns {Array.object} list of objects holding the matching line
-     * content and line number.
      * @param {number} [options.dir=1] is -1 to search backwards
      * @param {number} [options.start] to start at a given line
+     * @param {number} [options.end] to end at a given line
+     * @returns {Array.object} list of objects holding the matching line
+     * content and line number.
      */
     search: function(re, options) {
       var cm      = this.data(pluginName).cm;
       var dir     = options.dir||1;
-      var start   = cm.firstLine();
-      var end     = cm.lastLine();
+      var start   = options.start == undefined ? cm.firstLine() : options.start;
+      var end     = options.end   == undefined ? cm.lastLine()  : options.end;
       var matches = [];
 
-      if ( dir == -1 )
+      if ( (dir == -1 && end > start) ||
+	   (dir == 1 && start > end) )
       { var tmp = start;
 	start = end;
 	end = tmp;
       }
-      if ( options.start !== undefined )
-	start = options.start;
 
       if ( (dir > 0 && start > end) ||
 	   (dir < 0 && start < end) )
@@ -1309,7 +1336,7 @@ define([ "cm/lib/codemirror",
       var elem = this;
 
       storage.setValue = function(source) {
-	elem.prologEditor('setEdSource', source, true);
+	elem.prologEditor('setSource', source, true);
       };
       storage.getValue = function() {
 	return data.cm.getValue();
@@ -1402,28 +1429,50 @@ define([ "cm/lib/codemirror",
 
     /**
      * @param {String} [query] query to get the variables from
-     * @param {Boolean} [anon] if `true`, also include _X variables.
-     * @return {List.string} is a list of Prolog variables without
-     * duplicates
+     * @param {Object} [options]
+     * @param {Boolean} [options.anon] if `true`, also include _X
+     * variables.
+     * @param {Boolean} [options.projection] if `true` and there is
+     * a projection, only include the variables from the projection.
+     * @return {List.string} is a list of Prolog variables
+     * without duplicates
      */
 
-    variables: function(query, anon) {
+    variables: function(query, options) {
       var qspan = $.el.span({class:"query cm-s-prolog"});
       var vars = [];
+
+      options = options||{};
 
       CodeMirror.runMode(query, "prolog", qspan);
 
       function addVars(selector) {
+	var incl = true;
+	var use_proj = false;
+
 	$(qspan).find(selector).each(function() {
-	  var name = $(this).text();
-	  if ( vars.indexOf(name) < 0 )
-	    vars.push(name);
+	  var elem = $(this);
+	  var name = elem.text();
+
+	  if ( elem.hasClass("cm-functor") ) {
+	    if ( name == "projection" ) { use_proj = true;
+	    } else if ( use_proj ) {
+	      incl = false;
+	    }
+	  } else {
+	    if ( incl && vars.indexOf(name) < 0 )
+	      vars.push(name);
+	  }
 	});
       }
 
-      addVars("span.cm-var");
-      if ( anon )
-	addVars("span.cm-var-2");
+      if ( options.projection ) {
+	addVars("span.cm-var,span.cm-var-2,span.cm-functor");
+      } else {
+	addVars("span.cm-var");
+	if ( options.anon )
+	  addVars("span.cm-var-2");
+      }
 
       return vars;
     },
@@ -1440,13 +1489,13 @@ define([ "cm/lib/codemirror",
       var vars = this.prologEditor('variables', query);
 
       function wrapQuery(pre, post) {
-	that.prologEditor('setEdSource', pre + "("+query+")" + post + ".")
+	that.prologEditor('setSource', pre + "("+query+")" + post + ".")
 	    .focus();
 	return that;
       }
 
       function prefixQuery(pre) {
-	that.prologEditor('setEdSource', pre + query + ".")
+	that.prologEditor('setSource', pre + query + ".")
 	    .focus();
 	return that;
       }
@@ -1488,7 +1537,7 @@ define([ "cm/lib/codemirror",
     create: function(dom, options) {
       $(dom).addClass("prolog-editor")
             .prologEditor($.extend({save:true}, options))
-	    .prologEditor('makeCurrent');
+	    .prologEditor('makeCurrent', options);
     }
   };
 

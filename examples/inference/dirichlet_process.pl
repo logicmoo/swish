@@ -5,8 +5,8 @@ probability of being equal to already sampled values. The process depends
 on a parameter alpha (concentration parameter): with alpha->0, a single 
 value is sampled, with alpha->infinite the distribution is equal to the base
 distribution.
-In this example the base distribution is a Guassian with mean 0 and variance
-1, as in https://en.wikipedia.org/wiki/Dirichlet_process#/media/File:Dirichlet_process_draws.svg
+In this example the base distribution is a Gaussian with mean 0 and variance
+5, as in https://en.wikipedia.org/wiki/Dirichlet_process#/media/File:Dirichlet_process_draws.svg
 To model the process, this example uses a stick breaking process: to sample
 a value, a sample beta_1 is taken from Beta(1,alpha) and a coin with heads
 probability beta_1 is flipped. If the coin lands heads, a sample from the base
@@ -19,13 +19,13 @@ Moreover, they show the distribution of unique indexes as in
 http://www.robots.ox.ac.uk/~fwood/anglican/examples/viewer/?worksheet=nonparametrics/dp-mixture-model
 */
 /** <examples>
-?- hist(200,100,G).
+?- hist(2000,100,G).
 % show the distribution of indexes with concentration parameter 10. 
-?- hist_val(200,100,G).
+?- hist_val(2000,100,G).
 % show the distribution of values with concentration parameter 10. Should look
 % like row 2 of https://en.wikipedia.org/wiki/Dirichlet_process#/media/File:Dirichlet_process_draws.svg
-?- hist_repeated_indexes(100,40,G).
-% show the distribution of unique indexes in 100 samples with concentration parameter 10. 
+?- hist_repeated_indexes(1000,100,G).
+% show the distribution of unique indexes in 10 samples from a DP with concentration parameter 10. 
 
 
 */
@@ -57,8 +57,8 @@ dp_value(NV,Alpha,V):-
 
 % dp_pick_value(I,V)
 % returns in V the value of index I of the base distribution 
-% (in this case N(0,1))
-dp_pick_value(_,V):gaussian(V,0,1).
+% (in this case N(0,5))
+dp_pick_value(_,V):gaussian(V,0,5).
 
 % dp_stick_index(NV,Alpha,I)
 % returns in I the index of the NVth sample from the DP
@@ -83,18 +83,18 @@ choose_prop(N,NV,Alpha,P,V):-
 % sample of the beta_i parameters
 stick_proportion(_,Alpha,P):beta(P,1,Alpha).
 
-% flip of the coing for the portion of the stick of size P
-pick_portion(_,_,P):P;neg_pick_portion(_,_,P):1-P.
+% flip of the coin for the portion of the stick of size P
+pick_portion(N,NV,P):P;neg_pick_portion(N,NV,P):1-P.
 
 :- end_lpad.
 
 hist(Samples,NBins,Chart):-
   mc_sample_arg(dp_stick_index(1,10.0,V),Samples,V,L),
-  histogram(L,NBins,Chart).
+  histogram(L,Chart,[nbins(NBins)]).
 
 hist_repeated_indexes(Samples,NBins,Chart):-
   repeat_sample(0,Samples,L),
-  histogram(L,NBins,Chart).
+  histogram(L,Chart,[nbins(NBins)]).
 
 repeat_sample(S,S,[]):-!.
 
@@ -107,7 +107,7 @@ repeat_sample(S0,S,[[N]-1|LS]):-
 hist_val(Samples,NBins,Chart):-
   mc_sample_arg_first(dp_n_values(0,Samples,10.0,V),1,V,L),
   L=[Vs-_],
-  histogram(Vs,NBins,Chart).
+  histogram(Vs,Chart,[nbins(NBins)]).
 
 
 

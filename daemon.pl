@@ -2,7 +2,6 @@
 
 :- module(swish_daemon, []).
 
-:- use_module(library(rtrace)).
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 Run
 
@@ -52,7 +51,7 @@ Run
 :- initialization(swish_daemon, main).
 :- else.
 :- initialization(swish_daemon).
-:- endif.
+:-endif.
 
 swish_daemon :-
 	current_prolog_flag(argv, Argv),

@@ -30,7 +30,7 @@
 :- determination(aleph_false/0,female/1).
 :- determination(aleph_false/0,(not)/1).
 
-:- set(noise,0).
+:- aleph_set(noise,0).
 
 :-begin_bg.
 male('Fred').
@@ -42,5 +42,5 @@ human('Wilma').
 :-end_in_pos.
 :-begin_in_neg.
 :-end_in_neg.
-:-aleph_read_all.
+
 

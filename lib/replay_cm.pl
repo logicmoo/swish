@@ -52,7 +52,7 @@
   1. ?- load_log('httpd-1.log.gz').
   2. ?- request(Id, Time, Request, false).
 
-You can use ?- replay. to replay all events on http://localhost:3020. To
+You can use ?- replay. to replay all events on http://gitlab.logicmoo.org:3020. To
 avoid piling up states you need to set the state timeout on the *server*
 low, e.g.
 
@@ -187,7 +187,7 @@ replay_guarded(Id, Reply) :-
 	memberchk(post_data(Encoded), Request), !,
 	memberchk(content_type(ContentType), Request),
 	memberchk(path(Path), Request),
-	format(atom(URL), 'http://localhost:3020~w', [Path]),
+	format(atom(URL), 'http://gitlab.logicmoo.org:3020~w', [Path]),
 	post_data_encoded(Bytes, Encoded),
 	setup_call_cleanup(
 	    http_open(URL, In,
@@ -199,7 +199,7 @@ replay_guarded(Id, Reply) :-
 	request(Id, _Time, Request, _Completed),
 	memberchk(method(get), Request),
 	memberchk(request_uri(URI), Request),
-	format(atom(URL), 'http://localhost:3020~w', [URI]),
+	format(atom(URL), 'http://gitlab.logicmoo.org:3020~w', [URI]),
 	setup_call_cleanup(
 	    http_open(URL, In, []),
 	    read_string(In, _, Reply),
