@@ -10,6 +10,7 @@
 :- endif.
 
 
+:- if( current_prolog_flag(xpce,true) ).
 % Debugging
 :- debug.
 :- tdebug.
@@ -52,6 +53,8 @@
 :- debug(cm(change)).
 
 :- prolog_ide(debug_monitor).
+
+:- endif.
 
 :- thread_local(prolog_stack:option/2).
 :- multifile(prolog_stack:option/2).
