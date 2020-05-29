@@ -205,9 +205,9 @@ preferences.setInform("preserve-state", ".unloadable");
      $("body").swish('populateExtendedExamples', navbar, dropdown, 
      config.http.locations.swish_extended_examples+"/lps_corner");      },      
      
-//     "LPS Survival": function(navbar, dropdown) {
-//     $("body").swish('populateExtendedExamples', navbar, dropdown, 
-//     config.http.locations.swish_extended_examples+"/lps_corner/survival_game");      },      
+     "LPS Survival": function(navbar, dropdown) {
+     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+     config.http.locations.swish_extended_examples+"/lps_corner/survival_game");      },      
 
 //     "LPS Testing": function(navbar, dropdown) {
 //     $("body").swish('populateExtendedExamples', navbar, dropdown, 

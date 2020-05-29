@@ -33,8 +33,8 @@
 */
 /*
 :- module(swish_ide,
-	  [ swish/0,
-	    swish/1			% ?Port
+	  [ remote_swish/0,
+	    remote_swish/1			% ?Port
 	  ]).
 */
 :- use_module(library(http/thread_httpd)).
@@ -71,6 +71,14 @@ from_http(G):- with_output_to(main_error,G).
 	pengines:not_sandboxed/2,		% User, Application
 	user:file_search_path/2.		% Alias, Path
 
+:- dynamic
+	swish_config:config/2,			% Name, Value
+	swish_config:source_alias/2,		% Alias, Options
+	swish_config:verify_write_access/3,	% Request, File, Options
+	pengines:authentication_hook/3,		% Request, Application, User
+	pengines:not_sandboxed/2,		% User, Application
+	user:file_search_path/2.		% Alias, Path
+
 :- prolog_load_context(directory,Dir),asserta(user:file_search_path(swish, Dir)).
 user:file_search_path(project, '.').
 
@@ -78,8 +86,10 @@ user:file_search_path(project, '.').
 :- multifile http:location/3.
 http:location(root, '/', [priority(1100)]).
 http:location(swish, root('swish'), [priority(500)]).
-http:location(root, '/swish', []).
+% http:location(root, '/remote', []).
 
+rsmsg(_):- !.
+rsmsg(X):- wdmsg(X).
 
 /*
 
@@ -114,23 +124,23 @@ currently_logged_in(Why,User):-
      http_session_data(oauth2(OAuth, _)),
      http_session_data(user_info(OAuth, Info))),
    User=Info.name,!,
-  wdmsg(currently_logged_in(Why,User=Info.name)))),!.
+  rsmsg(currently_logged_in(Why,User=Info.name)))),!.
 currently_logged_in(Why,User):- 
   from_http((http_session:
     (session_data(S,oauth2(OAuth, Y)),
-     wdmsg(currently_logged_in(User=Why,session_data(S,oauth2(OAuth, Y))))))),!,ignore(User="guest1"),!.
+     rsmsg(currently_logged_in(User=Why,session_data(S,oauth2(OAuth, Y))))))),!,ignore(User="guest1"),!.
 
 
 currently_logged_in(Why,D):- http_session:http_in_session(SessionID),!,
    
   from_http(
-  ((wdmsg(fail_dispite_http_in_session(SessionID,D,Why)),  
+  ((rsmsg(fail_dispite_http_in_session(SessionID,D,Why)),  
     http_session:http_in_session(SessionID),
     listing(http_session: session_data(SessionID,_Data))))),!,fail.
 
 
 
-currently_logged_in(Why,D):- thread_self(S),wdmsg(fail_currently_logged_in(Why,S,D)),!,fail.
+currently_logged_in(Why,D):- thread_self(S),rsmsg(fail_currently_logged_in(Why,S,D)),!,fail.
 
 
 no_auth_needed(Request):- is_list(Request),memberchk(path_info(Path),Request),mimetype:file_mime_type(Path,Type),memberchk(Type,[image/_,_/javascript]),!.
@@ -167,18 +177,17 @@ swish_config:authenticate(Request, User) :-
   from_http(
   ((http_session:http_in_session(SessionID),
     listing(http_session: session_data(SessionID,_Data))))),
-  from_http(wdmsg((http_session:authenticate(Request, User)))),
+  from_http(rsmsg((http_session:authenticate(Request, User)))),
   !.
 
 swish_config:authenticate(Request, User) :- \+ http_session:http_in_session(_),
   fail, currently_logged_in(_Why,User),
-  from_http(wdmsg((swish_config:authenticate(Request, User)))), ignore(User="guest"),!.
+  from_http(rsmsg((swish_config:authenticate(Request, User)))), ignore(User="guest"),!.
 
 
-:- use_module(swish(swish)).
 
   
-% swish_config:authenticate(Request, "bad_user") :- wdmsg(swish_config:authenticate(Request, "bad_user")),!.
+% swish_config:authenticate(Request, "bad_user") :- rsmsg(swish_config:authenticate(Request, "bad_user")),!.
 swish_config:authenticate(Request, User) :- fail,
         swish_http_authenticate:logged_in(Request, User), !.
 
@@ -188,17 +197,17 @@ swish_config:authenticate(Request, User) :- fail,
 %
 %	Start the SWISH server and open the main page in your browser.
 
-swish :-
-	swish('logicmoo.org':3020).
+remote_swish :-
+	remote_swish('logicmoo.org':3022).
 
-swish(Port) :-
+remote_swish(Port) :-
 	http_server_property(Port, goal(swish_ide:http_dispatch)), !,
 	open_browser(Port).
-swish(_:Port) :-
+remote_swish(_:Port) :-
 	integer(Port),
 	http_server_property(Port, goal(swish_ide:http_dispatch)), !,
 	open_browser(Port).
-swish(Port) :-
+remote_swish(Port) :-
 	http_server(http_dispatch,
 		    [ port(Port),
 		      workers(16)
@@ -210,32 +219,33 @@ open_browser(Address) :-
 	http_server_property(Port, scheme(Scheme)),
 	http_absolute_location(root(.), Path, []),
 	format(atom(URL), '~w://~w:~w~w', [Scheme, Host, Port, Path]),
-	wdmsg(www_open_url(URL)).
+	rsmsg(www_open_url(URL)).
 
 host_port(Host:Port, Host, Port) :- !.
 host_port(Port,Host, Port):- gethostname(Host),!.
 host_port(Port,_, Port):-!.
 
-:- swish.
 
 
 
 :- [library(pengines)].
 
-pet:- pengine_rpc("http://logicmoo.org:3020",
+pet:- pengine_rpc("http://logicmoo.org:3022",
                        sin_table(X,Y),
                        [ src_text(':- dynamic(sin_table/2). sin_table(1,2).'),
                          application(swish)
                        ]),
-   wdmsg(sin_table(X,Y)).
+   rsmsg(sin_table(X,Y)).
+
+:- [run_swish_and_clio].
+:- use_module(swish(swish)).
 
 
 :- listing(swish_config:authenticate/2).
 
 :- stream_property(X,file_no(2)),stream_property(X,alias(main_error)).
 
-:- debug.
-:- tdebug.
 
-
-
+:- if(\+ prolog_load_context(reload,true)).
+:- remote_swish.
+:- endif.

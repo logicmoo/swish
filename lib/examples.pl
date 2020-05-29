@@ -43,7 +43,7 @@
 :- use_module(library(http/http_path)).
 :- use_module(library(filesex)).
 :- use_module(library(apply)).
-:- use_module(library(option)).
+:- swish_examples:use_module(library(option)).
 :- use_module(library(lists)).
 :- if(exists_source(library(atom))).
 :- use_module(library(atom)).
@@ -74,24 +74,13 @@ overview notebooks.
 	swish_config:source_alias/2.
 
 % make example(File) find the example data
-user:file_search_path(example, swish(examples)).
-user:file_search_path(example, swish(examples/inference)).
-user:file_search_path(example, swish(examples/learning)).
-user:file_search_path(example, swish(examples/lemur)).
-user:file_search_path(example, swish(examples/phil)).
-user:file_search_path(example, swish(examples/aleph)).
-user:file_search_path(example, swish(examples/trill)).
-
-user:file_search_path(e, swish(examples)).
-user:file_search_path(e, swish(examples/inference)).
-user:file_search_path(e, swish(examples/learning)).
-user:file_search_path(e, swish(examples/lemur)).
-user:file_search_path(e, swish(examples/phil)).
-user:file_search_path(e, swish(examples/aleph)).
-user:file_search_path(e, swish(examples/trill)).
-
-
-
+ufsp(swish(examples)).
+ufsp(swish(examples/inference)).
+ufsp(swish(examples/learning)).
+ufsp(swish(examples/lemur)).
+ufsp(swish(examples/phil)).
+ufsp(swish(examples/aleph)).
+ufsp(swish(examples/trill)).
 ufsp(swish(examples/lps_corner)).
 ufsp(swish(examples/lps_corner/'CLOUT_workshop')).
 ufsp(swish(examples/lps_corner/'forTesting')).
@@ -113,7 +102,7 @@ user:file_search_path(example, UFSP):- ufsp(UFSP).
                   id(swish_group_extended_examples)]).
 
 list_extended_example(_GetPostPut, Example, _Request) :-
-	atom_concat('examples/',Example,Dir),
+	atom_concat('/opt/logicmoo_workspace/packs_web/swish/examples/',Example,Dir),
     dir_to_pattern(Dir,Pattern),
 	expand_file_name(Pattern, Files),
 	maplist(ex_file_json('/swish/e/'), Files, Menu),
@@ -155,7 +144,7 @@ swish_config:source_alias(example, [access(read), search('*/*/*/*.*')]):- swish_
 %	a file swish_examples('index.json').
 
 list_examples(_Request) :-
-    directory_index_json(examples, JSON0),
+    directory_index_json(swish(examples), JSON0),
 	http_absolute_location(swish(example), HREF, []),
 	add_examples_href(HREF, JSON0, JSON),
 	Menu = JSON.get(files),
@@ -200,7 +189,7 @@ examples(AllExamples, Options) :-
 	swish_examples(SWISHExamples, Options),
 	(   option(community(true), Options)
 	->  community_examples(CommunityEx)
-	;   CommunityEx = json{}
+	;   no_examples(CommunityEx)
 	),
 	join_examples([CommunityEx|SWISHExamples], AllExamples).
 
@@ -237,7 +226,8 @@ swish_examples_no_cache(SWISHExamples,_Options) :-
 	maplist(index_json(HREF), ExDirs, SWISHExamples).
 
 
-join_examples(PerDir, Files) :-
+join_examples(PerDirV, Files) :-
+        flatten(PerDirV,PerDir),
 	menu_groups(PerDir, Groups),
 	maplist(get_or(files, []), PerDir, FilesPerDir),
 	append(FilesPerDir, Files0),
@@ -276,7 +266,8 @@ get_or(Key, Default, Dict, Value) :-
 %	is present, all files are added as example files.
 
 directory_index_json(Dir, JSON) :- 
-	directory_file_path(Dir, 'index.json', File),
+    absolute_file_name(Dir, Path),!,
+	directory_file_path(Path, 'index.json', File),
 	access_file(File, read), !,
 	read_file_to_json(File, JSON).
 
@@ -298,7 +289,8 @@ index_json(HREF, Dir, json{menu:[json{group:examples, rank:10000}],
 	example_files(HREF, Dir, Files0),
 	maplist(add_group(examples), Files0, Files).
 
-example_files(HREF, Dir, JSON) :-
+example_files(HREF, LDir, JSON) :-
+   absolute_file_name(LDir, Dir, [access(read), file_errors(fail), file_type(directory)]),
 	string_concat(Dir, "/*.{pl,swinb}", Pattern),
 	expand_file_name(Pattern, Files),
 	maplist(ex_file_json(HREF), Files, JSON).
@@ -372,6 +364,13 @@ file_group(File,OneDir):-
   file_directory_name(File,FullDir),file_base_name(FullDir,OneDir), !.
 file_group(_,extras).
 
+
+file_name_to_title(Path, Title):- atom(Path), sub_string(Path, _, _, _, '/'),
+	file_base_name(Path, File), !,
+        file_name_to_title(File, Title).
+file_name_to_title(Path, Title):- atom(Path), sub_string(Path, _, _, _, '.'),
+	file_name_extension(File, _, Path), !,
+        file_name_to_title(File, Title).
 :- if(current_predicate(restyle_identifier/3)).
 file_name_to_title(Base, Title) :-
 	restyle_identifier(style(true,false,' '), Base, Title).
@@ -419,6 +418,11 @@ active_example(Example, Example).
 cond_reason(plugin(Name), 'missing plugin: ~w', [Name]).
 
 
+:- asserta(cp_menu:menu_item(Loc,Title):- example_menu_item(Loc,Title)).
+
+example_menu_item(901=swish/swish+class(login), 'Example KB').
+
+:- use_module(filesystems).
 
 		 /*******************************
 		 *	      STORAGE		*
