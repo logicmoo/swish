@@ -131,12 +131,12 @@ currently_logged_in(Why,User):-
      rsmsg(currently_logged_in(User=Why,session_data(S,oauth2(OAuth, Y))))))),!,ignore(User="guest1"),!.
 
 
-currently_logged_in(Why,D):- http_session:http_in_session(SessionID),!,
-   
+currently_logged_in(Why,D):- http_session:http_in_session(SessionID),fail,
+  
   from_http(
   ((rsmsg(fail_dispite_http_in_session(SessionID,D,Why)),  
     http_session:http_in_session(SessionID),
-    listing(http_session: session_data(SessionID,_Data))))),!,fail.
+    listing(http_session:session_data(SessionID,_Data))))),!,fail.
 
 
 
@@ -168,12 +168,12 @@ swish_config:authenticate(Request, User) :-
   ignore(currently_logged_in(no_auth_needed,User)),!,
   ignore(User="guest1"),!.
 
-% swish_config:authenticate(Request, User) :- swish_http_authenticate:logged_in(Request, User), !.
-
+%swish_config:authenticate(Request, User) :- swish_http_authenticate:logged_in(Request, User), !.
 
 swish_config:authenticate(Request, User) :-
  http_session:http_in_session(SessionID),
-  fail, currently_logged_in(_Why,User),
+
+  currently_logged_in(_Why,User),
   from_http(
   ((http_session:http_in_session(SessionID),
     listing(http_session: session_data(SessionID,_Data))))),
@@ -181,14 +181,14 @@ swish_config:authenticate(Request, User) :-
   !.
 
 swish_config:authenticate(Request, User) :- \+ http_session:http_in_session(_),
-  fail, currently_logged_in(_Why,User),
+  currently_logged_in(_Why,User),
   from_http(rsmsg((swish_config:authenticate(Request, User)))), ignore(User="guest"),!.
 
 
 
   
 % swish_config:authenticate(Request, "bad_user") :- rsmsg(swish_config:authenticate(Request, "bad_user")),!.
-swish_config:authenticate(Request, User) :- fail,
+swish_config:authenticate(Request, User) :- 
         swish_http_authenticate:logged_in(Request, User), !.
 
   
@@ -226,9 +226,8 @@ host_port(Port,Host, Port):- gethostname(Host),!.
 host_port(Port,_, Port):-!.
 
 
-
-
 :- [library(pengines)].
+
 
 pet:- pengine_rpc("http://logicmoo.org:3022",
                        sin_table(X,Y),
@@ -237,7 +236,7 @@ pet:- pengine_rpc("http://logicmoo.org:3022",
                        ]),
    rsmsg(sin_table(X,Y)).
 
-:- [run_swish_and_clio].
+:- ['run_swish_and_clio.pl'].
 :- use_module(swish(swish)).
 
 
@@ -246,6 +245,10 @@ pet:- pengine_rpc("http://logicmoo.org:3022",
 :- stream_property(X,file_no(2)),stream_property(X,alias(main_error)).
 
 
+
+
 :- if(\+ prolog_load_context(reload,true)).
 :- remote_swish.
 :- endif.
+
+

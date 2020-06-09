@@ -1,7 +1,7 @@
 #node_modules
 #bower_components
-swish-bower-components.zip
-.bower-senitel
+#swish-bower-components.zip
+#.bower-senitel
 passwd
 #data
 #log
@@ -9,9 +9,9 @@ passwd
 *~
 *.bak
 #config-enabled
-config-local*
-https
-.gdbinit
+#config-local*
+#https
+#.gdbinit
 web/icons/noble
-TAGS
+#TAGS
 yarn.lock

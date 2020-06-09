@@ -146,7 +146,9 @@ rt123:- rtrace(swish_highlight:codemirror_tokens([protocol(http),method(post),re
     accept_encoding('gzip, deflate'),accept_language('en-US,en;q=0.9'),cookie(['_ga'='GA1.2.2901774.1587353525',
     swipl_session='2c10-e3c5-65e9-df9a.gitlab']),content_type(html)])).
 
-:- user:ensure_loaded(library(lps_corner)).
+% :- cpack_install([prov,amalgame,skos,cpack_repository,media_cache,'EDM','cloud',trill_on_swish,ecdemo,command,rdf_qa,waisda,jquery,accurator,pirates,cluster_search_ui,skos_browser,tag_matcher,statistics,opmv,vumix]).
+
+:- lps_corner:ensure_loaded(library(lps_corner)).
 
 
 
