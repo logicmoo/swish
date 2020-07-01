@@ -371,7 +371,8 @@ oauth2_token_details(ServerID, AuthCode, Dict) :-
 
 read_reply(Code, ContentType, In, Dict) :-
 	debug(oauth, 'Token details returned ~p ~p', [Code, ContentType]),
-	http_parse_header_value(content_type, ContentType, Parsed),
+	ignore(ContentType='application/json'),
+        http_parse_header_value(content_type, ContentType, Parsed),
 	read_reply2(Code, Parsed, In, Dict).
 
 %!	read_reply2(+Code, +ContentType, +Stream, -Dict) is det.

@@ -231,6 +231,12 @@ tabbed.tabTypes.permalink = {
 			//this.tabbed('searchForm'),
 		        sl = $.el.div({class:"sourcelist"}));
 	  $(sl).sourcelist();
+	  
+		 var ff = $('<iframe id="the_iframe" src="https://logicmoo.org/ef/elfinder.src.html"/>');
+		 $(ff).css('height',$(window).height() - 20);
+		 $(ff).css('width',"100%");
+		 $(dom).append(sl,ff);
+
 	}
       }
 
@@ -425,6 +431,9 @@ tabbed.tabTypes.permalink = {
 	if ( src.noHistory )
 	  options.noHistory = true;
 
+    if (!tabType) {
+    	tabType = tabbed.tabTypes.program;
+    }
 	tab.html("");
 	tab.tabbed('title', tabType.label, tabType.dataType);
 	tab.append(content);

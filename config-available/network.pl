@@ -10,7 +10,7 @@ accessible URL for the SWISH server if   this address cannot be resolved
 automatically.
 */
 
-:- set_setting_default(http:public_host,   'gitlab.logicmoo.org').
+:- set_setting_default(http:public_host,   'logicmoo.org').
 :- set_setting_default(http:public_port,   3020).
 :- set_setting_default(http:public_scheme, http).
 

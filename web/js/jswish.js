@@ -112,6 +112,15 @@ preferences.setInform("preserve-state", ".unloadable");
 		      glyph("eye-open", function() {
 	  menuBroadcast("follow-file");
 	}) : undefined,
+	"Chat ...": icon("chat", function() {
+	  menuBroadcast("chat-about-file");
+	}),
+	"Chat help room ...": icon("chathelp", function() {
+	  $("body").swish('playFile', {
+	    file:"Help.swinb",
+	    chat:'large'
+	  });
+    }),
 	"Start TogetherJS ...": icon("togetherjs", function() {
 	  $("body").swish('collaborate');
 	}),
@@ -228,10 +237,7 @@ preferences.setInform("preserve-state", ".unloadable");
 
       "Help": function(navbar, dropdown) {
 	$("body").swish('populateHelp', navbar, dropdown);
-      },
-//      "Extended Help": function(navbar, dropdown) {
-//	$("body").swish('populateExtendedHelp', navbar, dropdown);
-//      },      
+      }
     }
   }; // defaults;
 

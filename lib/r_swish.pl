@@ -71,13 +71,10 @@ r_call:r_console(stdout, Strings) :-
 	atomics_to_string(Strings, "\n", String),
 	send_html(pre(class(['R', console]), String)).
 
-/*
 send_html(HTML) :-
 	phrase(html(HTML), Tokens),
 	with_output_to(string(HTMlString), print_html(Tokens)),
 	pengine_output(HTMlString).
-
-*/
 
 %!	r_call:r_console_property(?Property)
 %

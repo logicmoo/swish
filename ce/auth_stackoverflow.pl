@@ -96,7 +96,7 @@ this module:
 oauth2:server_attribute(stackexchange, url,
                         'https://stackexchange.com').
 oauth2:server_attribute(stackexchange, redirect_uri,
-                        'http://logicmoo.org:3020/oauth2/stackexchange/reply').
+                        'https://logicmoo.org:3020/oauth2/stackexchange/reply').
 oauth2:server_attribute(stackexchange, authorization_endpoint,
                         '/oauth').
 oauth2:server_attribute(stackexchange, token_endpoint,

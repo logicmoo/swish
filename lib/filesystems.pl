@@ -70,7 +70,7 @@
 :- use_module(library(pldoc/doc_htmlsrc)).
 :- use_module(library(prolog_xref)).
 
-:- use_module('../../plweb/pack_info.pl').
+%:- use_module('../../plweb/pack_info.pl').
 
 
 /** <module> Serve filesystem files

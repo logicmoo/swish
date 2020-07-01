@@ -35,7 +35,7 @@
 
 :- module(swish_authenticate,
           [ authenticate/2,                     % +Request, -Authentity
-            user_property/2                     % +Authentity, ?Property
+            user_property_swish/2                     % +Authentity, ?Property
           ]).
 :- use_module(library(http/http_wrapper)).
 :- use_module(library(debug)).
@@ -114,7 +114,7 @@ identity(Request, Auth0, Auth) :-
 identity(_, Auth, Auth).
 
 
-%!  user_property(+Identity, ?Property) is nondet.
+%!  user_property_swish(+Identity, ?Property) is nondet.
 %
 %   True when Identity has Property. Defined properties are:
 %
@@ -135,9 +135,12 @@ identity(_, Auth, Auth).
 %     - email(Atom)
 %     Email associated with the identity
 
-user_property(Identity, Property) :-
+user_property_swish(Identity, Property) :-
     current_user_property(Property, How),
     user_property_impl(Property, How, Identity).
+
+:- multifile(system:user_property/2).
+system:user_property(User, Property):- user_property_swish(User, Property).
 
 user_property_impl(Property, dict, Identity) :- !,
     Property =.. [Name,Value],

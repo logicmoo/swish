@@ -65,7 +65,7 @@ from_http(G):- with_output_to(main_error,G).
    set_stream(X,alias(main_error)),
    set_stream(X,alias(Was)).
     
-:- use_module(library(aleph),[]).
+%:- use_module(library(aleph),[]).
 
 
 #:- use_module(library(must_trace)).
@@ -328,7 +328,7 @@ host_port(Port,_, Port):-!.
 :- listing(pengines:allowed/2).
 
 
-pet:- pengine_rpc("http://logicmoo.org:3020",
+pet:- pengine_rpc("https://logicmoo.org:3020",
                        sin_table(X,Y),
                        [ src_text(':- dynamic(sin_table/2). sin_table(1,2).'),
                          application(swish)

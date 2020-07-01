@@ -101,7 +101,7 @@ define([ "cm/lib/codemirror",
       matchBrackets: true,
       textHover: true,
       prologKeys: true,
-      codeType: "prolog",
+     // codeType: "prolog",
       extraKeys: {
 	"Ctrl-Space": "autocomplete",
 	"Alt-/": "autocomplete",
@@ -116,6 +116,7 @@ define([ "cm/lib/codemirror",
       mode: "markdown",
       placeholder: "Your markdown block goes here ...",
       lineWrapping: true,
+      // codeType: "notebook",
       save: false
     }
   };

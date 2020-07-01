@@ -153,7 +153,7 @@ map_user_field(Field, Field).
 oauth2:server_attribute(scz, url,
                         'https://proxy.pilot.scz.lab.surf.nl/SamlSP/OIDC/authorization').
 oauth2:server_attribute(scz, redirect_uri,
-                        'http://gitlab.logicmoo.org:3020/oauth2/scz/reply').
+                        'https://logicmoo.org:3020/oauth2/scz/reply').
 oauth2:server_attribute(scz, client_id,
                         '***').
 oauth2:server_attribute(scz, client_secret,

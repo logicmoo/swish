@@ -136,7 +136,7 @@ start_chat(Request, Options) :-
 	http_upgrade_to_websocket(
 	    accept_chat(Session, ChatOptions),
 	    [ guarded(false),
-	      subprotocols(['v1.chat.cplint.lamping.unife.it', chat])
+	      subprotocols(['v1.chat.logicmoo.org', chat])
 	    ],
 	    Request).
 

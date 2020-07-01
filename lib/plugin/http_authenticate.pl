@@ -362,8 +362,8 @@ swish_add_user :-
 	    fail
 	).
 
-interrupted(_Sig) :-
-	halt(2).
+interrupted(_Sig) :- 
+	!. % halt(2).
 
 read_string(Prompt, String) :-
 	format(user_error, '~w', [Prompt]),

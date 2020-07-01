@@ -155,8 +155,8 @@ define([ "jquery", "config", "modal", "form", "gitty",
       if ( (src.meta && src.meta.name) || src.url )
       { var name = (src.meta && src.meta.name) ? src.meta.name : src.url;
 
-	if ( tabbed.type(name)["typeName"] != type.typeName )
-	  return false;
+			//if ( tabbed.type(name)["typeName"] != type.typeName )
+			  //return false;
       }
 
       return true;
@@ -1403,6 +1403,10 @@ define([ "jquery", "config", "modal", "form", "gitty",
 
   function filebase(file) {
     return file ? file.split('.').slice(0,-1).join(".") : null;
+  }
+
+  function basename(path) {
+    return path ? path.split('/').pop() : null;
   }
 
   function udiff(diff) {
