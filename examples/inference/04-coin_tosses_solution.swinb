@@ -76,10 +76,10 @@ P = 0.0692.
 
 % Compute the probability of the sequence [h,h,h,h,h] given that the
 % subsequence [h,h,h] was observed using rejection sampling and Metropolis Hastings.
-?- mc_rejection_sample(tosses(0,[h,h,h,h,h]),tosses(0,[h,h,h]),1000,P).
+?- mc_rejection_sample(tosses(0,[h,h,h,h,h]),partial_tosses([h,h,h]),1000,P).
 P = 0.171.
 
-?- mc_mh_sample(tosses(0,[h,h,h,h,h]),tosses(0,[h,h,h]),1000,P).
+?- mc_mh_sample(tosses(0,[h,h,h,h,h]),partial_tosses([h,h,h]),1000,P).
 P = 0.153.
 
 % Compute the probability of the sequences of 10 coin tosses using MCINTYRE.
