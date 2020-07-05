@@ -160,6 +160,7 @@ currently_logged_in(Why,User):-
   from_http((http_session:session_data(S,oauth2(OAuth, Y)),
      rsmsg(currently_logged_in(User=Why,session_data(S,oauth2(OAuth, Y)))))).
   
+currently_logged_in(no_auth_needed, User):- ignore(User="guest"),!.
 currently_logged_in(Why,User):- 
   http_session:http_in_session(SessionID),  
   from_http(
