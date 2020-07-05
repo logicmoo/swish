@@ -45,10 +45,15 @@
 :- use_module(library(uid)).
 :- endif.
 
+:- user:use_module(library(semweb/rdf_library)).
+:- system:use_module(library(semweb/rdf_library)).
+:- system:use_module(library(settings)).
+
+
 % So we dont get stuck in Console color snooping test!
 :- system:use_module(library(console_input)).
 :- initialization(system:use_module(library(console_input)),restore_state).
-:- use_module(library(prolog_autoload)).
+:- system:use_module(library(prolog_autoload)).
 :- system:use_module(library(lists)).
 
 :- if( \+ exists_source(library(sldnfdraw))).
@@ -99,9 +104,9 @@ user:file_search_path(project, '.').
 
 :- dynamic http:location/3.
 :- multifile http:location/3.
+% http:location(root, '/remote', []).
 http:location(root, '/', [priority(1100)]).
 http:location(swish, root('swish'), [priority(500)]).
-% http:location(root, '/remote', []).
 
 rsmsg(X):- compound(X),functor(X,currently_logged_in,_),!.
 rsmsg(X):- wdmsg(X).                              
@@ -120,10 +125,10 @@ swish_config:source_alias(library, []).
 
 swish_config:verify_write_access(Request, File, Options) :- currently_logged_in(swish_config:verify_write_access(Request, File, Options),_).
 
-pengines:authentication_hook(Request, swish, User) :- 
-   fail, currently_logged_in(pengines:authentication_hook(Request, swish, User),User),!.
+pengines:authentication_hook(Request, swish, User) :- fail, currently_logged_in(pengines:authentication_hook(Request, swish, User),User),!.
 
-pengines:allowed(Request, Application) :- Application=swish-> true; currently_logged_in(pengines:allowed(Request, Application),_User).
+pengines:allowed(Request, Application) :- Application=swish-> true; currently_logged_in(pengines:allowed(Request, Application),_User),!.
+pengines:allowed(_Request, _Application).
 
 
 pengines:not_sandboxed(Maybe, Application) :- currently_logged_in(pengines:not_sandboxed(Maybe, Application),_User),!.
@@ -210,14 +215,14 @@ swish_config:authenticate(Request, User) :-
 %	Start the SWISH server and open the main page in your browser.
 
 remote_swish :-
-	remote_swish('logicmoo.org':3022).
+	remote_swish('logicmoo.org':3020).
 
 remote_swish(Port) :-
-	http_server_property(Port, goal(swish_ide:http_dispatch)), !,
+	http_server_property(Port, _), !,
 	open_browser(Port).
 remote_swish(_:Port) :-
 	integer(Port),
-	http_server_property(Port, goal(swish_ide:http_dispatch)), !,
+	http_server_property(Port, _), !,
 	open_browser(Port).
 remote_swish(Port) :-
 	http_server(http_dispatch,
@@ -229,7 +234,7 @@ remote_swish(Port) :-
 open_browser(Address) :-
 	host_port(Address, Host, Port),
 	http_server_property(Port, scheme(Scheme)),
-	http_absolute_location(root(.), Path, []),
+	http_absolute_location(root(swish), Path, []),
 	format(atom(URL), '~w://~w:~w~w', [Scheme, Host, Port, Path]),
 	rsmsg(www_open_url(URL)).
 
@@ -238,10 +243,8 @@ host_port(Port,Host, Port):- gethostname(Host),!.
 host_port(Port,_, Port):-!.
 
 
-:- [library(pengines)].
 
-
-pet:- pengine_rpc("https://logicmoo.org:3022",
+pet_test:- pengine_rpc("https://logicmoo.org:3020",
                        sin_table(X,Y),
                        [ src_text(':- dynamic(sin_table/2). sin_table(1,2).'),
                          application(swish)
@@ -261,15 +264,16 @@ pet:- pengine_rpc("https://logicmoo.org:3022",
 */
 
 
+/*
 :- if( current_prolog_flag(xpce,true) ).
 
 % Debugging
-
-/*
 :- prolog_ide(debug_monitor).
 :- debug.
 :- tdebug.
 :- guitracer.
+:- endif.
+
 
 :- debug(dot).
 :- debug(html(script)).
@@ -286,45 +290,37 @@ pet:- pengine_rpc("https://logicmoo.org:3022",
 :- debug(websocket(_)).
 */
 
-:- debug(http(authenticate)).
-:- debug(http(error)).
-:- nodebug(http(redirect)).
-:- debug(http(request)).
-:- debug(http_authenticate).
-:- nodebug(http_path).
-:- debug(http_session).
-:- debug(setting).
-:- debug(settings).
-:- debug(login).
-:- debug(notify(_)).
-:- debug(notify).
-:- debug(openid(_)).
-:- debug(openid).
-:- debug(openid_fake(_)).
-:- debug(cm(tokens)).
-:- debug(authenticate).
-:- debug(chat(_)).
-:- debug(cm(change)).
 
+some_debug:-
+  debug(http(authenticate)),
+  debug(http(error)),
+  nodebug(http(redirect)),
+  debug(http(request)),
+  debug(http_authenticate),
+  nodebug(http_path),
+  debug(http_session),
+  debug(setting),
+  debug(settings),
+  debug(login),
+  debug(notify(_)),
+  debug(notify),
+  debug(openid(_)),
+  debug(openid),
+  debug(openid_fake(_)),
+  debug(cm(tokens)),
+  debug(authenticate),
+  debug(chat(_)),
+  debug(cm(change)),
+  !.
 
-:- endif.
-
-:- multifile(pengines:allowed/2).
-:- dynamic(pengines:allowed/2).
-:- multifile(sandbox:safe_primitive/1).
-:- dynamic(sandbox:safe_primitive/1).
-:- multifile(sandbox:safe_meta_predicate/1).
-:- dynamic(sandbox:safe_meta_predicate/1).
-:- use_module(library(pengines_sandbox)).
-% sandbox:safe_primitive(dumpst:dumpST/0).
-sandbox:safe_meta_predicate(system:notrace/1).
 
 :- multifile(cp_menu:menu_item/2).
-:- dynamic(cp_menu:menu_item/2).
+:- dynamic(cp_menu:menu_item/2).      
+:- asserta(cp_menu:menu_item(90=swish/swish, 'Swish Home')).
+:- asserta(cp_menu:menu_item(300=query/swish, 'SWISH Prolog shell')).
 
 
-% :- use_module(library(logicmoo_common)).
-% :- use_module(library(must_trace)).
+%:- use_module(library(pengines)).
 
 
 
@@ -332,7 +328,6 @@ sandbox:safe_meta_predicate(system:notrace/1).
 %:- register_iri_scheme(pengines, pengines_iri_hook, []).
 
 swish_and_clio:is_module.
-%nd_of_file.
 
 add_relative_search_path(Alias, Abs) :-
 	is_absolute_file_name(Abs), !,
@@ -367,11 +362,8 @@ user:file_search_path(lps_corner, '/opt/logicmoo_workspace/packs_web/lps_corner'
 % Load ClioPatria itself.  Better keep this line.
 :- user:use_module(cliopatria(cliopatria)).
 
-:- listing(cp_server:cp_server).
-
-:- user:use_module(swish(swish)).
-
-:- listing(user_property/2).
+% :- listing(cp_server:cp_server).
+%:- listing(user_property/2).
 
 :- if( \+ current_module(lps_server_UI) ).
 %:- lps_corner:ensure_loaded(library(lps_corner)).
@@ -379,14 +371,8 @@ user:file_search_path(lps_corner, '/opt/logicmoo_workspace/packs_web/lps_corner'
 :- endif.
 
 
+:- swish:use_module(swish(swish)).
 
-
-:- listing(swish_config:authenticate/2).
-:- asserta(pengines:allowed(_Request, _Application)).
-:- listing(pengines:allowed/2).
-
-:- asserta(cp_menu:menu_item(90=swish/swish, 'Swish Home')).
-:- asserta(cp_menu:menu_item(300=query/swish, 'SWISH Prolog shell')).
 
 rt123:- rtrace(swish_highlight:codemirror_tokens([protocol(http),method(post),request_uri('/swish/cm/tokens'),
     path('/swish/cm/tokens'),http_version(1-1),host('logicmoo.org'),port(3020),
@@ -400,32 +386,24 @@ rt123:- rtrace(swish_highlight:codemirror_tokens([protocol(http),method(post),re
 % X = lps_visualization(_1422{groups:[_2144{content:"left(A)", id:"left/1", order:3, subgroupStack:"false"}, _2190{content:"right(A)", id:"right/1", order:3, subgroupStack:"false"}, _2238{content:"searching(A)", id:"searching/1", order:3, subgroupStack:"false"}, _2286{content:"Actions", id:"action", order:4}], items:[_1440{content:"0", end:2, group:"left/1", id:0, start:1, subgroup:"0", title:"Fluent left(0) initiated at 1<br/>and terminated at transition to 2"}, _1518{content:"5", end:4, group:"left/1", id:1, start:2, subgroup:"5", title:"Fluent left(5) initiated at 2<br/>and terminated at transition to 4"}, _1596{content:"7", end:21, group:"left/1", id:2, start:4, subgroup:"7", title:"Fluent left(7) initiated at 4<br/>and terminated at transition to 21"}, _1674{content:"7", end:21, group:"right/1", id:3, start:3, subgroup:"7", title:"Fluent right(7) initiated at 3<br/>and terminated at transition to 21"}, _1754{content:"9", end:3, group:"right/1", id:4, start:1, subgroup:"9", title:"Fluent right(9) initiated at 1<br/>and terminated at transition to 3"}, _872{content:"60", end:21, group:"searching/1", id:5, start:1, subgroup:"60", title:"Fluent searching(60) initiated at 1<br/>and terminated at transition to 21"}, _954{content:"sample(4)", group:"action", id:6, start:2, style:"color:green", title:"happens(sample(4),1,2)", type:"point"}, _1030{content:"sample(7)", group:"action", id:7, start:3, style:"color:green", title:"happens(sample(7),2,3)", type:"point"}, _1106{content:"sample(6)", group:"action", id:8, start:4, style:"color:green", title:"happens(sample(6),3,4)", type:"point"}]}, [])+dot(digraph([node([1], [label = 'left(0)\nright(9)\nsearching(60)', fillcolor = '#D7DCF5', style=filled, color=black]), node([3], [label = 'left(5)\nright(7)\nsearching(60)', fillcolor = '#D7DCF5', style=filled, color = '#D7DCF5']), node([2], [label = 'left(5)\nright(9)\nsearching(60)', fillcolor = '#D7DCF5', style=filled, color = '#D7DCF5']), node([4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], [label = 'left(7)\nright(7)\nsearching(60)', fillcolor = '#D7DCF5', style=filled, color = '#D7DCF5']), edge(([1]->[2]), [label=sample(4), color=forestgreen]), edge(([2]->[3]), [label=sample(7), color=forestgreen]), edge(([3]->[4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]), [label=sample(6), color=forestgreen])])).
 % X = dot(digraph([node([1], [label = 'left(0)\nright(9)\nsearching(60)', fillcolor = '#D7DCF5', style=filled, color=black]), node([3], [label = 'left(5)\nright(7)\nsearching(60)', fillcolor = '#D7DCF5', style=filled, color = '#D7DCF5']), node([2], [label = 'left(5)\nright(9)\nsearching(60)', fillcolor = '#D7DCF5', style=filled, color = '#D7DCF5']), node([4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], [label = 'left(7)\nright(7)\nsearching(60)', fillcolor = '#D7DCF5', style=filled, color = '#D7DCF5']), edge(([1]->[2]), [label=sample(4), color=forestgreen]), edge(([2]->[3]), [label=sample(7), color=forestgreen]), edge(([3]->[4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]), [label=sample(6), color=forestgreen])])).
 
+:- stream_property(X,file_no(2)),set_stream(X,alias(main_error)).
 
 
-:- listing(swish_config:authenticate/2).
-
-:- stream_property(X,file_no(2)),stream_property(X,alias(main_error)).
-
-
-start_swish_and_clio:-
+:- dynamic(did_start_swish_and_clio/0).
+start_swish_and_clio:- did_start_swish_and_clio,!.
+start_swish_and_clio:- asserta(did_start_swish_and_clio),
  % :- cd('/opt/logicmoo_workspace/packs_web/ClioPatria').
    current_prolog_flag(argv,WasArgV),
    current_prolog_flag(os_argv,WasOSArgV),
    
    setup_call_cleanup((set_prolog_flag(argv,[]),set_prolog_flag(os_argv,[swipl])),
-      cp_server:cp_server,
+      cp_server:cp_server([]),
      (set_prolog_flag(argv,WasArgV),set_prolog_flag(os_argv,WasOSArgV))),
-   remote_swish,
-   broadcast(http(post_server_start)).
+   nop(remote_swish),
+   broadcast:broadcast(http(post_server_start)).
 
+:- runtime_boot(start_swish_and_clio).
 
-:- if(\+ prolog_load_context(reload,true)).
-
-%- thread_httpd:http_server(http_dispatch:http_dispatch,[port('0.0.0.0':3020)]).
-%:- remote_swish.
-%:- broadcast(http(post_server_start)).
-:- start_swish_and_clio.
-:- endif.
 
 
 

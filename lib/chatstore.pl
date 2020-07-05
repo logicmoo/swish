@@ -58,7 +58,7 @@
 :- multifile
     swish_config:chat_count_about/2.	% +DocID, -Count
 
-:- dumpST.
+% :- dumpST.
 :- broadcast:listen(http(pre_server_start),
           open_chatstore).
 
