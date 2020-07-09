@@ -64,6 +64,7 @@ server :-
 server(Port) :-
 	broadcast(http(pre_server_start)),
 	http_server(http_dispatch,
-		    [ port(Port)
+		    [ port(Port),
+		      workers(16)
 		    ]),
 	broadcast(http(post_server_start)).
