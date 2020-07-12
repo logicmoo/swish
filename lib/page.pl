@@ -366,10 +366,11 @@ swish_navbar(Options) -->
         &(nbsp), &(nbsp),
         a([id('about')],['About']),
         &(nbsp), &(nbsp),
-        a([href('/help/about.html'),target('_blank')],['About']),
+        a([href('/help/about.html'),target('_blank')],['About.html']),
         &(nbsp), &(nbsp),
-        a([href('http://friguzzi.github.io/cplint/'),target('_blank')],['Help']),
-	a([href('/help/help-trill.html'),target('_blank')],['Help']),
+        a([href('http://friguzzi.github.io/cplint/'),target('_blank')],['cplint Help']),
+        &(nbsp), &(nbsp),
+	a([href('/help/help-trill.html'),target('_blank')],['Trill Help']),
 	&(nbsp), &(nbsp),
 	&(nbsp), &(nbsp),
 	a([href('http://arnaudfadja.github.io/phil/'),target('_blank')],['PHIL-Help']),
@@ -878,12 +879,12 @@ filesystems_res -->
                        var elem = $;
                        var file = navto;
                        if(!navto.includes(":") && !navto.startsWith("/")) {
-                          navto = '/swish/e/opt/logicmoo_workspace/html/ef/'+ navto;
+                          navto = '/swish/filesystem/opt/logicmoo_workspace/html/ef/'+ navto;
                           file = 'opt/logicmoo_workspace/html/ef/'+ file;
                        }
                        if(!navto.endsWith("]")) {
                           // window.document.body.closest(".swish").swish('playURL', {url: navto});
-                             setTimeout(function(e) { $("body").swish('playURLQueued', {url: navto }); },0);  
+                             setTimeout(function(e) { $("body").swish('playURL', {url: navto }); },0);  
                         //  $.fn.swish('playURL', {url: navto, file: file, newTab: true, chat: 'large', noHistory: true, prompt: false});
                        }
                  });
