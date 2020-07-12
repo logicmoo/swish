@@ -34,8 +34,9 @@ a.pengine-logo {
   left:4px;
   width: 42px;
   height: 42px;
-  /*background-image: url("../icons/logo.png");*/
-  background-image: url("../icons/red_bird.svg");
+  /*background-image: url("../icons/logo.png");
+  background-image: url("../icons/red_bird.svg");*/
+  background-image: url("../icons/logicmoo.png");
   background-size: 100%;
 }
 
