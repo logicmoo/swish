@@ -211,6 +211,7 @@ swish_config:config(show_beware,        false).
 swish_config:config(tabled_results,     false).
 swish_config:config(application,        swish).
 
+is_logicmoo :- gethostname(gitlab).
 
 :- if(is_logicmoo).
 swish_config:config(csv_formats,    [rdf, prolog]).

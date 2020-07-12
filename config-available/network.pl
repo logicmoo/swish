@@ -29,7 +29,9 @@ automatically.
 % proxy /my-swish-app to http://machine.running.swish/
 
 :- if(gethostname(gitlab)).
-http:location(root, '/root-swish-mirror', []).
+http:location(root, '/', []).
+http:location(swish, '/swish', []).
+%http:location(root, '/root-swish-mirror', []).
 :- else.
 http:location(root, '/', []).
 http:location(swish, '/swish', []).
