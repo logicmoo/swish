@@ -202,7 +202,38 @@ define(["jquery", "config", "modal"],
 	}
 
 	if ( !done ) {
+
+
+            var id = href.split("#").pop();
+            var target;
+            if ((target = modal.find("#" + id)).length == 1) {
+              done = true;
+              ev.preventDefault();
+              modal.animate({
+                scrollTop: target.position().top
+              }, 2000);
+              if (true) return;
+                        } else {
 	  ev.preventDefault();
+              accept();
+              if (href.startsWith("/swish/")) {
+                $(ev.target).closest(".swish")
+                  .swish('playURL', {
+                    url: href
+                  });
+                return;
+              }
+              if (href.startsWith("/")) {
+                //debugger;
+                href = "/swish" + href;
+                $(ev.target).closest(".swish")
+                  .swish('playURL', {
+                    url: href
+                  });
+                return;
+              }
+            }
+            //debugger;
 	  window.open(href, '_blank');
 	}
       } else if ( a.data("query") ) {
@@ -211,5 +242,18 @@ define(["jquery", "config", "modal"],
     }
   }
 
+    function interceptClickEvent(e) {
+      var target = e.target || e.srcElement;
+      if (target.tagName === 'A') {
+        functions.followLink(e);
+      }
+    }
+
+    //listen for link click events at the document level
+    if (document.addEventListener) {
+      document.addEventListener('click', interceptClickEvent);
+        } else if (document.attachEvent) {
+      document.attachEvent('onclick', interceptClickEvent);
+    }
   return functions;
 });

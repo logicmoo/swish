@@ -238,9 +238,10 @@ swish_provides(Term) :-
 
 swish_has_plugin(Name) :-
     var(Name), !,
+    member(CE,[config_enabled_swish(.),config_enabled(.)]),
     distinct(Dir,
              absolute_file_name(
-                 config_enabled(.),
+                 CE,
                  Dir,
                  [ solutions(all),
                    file_type(directory)
@@ -252,8 +253,9 @@ swish_has_plugin(Name) :-
     file_name_extension(Name, _, File).
 swish_has_plugin(Name) :-
     must_be(atom, Name),
+    member(CE,[config_enabled(Name),config_enabled_swish(Name)]),
     absolute_file_name(
-        config_enabled(Name),
+        CE,
         File,
         [ solutions(all),
           file_type(prolog)

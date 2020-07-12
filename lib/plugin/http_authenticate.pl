@@ -362,6 +362,7 @@ swish_add_user :-
 	    fail
 	).
 
+interrupted(_Sig) :- gethostname(gitlab), !.
 interrupted(_Sig) :-
 	halt(2).
 

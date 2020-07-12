@@ -7,10 +7,19 @@
 }
 
 /* TO REMOVE
+*/
 .type-icon.cpl {
   background-image: url("../icons/cpl.png");
 }
+/*
 */
+.type-icon.json {
+  background-image: url("../icons/json.png");
+}
+
+.type-icon.lpad {
+  background-image: url("../icons/lpad.png");
+}
 
 .type-icon.swinb {
   background-image: url("../icons/swinb.png");

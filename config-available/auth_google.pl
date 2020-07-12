@@ -142,11 +142,11 @@ map_user_info(Dict, Dict) :-
 oauth2:server_attribute(google, url,
                         'https://accounts.google.com').
 oauth2:server_attribute(google, redirect_uri,
-                        'http://localhost:3050/oauth2/google/reply').
+                        'https://logicmoo.org/oauth2/google/reply').
 oauth2:server_attribute(google, client_id,
-                        '****').
+                        '131442651-0b9tbp7n2ihu4or4nj31395n05v1lg2c.apps.googleusercontent.com').
 oauth2:server_attribute(google, client_secret,
-                        '****').
+                        'jykqJiZikgMteL3vq0IhjPDC').
 oauth2:server_attribute(google, scope,
                         profile).
 

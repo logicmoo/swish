@@ -60,7 +60,7 @@ http://localhost:3050/
 %    interface.
 
 server :-
-	server(localhost:3050).
+	server('0.0.0.0':3050).
 server(Port) :-
 	broadcast(http(pre_server_start)),
 	http_server(http_dispatch,

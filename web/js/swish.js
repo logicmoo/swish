@@ -44,10 +44,12 @@
  */
 
 require.config({
-  urlArgs: "ts="+new Date().getTime(),	/* prevent caching during development */
-  waitSeconds: 60,			/* swish-min.js is big */
-  paths:
-  { jquery:      "../node_modules/jquery/dist/jquery.min",
+  urlArgs: "ts=" + new Date().getTime(),
+  /* prevent caching during development */
+  waitSeconds: 60,
+  /* swish-min.js is big */
+  paths: {
+    jquery: "../node_modules/jquery/dist/jquery.min",
     "jquery-ui": "../node_modules/jquery-ui/jquery-ui.min",
     laconic:     "../node_modules/laconic/laconic",
     bootstrap:   "../node_modules/bootstrap/dist/js/bootstrap.min",
@@ -70,29 +72,29 @@ require.config({
     "cm/addon/hint/show-context-info": "codemirror/addon/hint/show-context-info",
 
 					/* Standard CodeMirror */
-    "cm" : "../node_modules/codemirror"
+    "cm": "../node_modules/codemirror"
   },
-  shim:
-  { bootstrap:
-    { deps:["jquery"]
+  shim: {
+    bootstrap: {
+      deps: ["jquery"]
     },
-    typeahead: /* HACK: See https://github.com/twitter/typeahead.js/issues/1211 */
-    { deps:["jquery"],
-      init: function ($) {
+    typeahead: /* HACK: See https://github.com/twitter/typeahead.js/issues/1211 */ {
+      deps: ["jquery"],
+      init: function($) {
 	return require.s.contexts._.registry['typeahead.js'].factory($);
       }
     },
-    bloodhound:
-    { deps:["jquery"]
+    bloodhound: {
+      deps: ["jquery"]
     },
-    splitter:
-    { deps:["jquery"]
+    splitter: {
+      deps: ["jquery"]
     },
-    laconic:
-    { deps:["jquery"]
+    laconic: {
+      deps: ["jquery"]
     },
-    tagmanager:
-    { deps:["jquery"]
+    tagmanager: {
+      deps: ["jquery"]
     },
   }
 }); //require.config
@@ -107,12 +109,11 @@ require(["jquery", "config", "jswish", "plugin"],
 	function($, config, swish, plugin) {
   var deps = plugin.load();
 
-  deps.push(config.http.locations.pengines+"/pengines.js");
+    deps.push(config.http.locations.pengines + "/pengines.js");
 
   require(deps, function() {
     $(function() {
-      $("body").swish(config.swish||{});
+        $("body").swish(config.swish || {});
     });
   });
-});
-
+  });

@@ -7,47 +7,54 @@
 <!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
 
 <url>
-  <loc></loc>
+  <loc>/</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>index.html</loc>
+  <loc>/index.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>help/about.html</loc>
+  <loc>/help/about.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>help/help-cplint.html</loc>
+  <loc>/help/help-cplint.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>help/help-trill.html</loc>
+  <loc>/help/help.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>help/help.html</loc>
+  <loc>/help/runner.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>help/runner.html</loc>
+  <loc>/help/beware.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>help/beware.html</loc>
+  <loc>/help/background.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>help/background.html</loc>
+  <loc>/help/caveats.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>help/caveats.html</loc>
+  <loc>/help/query.html</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>
-  <loc>help/query.html</loc>
+  <loc>/example/inference/inference_examples.swinb</loc>
+</url>
+<url>
+  <loc>/example/inference/coin.cpl</loc>
+  <changefreq>weekly</changefreq>
+</url>
+<url>
+  <loc>/example/inference/coin.pl</loc>
   <changefreq>weekly</changefreq>
 </url>
 <url>

@@ -55,6 +55,9 @@
 :- use_module(lib/swish_csv).
 :- use_module(lib/examples).
 :- use_module(lib/profiles).
+:- if(exists_source(lib/filesystems)).
+:- use_module(lib/filesystems).
+:- endif.
 :- use_module(lib/highlight).
 :- use_module(lib/markdown).
 :- use_module(lib/chat, []).
@@ -207,8 +210,43 @@ term_expansion(swish_config:config(Config, _Value), []) :-
 swish_config:config(show_beware,        false).
 swish_config:config(tabled_results,     false).
 swish_config:config(application,        swish).
+
+
+:- if(is_logicmoo).
+swish_config:config(csv_formats,    [rdf, prolog]).
+:- else.
 swish_config:config(csv_formats,        [prolog]).
+:- endif.
+
+
+% Allows users to extend the Examples menu by ticking the Example
+% checkbox.
 swish_config:config(community_examples, true).
+
+% Include elFinder server explorer
+swish_config:config(filesystem_browser,   true).
+% Use ace-editor to edit unknown file types (like .kif files)
+swish_config:config(edit_any,   true).
+set_swish_path :-
+	absolute_file_name(swish('swish.pl'), _,
+			   [file_errors(fail), access(read)]), !.
+
+% Make this a swish(..) root?
+set_swish_path :-
+	prolog_load_context(directory, Dir),
+	asserta(user:file_search_path(swish, Dir)).
+
+:- set_swish_path.
+
+http:location(swish, root(.), [priority(-100)]).
+
+:- if(exists_source(rdfql(sparql_csv_result))).
+:- use_module(rdfql(sparql_csv_result)).
+:- endif.
+
+
+
+
 swish_config:config(public_access,      false).
 swish_config:config(include_alias,	example).
 swish_config:config(ping,		2).
@@ -218,7 +256,12 @@ swish_config:config(notebook,		_{ eval_script: true,
 swish_config:config(fullscreen,		_{ hide_navbar: true
 					 }).
 swish_config:config(chat,		true).
+:- if(is_logicmoo).
+swish_config:config(chat_spam_protection, false).
+:- else.
 swish_config:config(chat_spam_protection, true).
+:- endif.
+
 swish_config:config(default_query,	'').
 
 %%	swish_config:source_alias(Alias, Options) is nondet.
@@ -262,6 +305,17 @@ swish_config:config(default_query,	'').
 
 pengines:prepare_module(Module, swish, _Options) :-
 	pengines_io:pengine_bind_io_to_html(Module).
+	
+
+pengines:prepare_module(Module, swish, Options2) :-
+    is_logicmoo,
+	Options=[swish_module(Module)|Options2],
+	asserta(Module:swish_options(Options)),
+	stream_property(X,file_no(2)),
+	forall(member(Info,Options),format(X,'~N~p~n',[Info])),
+	member(src_text(Src),Options),
+	format(X,'~N~w~n',[Src]).
+		
 %:- set_setting(swish:time_limit, 3600).
 % Additional sandboxing rules.
 :- use_module(lib/flags).
@@ -303,6 +357,34 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(library(auc)).
 :- use_module(library(matrix)).
 
+:- use_module(library(cplint_r)).
+:- multifile sandbox:safe_primitive/1.
+:- if(exists_source(swish(lib/render/html))).
+% Dmiles - fav render (only works if unsandboxed)
+:- use_module(swish(lib/render/html),	  []).
+:-endif.
+:- if(is_logicmoo).
+:- use_module(swish:library(semweb/rdf_db)).
+:- use_module(swish:library(semweb/rdfs)).
+% :- use_module(swish:library(semweb/rdf_optimise)).
+:- use_module(swish:library(semweb/rdf_litindex)).
+:- use_module(swish:lib/r_swish).
+:- use_module(library(r/r_sandbox)).
+:- endif.
+:- if(exists_source(library(semweb/rdf11))).
+ :- use_module(library(semweb/rdf11), []).
+:- endif.
+:- if(exists_source(library(must_trace))).
+%:- use_module(library(must_trace)).
+:- endif.
+:- if(exists_source(library(pfc_lib))).
+% :- use_module(library(pfc_lib)).
+:- endif.
+:- if(exists_source(library(logicmoo_user))).
+% :- use_module(library(logicmoo_user)).
+:- endif.
+sandbox:safe_primitive(nf_r:{_}).
+:- use_module(library(logicmoo_swish)).
 
 :- if(exists_source(library(trill))).
  :- use_module(library(trill)).

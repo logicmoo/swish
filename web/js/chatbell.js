@@ -86,6 +86,13 @@ define([ "jquery", "form", "modal", "config", "preferences",
      */
     chats: function(chats) {
       var data = this.data(pluginName);
+
+          if (data == undefined) {
+            data = $.extend({}, {}); /* private data */
+            data.docid = $(this).data('document');
+            $(this).data(pluginName, data); /* store with element */
+          }
+
       var span = this.find(".chat-bell-count");
       var elem = this;
 
@@ -154,7 +161,13 @@ define([ "jquery", "form", "modal", "config", "preferences",
     update: function(chats) {
       var data = this.data(pluginName);
 
-      chats = chats||{};
+      if (data == undefined) {
+            data = $.extend({}, {}); /* private data */
+            data.docid = $(this).data('document');
+            $(this).data(pluginName, data); /* store with element */
+          }
+
+          chats = chats||{};
 
       if ( chats.total != undefined &&
 	   chats.count != undefined ) {

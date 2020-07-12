@@ -773,6 +773,8 @@ install_exception_hook :-
 	sandbox:safe_primitive/1,
 	sandbox:safe_meta_predicate/1.
 
+sandbox:safe_primitive(system:b_setval(_,_)).
+
 sandbox:safe_primitive(system:trace).
 sandbox:safe_primitive(system:notrace).
 sandbox:safe_primitive(system:tracing).

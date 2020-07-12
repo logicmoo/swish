@@ -809,7 +809,8 @@ include_swish_js -->
 	rjs_timeout(JS),
 	html(script([ src(SwishRJS),
 		      'data-main'(SwishJS)
-		    ], [])).
+		    ], [])),
+		    filesystems_res.
 
 rjs_timeout('swish-min') --> !,
 	js_script({|javascript||
@@ -833,15 +834,64 @@ swish_resource(Type, ID) :-
 	;   absolute_file_name(File, _P, [file_errors(fail), access(read)])
 	), !.
 
+may_use_min:- fail, \+ debugging(nominified).
+
 alt(js,  'swish-min',     swish_web('js/swish-min.js')) :-
-	\+ debugging(nominified).
+	may_use_min.
 alt(js,  'swish',         swish_web('js/swish.js')).
 alt(css, 'swish-min.css', swish_web('css/swish-min.css')) :-
-	\+ debugging(nominified).
+	may_use_min.
 alt(css, 'swish.css',     swish_web('css/swish.css')).
 alt(rjs, 'js/require.js', swish_web('js/require.js')) :-
-	\+ debugging(nominified).
+	may_use_min.
 alt(rjs, 'node_modules/requirejs/require.js', -).
+filesystems_res -->
+     html({|html||       
+
+      <script src="/node_modules/monaco-editor/min/vs/loader.js"></script>
+      <script src="/node_modules/ace/build/src/ace.js" data-ace-base="/node_modules/ace/build/src" type="text/javascript" charset="utf-8"></script>      
+      <script src="/node_modules/ace/build/src/keybinding-vim.js"></script>
+      <script src="/node_modules/ace/build/src/keybinding-emacs.js"></script>
+      <script src="/node_modules/ace/build/src/keybinding-vscode.js"></script>
+    
+
+      <script>
+        //This function is called once the DOM is ready.. 
+	window.addEventListener("DOMContentLoaded", 
+	  function(){
+                  function bindEvent(element, eventName, eventHandler) {
+                    if (element.addEventListener){
+                       // addEventListener support for IE8
+                      element.addEventListener(eventName, eventHandler, false);
+                    } else if (element.attachEvent) {
+                      element.attachEvent('on' + eventName, eventHandler);
+                    }
+                  }
+                  // Listen to message from child window
+
+                  bindEvent(window, 'edit', function (e) { alert("edit: " + e.data); });
+
+                  // Listen to message from child window
+                  bindEvent(window, 'message', function (e) {
+                       // results.innerHTML = e.data;                         
+                       var navto = ""+e.data;
+                       var elem = $;
+                       var file = navto;
+                       if(!navto.includes(":") && !navto.startsWith("/")) {
+                          navto = '/swish/e/opt/logicmoo_workspace/html/ef/'+ navto;
+                          file = 'opt/logicmoo_workspace/html/ef/'+ file;
+                       }
+                       if(!navto.endsWith("]")) {
+                          // window.document.body.closest(".swish").swish('playURL', {url: navto});
+                             setTimeout(function(e) { $("body").swish('playURLQueued', {url: navto }); },0);  
+                        //  $.fn.swish('playURL', {url: navto, file: file, newTab: true, chat: 'large', noHistory: true, prompt: false});
+                       }
+                 });
+                });      
+       </script>
+     |}),!.
+
+
 
 
 		 /*******************************

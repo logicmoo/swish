@@ -43,7 +43,7 @@
 :- use_module(library(http/http_path)).
 :- use_module(library(filesex)).
 :- use_module(library(apply)).
-:- use_module(library(option)).
+:- swish_examples:use_module(library(option)).
 :- use_module(library(lists)).
 :- if(exists_source(library(atom))).
 :- use_module(library(atom)).
@@ -51,6 +51,7 @@
 
 :- use_module(storage).
 :- use_module(md_eval).
+
 
 /** <module> Serve example files
 
@@ -73,29 +74,76 @@ overview notebooks.
 	swish_config:source_alias/2.
 
 % make example(File) find the example data
-user:file_search_path(example, swish(examples)).
-user:file_search_path(example, swish(examples/trill)).
-user:file_search_path(example, swish(examples/inference)).
-user:file_search_path(example, swish(examples/learning)).
-user:file_search_path(example, swish(examples/lemur)).
-user:file_search_path(example, swish(examples/phil)).
-user:file_search_path(example, swish(examples/aleph)).
+ufsp((examples)).
+ufsp((examples/inference)).
+ufsp((examples/learning)).
+ufsp((examples/lemur)).
+ufsp((examples/phil)).
+ufsp((examples/aleph)).
 
-user:file_search_path(e, swish(examples)).
-user:file_search_path(e, swish(examples/trill)).
-user:file_search_path(e, swish(examples/inference)).
-user:file_search_path(e, swish(examples/learning)).
-user:file_search_path(e, swish(examples/lemur)).
-user:file_search_path(e, swish(examples/phil)).
-user:file_search_path(e, swish(examples/aleph)).
+ufsp((examples/trill)).
+
+ufsp((examples/lps_corner)).
+ufsp((examples/lps_corner/'CLOUT_workshop')).
+ufsp((examples/lps_corner/'forTesting')).
+ufsp((examples/lps_corner/'survival_game')).
+ufsp((examples/logicmoo)).
+ufsp((examples/logtalk)).
+ufsp((examples/pfc)).
+ufsp((examples/prologmud)).
+
+user:file_search_path(e, swish(UFSP)):- ufsp(UFSP).
+user:file_search_path(example, swish(UFSP)):- ufsp(UFSP).
+
+
+
+:- http_handler(swish(list_extended_examples/Example),
+		list_extended_example(Method, Example),
+                [ method(Method),
+                  methods([get,post,put]),
+                  id(swish_group_extended_examples)]).
+
+list_extended_example(_GetPostPut, Example, _Request) :-
+    http_absolute_location(swish('e/'), HREF, []),
+	atom_concat('/opt/logicmoo_workspace/packs_web/swish/examples/',Example,Dir),
+        dir_to_pattern(Dir,Pattern),
+	expand_file_name(Pattern, Files),
+	maplist(ex_file_json(HREF), Files, Menu),
+	reply_json(Menu).
+
+dir_to_pattern(Dir,Pattern):- sub_string(Dir, _, _, _, "*"),!,Dir=Pattern.
+dir_to_pattern(Dir,Pattern):- string_concat(Dir, "/*.{pl,swinb,*}", Pattern).
+	
+:- http_handler(swish(list_extended_examples),
+		list_extended_examples, [id(swish_extended_examples)]).
+% :- http_handler(swish(list_extended_examples), list_extended_examples, [id(swish_extended_examples_from_root)]).
+
+list_extended_examples(_Request) :-
+     examples(AllExamples, [community(true)]),
+     example_menu(AllExamples, Menu),
+     reply_json(Menu).
+
 
 
 % make SWISH serve /example/File as example(File).
-swish_config:source_alias(example, [access(read), search('*.{pl,swinb}')]).
-swish_config:source_alias(e, [access(read), search('*.{pl,swinb}')]).
+%swish_config:source_alias(example, [access(read), search('*.{pl,swinb}')]).
+%swish_config:source_alias(e, [access(read), search('*.{pl,swinb}')]).
+swish_config:source_alias(e, [access(both),search('*')]).
+swish_config:source_alias(example, [access(both),search('*')]).
+
+
+swish_config:source_alias(example, [access(read), search(What)]):-
+  (swish_config:config(edit_any,   true)) 
+    ->   What = '*.*' ;   What = '*.{pl,swinb}'.
+
+%swish_config:source_alias(example, [access(read), search('*/*.*')]):- swish_config:config(edit_any,   true).
+%swish_config:source_alias(example, [access(read), search('*/*/*.*')]):- swish_config:config(edit_any,   true).
+%swish_config:source_alias(example, [access(read), search('*/*/*/*.*')]):- swish_config:config(edit_any,   true).
 
 :- http_handler(swish(list_examples),
 		list_examples, [id(swish_examples)]).
+:- http_handler(root(list_examples),
+		list_examples, [id(swish_examples_from_root)]).
 
 
 %%	list_examples(+Request)
@@ -104,7 +152,14 @@ swish_config:source_alias(e, [access(read), search('*.{pl,swinb}')]).
 %	a file swish_examples('index.json').
 
 list_examples(_Request) :-
-	examples(AllExamples, [community(true)]),
+    directory_index_json(swish(examples), JSON0),
+	http_absolute_location(swish(example), HREF, []),
+	add_examples_href(HREF, JSON0, JSON),
+	Menu = JSON.get(files),
+	reply_json(Menu).
+
+list_examples(_Request) :-
+    examples(AllExamples, [community(false),extra_files(false)]),
 	example_menu(AllExamples, Menu),
 	reply_json(Menu).
 
@@ -139,28 +194,34 @@ insert_group_dividers([H], [H]).
 %	  - group:String
 
 examples(AllExamples, Options) :-
-	swish_examples(SWISHExamples),
+	swish_examples(SWISHExamples, Options),
 	(   option(community(true), Options)
 	->  community_examples(CommunityEx)
-	;   CommunityEx = json{}
+	;   no_examples(CommunityEx)
 	),
 	join_examples([CommunityEx|SWISHExamples], AllExamples).
 
 :- dynamic
 	swish_example_cache/2.
 
-swish_examples(SWISHExamples) :-
+no_examples(json{}).
+
+swish_examples(SWISHExamples, Options) :-
+        option(extra_files(false), Options),!, no_examples(SWISHExamples).
+swish_examples(SWISHExamples,_Options) :-
 	swish_example_cache(SWISHExamples, Time),
 	get_time(Now),
 	Now - Time < 60,
 	!.
-swish_examples(SWISHExamples) :-
-	swish_examples_no_cache(SWISHExamples),
+swish_examples(SWISHExamples, Options) :-
+	swish_examples_no_cache(SWISHExamples, Options),
 	get_time(Now),
 	retractall(swish_example_cache(_,_)),
 	assertz(swish_example_cache(SWISHExamples, Now)).
 
-swish_examples_no_cache(SWISHExamples) :-
+swish_examples_no_cache(SWISHExamples, Options) :-
+        option(extra_files(false), Options),!, no_examples(SWISHExamples).
+swish_examples_no_cache(SWISHExamples,_Options) :-
 	http_absolute_location(swish(example), HREF, []),
 	findall(Index,
 		absolute_file_name(example(.), Index,
@@ -173,7 +234,8 @@ swish_examples_no_cache(SWISHExamples) :-
 	maplist(index_json(HREF), ExDirs, SWISHExamples).
 
 
-join_examples(PerDir, Files) :-
+join_examples(PerDirV, Files) :-
+        flatten(PerDirV,PerDir),
 	menu_groups(PerDir, Groups),
 	maplist(get_or(files, []), PerDir, FilesPerDir),
 	append(FilesPerDir, Files0),
@@ -211,18 +273,32 @@ get_or(Key, Default, Dict, Value) :-
 %	examples that are not included in   the menu. If no `index.json`
 %	is present, all files are added as example files.
 
-index_json(HREF, Dir, JSON) :-
-	directory_file_path(Dir, 'index.json', File),
+directory_index_json(Dir, JSON) :- 
+    absolute_file_name(Dir, Path),!,
+	directory_file_path(Path, 'index.json', File),
 	access_file(File, read), !,
-	read_file_to_json(File, JSON0),
+	read_file_to_json(File, JSON).
+
+index_json(HREF, Dir, JSON) :-
+	directory_index_json(Dir, JSON0),
 	add_examples_href(HREF, JSON0, JSON1),
 	add_other_files(HREF, Dir, JSON1, JSON).
+
+index_json(HREF, Dir, json{menu:[json{group:Group, rank:10000}],
+			   files:Files}) :- 
+	example_files(HREF, Dir, Files0),
+    file_base_name(Dir, Base),
+    format(atom(Group),'~w',[Base]),
+	maplist(add_group(Group), Files0, Files).
+	
+	
 index_json(HREF, Dir, json{menu:[json{group:examples, rank:10000}],
 			   files:Files}) :-
 	example_files(HREF, Dir, Files0),
 	maplist(add_group(examples), Files0, Files).
 
-example_files(HREF, Dir, JSON) :-
+example_files(HREF, LDir, JSON) :-
+   absolute_file_name(LDir, Dir, [access(read), file_errors(fail), file_type(directory)]),
 	string_concat(Dir, "/*.{pl,swinb}", Pattern),
 	expand_file_name(Pattern, Files),
 	maplist(ex_file_json(HREF), Files, JSON).
@@ -239,22 +315,27 @@ read_file_to_json(File, JSON) :-
 %	that are not dicts or have no `file` key.
 
 add_examples_href(HREF, JSON0, JSON) :-
+    is_dict(JSON0),
 	Files0 = JSON0.get(files), !,
-	convlist(add_href(HREF), Files0, Files),
+	add_examples_href(HREF, Files0, Files),
 	JSON = JSON0.put(files, Files).
-add_examples_href(_, JSON, JSON).
 
+add_examples_href(HREF, Files0, Files):-
+    convlist(add_href(HREF), Files0, Files).
 
 add_href(HREF0, Dict, Dict2) :-
 	is_dict(Dict),
+	( \+ (_ = Dict.get(href))),	
 	directory_file_path(HREF0, Dict.get(file), HREF),
 	Dict2 = Dict.put(href, HREF).
+add_href(_, Dict, Dict).
 
 add_group(Group, Dict0, Dict) :-
 	is_dict(Dict0), !,
 	Dict = Dict0.put(group, Group).
 add_group(_, Dict, Dict).
 
+% add_other_files(_HREF, _Dir, JSON, JSON):-!.
 add_other_files(HREF, Dir, JSON0, JSON) :-
 	example_files(HREF, Dir, Files),
 	get_or(files, [], JSON0, Files0),
@@ -271,14 +352,36 @@ in_ex_list(Examples, Ex) :-
 
 %%	ex_file_json(+ExampleBase, +Path, -JSON) is det.
 %
+%	@tbd	Beautify title from file-name (_ --> space, start
+%		with capital, etc).
+%
 %	Create a JSON representation for the given example file.
 
-ex_file_json(HREF0, Path, json{file:File, href:HREF, title:Title}) :-
+ex_file_json(HREF0, Path, json{file:File, href:HREF, title:Title, group:Group}) :-
 	file_base_name(Path, File),
 	file_name_extension(Base, _, File),
 	file_name_to_title(Base, Title),
+	file_group(File,OneDir), format(atom(Group),'~w',[OneDir]),
 	directory_file_path(HREF0, File, HREF).
 
+file_group(File,Group):-
+  absolute_file_name(example(File), AFN, 
+				   [ access(read),
+				     file_errors(fail)
+				   ]),
+   file_directory_name(AFN,FullDir),
+   file_base_name(FullDir,Group), !.				     
+file_group(File,OneDir):- 
+  file_directory_name(File,FullDir),file_base_name(FullDir,OneDir), !.
+file_group(_,extras).
+
+
+file_name_to_title(Path, Title):- atom(Path), sub_string(Path, _, _, _, '/'),
+	file_base_name(Path, File), !,
+        file_name_to_title(File, Title).
+file_name_to_title(Path, Title):- atom(Path), sub_string(Path, _, _, _, '.'),
+	file_name_extension(File, _, Path), !,
+        file_name_to_title(File, Title).
 :- if(current_predicate(restyle_identifier/3)).
 file_name_to_title(Base, Title) :-
 	restyle_identifier(style(true,false,' '), Base, Title).
@@ -326,6 +429,11 @@ active_example(Example, Example).
 cond_reason(plugin(Name), 'missing plugin: ~w', [Name]).
 
 
+:- asserta(cp_menu:menu_item(Loc,Title):- example_menu_item(Loc,Title)).
+
+example_menu_item(901=swish/swish+class(login), 'Example KB').
+
+:- use_module(filesystems).
 
 		 /*******************************
 		 *	      STORAGE		*

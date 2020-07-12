@@ -96,7 +96,7 @@ this module:
 oauth2:server_attribute(stackexchange, url,
                         'https://stackexchange.com').
 oauth2:server_attribute(stackexchange, redirect_uri,
-                        'http://localhost:3050/oauth2/stackexchange/reply').
+                        'https://logicmoo.org/oauth2/stackexchange/reply').
 oauth2:server_attribute(stackexchange, authorization_endpoint,
                         '/oauth').
 oauth2:server_attribute(stackexchange, token_endpoint,
@@ -104,11 +104,11 @@ oauth2:server_attribute(stackexchange, token_endpoint,
 oauth2:server_attribute(stackexchange, api_endpoint,
                         'https://api.stackexchange.com').
 oauth2:server_attribute(stackexchange, client_id,
-                        '****').
+                        '9966').
 oauth2:server_attribute(stackexchange, client_secret,
-                        '****').
+                        'YRRNF4YVj8Tz7T*it8VnYQ((').
 oauth2:server_attribute(stackexchange, key,
-                        '****').
+                        ')1ck0jHtwdKpvfKcrtSB8w((').
 oauth2:server_attribute(stackexchange, site,
                         'stackoverflow').
 oauth2:server_attribute(stackexchange, scope,

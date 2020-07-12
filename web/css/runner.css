@@ -29,6 +29,13 @@ div.prolog-runner.tabled {
   border: 0px;
 }
 
+div.prolog-runner > a.close {
+  position: absolute;
+  top: -4px;
+  right: -10px;
+  z-index: 10;
+}
+
 div.prolog-runner > div.runner-title.runner-button-group {
   color: #fff;
   background: #000;
@@ -66,13 +73,17 @@ div.prolog-runner:focus {
 div.prolog-runner.iconic > div.runner-results { display: none; }
 
 div.runner-title {
-  padding: 0px 5px 0px;
+  padding: 0px 5px 1px;
   border: 2px solid #333;
   border-radius: 5px;
   box-sizing: border-box;
 }
 
 div.prolog-runner:focus div.panel-heading {
+  border: 2px solid #000;
+}
+
+div.prolog-runner:focus div.runner-title {
   border: 2px solid #000;
 }
 

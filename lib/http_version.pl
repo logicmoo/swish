@@ -107,7 +107,8 @@ user:message_hook(make(done(_)), _, _) :-
     retractall(change_cache(_,_,_)),
     fail.
 
-changes(Request) :-
+changes(Request) :- catch(changes_r(Request),_,reply_json_dict([])).
+changes_r(Request) :-
     http_parameters(Request,
                     [ commit(Commit, [default(last)]),
                       show(Show, [oneof([tagged, all]), default(tagged)])

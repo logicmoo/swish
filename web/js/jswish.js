@@ -72,11 +72,13 @@ define([ "jquery",
 	 "svg-pan-zoom"
        ], function($, config, preferences, history, modal) {
 
-preferences.setDefault("semantic-highlighting", true);
-preferences.setDefault("emacs-keybinding", false);
-preferences.setDefault("new-tab", true);
-preferences.setDefault("preserve-state", true);
-preferences.setInform("preserve-state", ".unloadable");
+  preferences.setDefault("semantic-highlighting", true);
+  preferences.setDefault("emacs-keybinding", false);
+  preferences.setDefault("new-tab", true);
+  preferences.setDefault("ace-editor", false);
+  preferences.setDefault("monaco-editor", false);
+  preferences.setDefault("preserve-state", true);
+  preferences.setInform("preserve-state", ".unloadable");
 
 (function($) {
   var pluginName = 'swish';
@@ -116,6 +118,15 @@ preferences.setInform("preserve-state", ".unloadable");
 		      glyph("eye-open", function() {
 	  menuBroadcast("follow-file");
 	}) : undefined,
+  "Chat ...": icon("chat", function() {
+    menuBroadcast("chat-about-file");
+  }),
+  "Chat help room ...": icon("chathelp", function() {
+    $("body").swish('playFile', {
+      file: "Help.swinb",
+      chat: 'large'
+    });
+  }),
 	"Start TogetherJS ...": icon("togetherjs", function() {
 	  $("body").swish('collaborate');
 	}),
@@ -155,6 +166,17 @@ preferences.setInform("preserve-state", ".unloadable");
 	  type: "checkbox",
 	  value: "false"
 	},
+          "Use ACE for unknown Files": {
+            preference: "ace-editor",
+            type: "checkbox",
+            value: "false"
+          },
+          "Use Monaco for some Files": {
+            preference: "monaco-editor",
+            type: "checkbox",
+            value: "false"
+          },
+
 	"Open document in new tab": {
 	  preference: "new-tab",
 	  type: "checkbox",
@@ -169,8 +191,103 @@ preferences.setInform("preserve-state", ".unloadable");
       "Examples": function(navbar, dropdown) {
 	$("body").swish('populateExamples', navbar, dropdown);
       },
+
+        "CPLINT": function(navbar, dropdown) {
+          $("body").swish('populateExtendedExamples', navbar, dropdown,
+            config.http.locations.swish_extended_examples + "/learning");
+        },
+
+        "CPLINT-I": function(navbar, dropdown) {
+          $("body").swish('populateExtendedExamples', navbar, dropdown,
+            config.http.locations.swish_extended_examples + "/inference/*.swinb");
+        },
+        "CPLINT-IP": function(navbar, dropdown) {
+          $("body").swish('populateExtendedExamples', navbar, dropdown,
+            config.http.locations.swish_extended_examples + "/inference/*pl");
+        },
+
+        "Logicmoo": function(navbar, dropdown) {
+          $("body").swish('populateExtendedExamples', navbar, dropdown,
+            config.http.locations.swish_extended_examples + "/logicmoo");
+        },
+
+        "PFC": function(navbar, dropdown) {
+          $("body").swish('populateExtendedExamples', navbar, dropdown,
+            config.http.locations.swish_extended_examples + "/pfc");
+        },
+
+        "PrologMUD": function(navbar, dropdown) {
+          $("body").swish('populateExtendedExamples', navbar, dropdown,
+            config.http.locations.swish_extended_examples + "/prologmud");
+        },
+
+        "Trill": function(navbar, dropdown) {
+          $("body").swish('populateExtendedExamples', navbar, dropdown,
+            config.http.locations.swish_extended_examples + "/trill");
+        },
+
+        "Aleph": function(navbar, dropdown) {
+          $("body").swish('populateExtendedExamples', navbar, dropdown,
+            config.http.locations.swish_extended_examples + "/aleph");
+        },
+
+        "Phil": function(navbar, dropdown) {
+          $("body").swish('populateExtendedExamples', navbar, dropdown,
+            config.http.locations.swish_extended_examples + "/phil");
+        },
+
+        "LPS": function(navbar, dropdown) {
+          $("body").swish('populateExtendedExamples', navbar, dropdown,
+            config.http.locations.swish_extended_examples + "/lps_corner");
+        },
+
+        "LPS Survival": function(navbar, dropdown) {
+          $("body").swish('populateExtendedExamples', navbar, dropdown,
+            config.http.locations.swish_extended_examples + "/lps_corner/survival_game");
+        },
+
+        //     "LPS Testing": function(navbar, dropdown) {
+        //     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+        //     config.http.locations.swish_extended_examples+"/lps_corner/forTesting");      },      
+
+        //     "LPS CLOUT": function(navbar, dropdown) {
+        //     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+        //     config.http.locations.swish_extended_examples+"/lps_corner/CLOUT_workshop");      },      
+
+        "Top NB": function(navbar, dropdown) {
+          $("body").swish('populateExtendedExamples', navbar, dropdown,
+            config.http.locations.swish_extended_examples + "/*.swinb");
+        },
+
+
+        //     "Extended Examples": function(navbar, dropdown) {
+        //     $("body").swish('populateExtendedExamples', navbar, dropdown, 
+        //     config.http.locations.swish_extended_examples);      },      
+
       "Help": function(navbar, dropdown) {
 	$("body").swish('populateHelp', navbar, dropdown);
+        },
+        "Extensions Menu": {
+          "Help on cplint...": function() {
+            menuBroadcast("help", {
+              file: "help-cplint.html"
+            });
+          },
+          "Pldoc on cplint...": function() {
+            var win = window.open("http://cplint.lamping.unife.it/pldoc/doc/home/trill/lib/swipl/pack/cplint/prolog/", '_blank');
+            win.focus();
+          },
+          "Help on aleph...": function() {
+            menuBroadcast("help", {
+              file: "help-aleph.html"
+            });
+          },
+          "PLP Tutorial": function() {
+            var win = window.open("http://ds.ing.unife.it/~gcota/plptutorial/", '_blank');
+            win.focus();
+            //console.log("click on tutorial");
+            //methods.playURL.call($("body"), {url:"/tutorial/tutorial.swinb"});
+          },
       }
     }
   }; // defaults;
@@ -506,24 +623,131 @@ preferences.setInform("preserve-state", ".unloadable");
 	     $("#navbar").navbar('clearDropdown', dropdown);
 	     that.swish('populateExamples', navbar, dropdown);
 	   });
-      $.ajax(config.http.locations.swish_examples,
-	     { dataType: "json",
+        $.ajax(config.http.locations.swish_examples, {
+          dataType: "json",
+          success: function(data) {
+            for (var i = 0; i < data.length; i++) {
+              var ex = data[i];
+              var title;
+              var options;
+              if (ex == "--" || ex.type == "divider") {
+                title = "--";
+                options = "--";
+              }
+              else {
+                var name = ex.file || ex.href;
+                if (!name) {
+                  continue;
+                  title = ex;
+                  options.typeIcon = name.split('.').pop();
+                  options = that.swish('populateExtendedHelp', navbar, dropdown);
+                  $("#navbar").navbar('extendDropdown', dropdown,
+                    title, options);
+
+                  continue;
+                }
+                else {
+                  title = ex.title;
+                  options = that.swish('openExampleFunction', ex);
+                  if (name)
+                    options.typeIcon = name.split('.').pop();
+                }
+              }
+
+              $("#navbar").navbar('extendDropdown', dropdown,
+                title, options);
+            }
+          },
+          error: function(jqXHR22) {
+            modal.ajaxError(jqXHR22);
+          }
+        });
+        return this;
+      },
+
+
+      /**
+       * populateExtendedExamples
+       */
+      populateExtendedExamples: function(navbar, dropdown, where) {
+        var that = this;
+        $.ajax(where, {
+          dataType: "json",
 	       success: function(data) {
-		 for(var i=0; i<data.length; i++) {
+            for (var i = 0; i < data.length; i++) {
 		   var ex = data[i];
 		   var title;
 		   var options;
 
-		   if ( ex == "--" || ex.type == "divider" ) {
+              if (ex == "--" || ex.type == "divider") {
 		     title = "--";
 		     options = "--";
-		   } else {
+              }
+              else {
 		     var name = ex.file || ex.href;
+                if (!name) {
+
+                  title = ex;
+                  continue;
+                  /*
+                  options = that.swish('populateExamples', navbar, dropdown);
+                  $("#navbar").navbar('extendDropdown', dropdown,
+                      title, options);
+                  continue;
+                  */
+                }
+                else {
 		     title = ex.title;
 		     options = that.swish('openExampleFunction', ex);
-		     if ( name )
+                  if (name)
 		       options.typeIcon = name.split('.').pop();
 		   }
+              }
+              $("#navbar").navbar('extendDropdown', dropdown,
+                title, options);
+
+
+            }
+          },
+          error: function(jqXHR1) {
+            modal.ajaxError(jqXHR1);
+          }
+        });
+        return this;
+      },
+
+
+      /**
+       * Extended Help
+       */
+      populateExtendedHelp: function(navbar, dropdown) {
+        var that = this;
+
+        function openHelpFunction(help) {
+          return function() {
+            menuBroadcast("help", {
+              file: help.file
+            });
+          };
+        }
+
+        $.ajax(config.http.locations.swish_extended_help_index, {
+          dataType: "json",
+          success: function(data) {
+            for (var i = 0; i < data.length; i++) {
+              var help = data[i];
+              var title;
+              var options;
+
+              if (help == "--" || help.type == "divider") {
+                title = "--";
+                options = "--";
+              }
+              else {
+                var name = help.file;
+                title = help.title;
+                options = openHelpFunction(help);
+              }
 
 		   $("#navbar").navbar('extendDropdown', dropdown,
 				       title, options);
@@ -794,11 +1018,30 @@ preferences.setInform("preserve-state", ".unloadable");
    */
   function swishLogo() {
     $(".swish-logo")
-      .append($.el.b($.el.span({style:"color:maroon"}, "cplint on "),
-      .append($.el.b($.el.span({style:"color:darkblue"}, "TRILL "),
-                     $.el.span({style:"color:maroon"}, "on "),
-      		     $.el.span({style:"color:darkblue"}, "SWI"),
-		     $.el.span({style:"color:maroon"}, "SH")))
+        .append($.el.b($.el.span({
+            style: "color:darkblue"
+          }, "LOGIC"),
+          $.el.span({
+            style: "color:maroon"
+          }, "MOO")))
+        .append($.el.b($.el.span({
+            style: "color:darkblue"
+          }, "+ cplint + TRILL "),
+          $.el.span({
+            style: "color:maroon"
+          }, "on "),
+          $.el.span({
+            style: "color:darkblue"
+          }, "SWI"),
+          $.el.span({
+            style: "color:maroon"
+          }, "SH")))
+        .append($.el.b($.el.span({
+            style: "color:darkblue"
+          }, " + LPS"),
+          $.el.span({
+            style: "color:maroon"
+          }, " + PFC")))
       .css("margin-left", "30px")
       .css("font-size", "24px")
       .addClass("navbar-brand");

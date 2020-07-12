@@ -44,6 +44,12 @@ tell:-
 % the jailers speaks if there is a prisoner for which he says that he will be
 % executed
 
+safe_after_tell:-
+  safe(a),
+  tell.
+% a is safe after the jailer has spoken if he is safe and the jailer has told
+% that someone is going to be executed
+
 :- end_lpad.
   
 /** <examples>

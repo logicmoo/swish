@@ -46,10 +46,15 @@
     http:location/3.
 
 user:file_search_path(data,           data).
+user:file_search_path(config_enabled_swish, 'config-enabled-swish').
+user:file_search_path(config_enabled_swish, swish('config-enabled-swish')).
+user:file_search_path(config,         config_enabled_swish(.)).
+user:file_search_path(config,         swish('config-available-swish')).
 user:file_search_path(config_enabled, 'config-enabled').
 user:file_search_path(config_enabled, swish('config-enabled')).
 user:file_search_path(config,         config_enabled(.)).
 user:file_search_path(config,         swish('config-available')).
+
 user:file_search_path(swish_web,      swish(web)).
 user:file_search_path(swish_pack,     swish(pack)).
 user:file_search_path(js,             config('web/js')).
@@ -58,6 +63,7 @@ user:file_search_path(css,            swish_web(css)).
 user:file_search_path(icons,          config('web/icons')).
 user:file_search_path(icons,          swish_web(icons)).
 user:file_search_path(plugin,         config('web/plugin')).
+user:file_search_path(node_modules,   swish_web(node_modules)).
 
 %!  set_swish_path
 %
@@ -110,7 +116,7 @@ initialize_paths :-
 
 % HTTP paths
 
-http:location(swish, root(.), [priority(-100)]).
+%http:location(swish, root(.), [priority(-100)]).
 
 
 

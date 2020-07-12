@@ -19,3 +19,6 @@
 [submodule "pack/chat80"]
 	path = pack/chat80
 	url = https://github.com/JanWielemaker/chat80.git
+[submodule "pack/libssh"]
+	path = pack/libssh
+	url = https://github.com/JanWielemaker/libssh.git

@@ -46,6 +46,14 @@ This module serves help information for SWISH.
 @tbd	Serve SWI-Prolog Markdown files.
 */
 
+:- http_handler(swish(extended_help_index),
+		extended_help_index, [id(swish_extended_help_index)]).
+extended_help_index(_Request) :-
+	help_files(HelpIndex),
+	reply_json(HelpIndex).
+
+
+
 :- http_handler(swish(help), serve_files_in_directory(swish_help),
 		[id(help),prefix]).
 :- http_handler(swish(help_index),

@@ -67,6 +67,12 @@ Tabling also avoids non-termination of the computation due to _left recursion_, 
 </div>
 
 <div class="nb-cell program">
+
+:- if((\+current_predicate((table)/1),exists_source(library(tabling)))).
+:- use_module(swish:library(tabling)).
+:- endif.
+
+
 :- table connection/2.
 
 connection(X, Y) :-

@@ -1,5 +1,6 @@
+etc/ssh/ssh_host_*
 node_modules
-node_modules
+bower_components
 swish-bower-components.zip
 .bower-senitel
 passwd

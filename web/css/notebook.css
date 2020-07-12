@@ -210,12 +210,19 @@ div.notebook-menu {
 { margin-left: 44px;		/* CodeMirror gutter width */
 }
 
+.nb-cell.program, .nb-cell.query
+{ margin-bottom: 1em;
+}
+
 .nb-cell.not-for-query
 { opacity: 0.5;
 }
 
 .nb-placeholder
 { margin-top: 2em;
+  opacity: 0.5;
+  width: 90%;
+  margin: auto;
 }
 
 .nb-help
@@ -248,6 +255,10 @@ div.notebook-menu {
 .nb-cell.markdown table.arglist td
 { vertical-align: top;
   padding-right: 1em;
+}
+
+.nb-cell.markdown blockquote
+{ border-left: 5px solid #ccc;
 }
 
 a.btn-image

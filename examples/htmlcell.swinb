@@ -84,6 +84,9 @@
           </ul>
         </div>
         <input class="form-control">
+        <div class="input-group-btn">
+          <button type="button" class="btn btn-primary">Parse</button>
+        </div>
       </div>
     </div>
   </div>

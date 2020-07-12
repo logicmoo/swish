@@ -822,6 +822,7 @@ style(rational(_Value),	 rational,			   [text]).
 style(format_string,	 format_string,			   []).
 style(meta(_Spec),	 meta,				   []).
 style(op_type(_Type),	 op_type,			   [text]).
+style(decl_option(_Name),decl_option,			   [text]).
 style(functor,		 functor,			   [text]).
 style(control,		 control,			   [text]).
 style(delimiter,	 delimiter,			   [text]).
@@ -1183,10 +1184,17 @@ predicate_info(PI, summary, Summary) :-
 	    prolog:predicate_summary(Module:Name/DCGArity, Summary)
 	).
 
-:- if(current_predicate(man_object_property/2)).
+:- if( true ; current_predicate(man_object_property/2)).
 man_predicate_summary(PI, Summary) :-
+    current_predicate(man_object_property/2),
     man_object_property(PI, summary(Summary)).
 :- else.
 man_predicate_summary(_, _) :-
     fail.
 :- endif.
+:- if( true ; current_predicate(predicate/5)).
+man_predicate_summary(Name/Arity, Summary) :-
+    current_predicate(predicate/5),
+    predicate(Name, Arity, Summary, _, _).
+:- endif.
+

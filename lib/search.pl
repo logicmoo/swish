@@ -193,3 +193,17 @@ sow(Text, Offset) :-
 	;   char_type(Start, upper),
 	    char_type(Before, lower)
 	), !.
+
+
+:- http_handler(swish(search),    search,    [id(swish_search)]).
+
+%%	search(+Request)
+%
+%	Handle an actual search  request  from   the  SWISH  search box.
+%	Returns an HTML  document  with  the   actual  results  that  is
+%	displayed in a modal dialog.
+
+search(_Request) :-
+	reply_html_page(search,
+			[],
+			h1('Search results')).

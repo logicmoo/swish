@@ -129,7 +129,7 @@ save_port(Port) :-
 open_browser(Address) :-
 	host_port(Address, Host, Port),
 	http_server_property(Port, scheme(Scheme)),
-	http_absolute_location(root(.), Path, []),
+	http_absolute_location(swish(.), Path, []),
 	format(atom(URL), '~w://~w:~w~w', [Scheme, Host, Port, Path]),
 	www_open_url(URL).
 
