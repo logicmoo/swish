@@ -3,7 +3,7 @@
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
     WWW:           http://www.swi-prolog.org
-    Copyright (C): 2016-2020, VU University Amsterdam
+    Copyright (C): 2016-2018, VU University Amsterdam
 			      CWI Amsterdam
     All rights reserved.
 
@@ -252,22 +252,7 @@ must_succeed(Goal) :-
 
 visitor(WSID) :-
 	visitor_session(WSID, _Session, _Token),
-	(   inactive(WSID, 30)
-	->  fail
-	;   reap(WSID)
-	).
-
-:- if(current_predicate(hub_member/2)).
-reap(WSID) :-
-	hub_member(swish_chat, WSID),
-	!.
-:- else.
-reap(_) :-
-	!.
-:- endif.
-reap(WSID) :-
-	reclaim_visitor(WSID),
-	fail.
+	\+ inactive(WSID, 30).
 
 visitor_count(Count) :-
 	aggregate_all(count, visitor(_), Count).
