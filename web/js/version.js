@@ -60,6 +60,7 @@ define([ "jquery", "config", "utils", "laconic" ],
 	if ( config.http.locations.versions ) {
 	  elem.append($.el.div({class:"version"},
 		  	       $.el.div({class:"v-cplint"}),
+		  	       $.el.div({class:"v-trill"}),
 			       $.el.div({class:"v-swish"}),
 			       $.el.div({class:"v-changelog"},
 					$.el.table()),
@@ -90,6 +91,7 @@ define([ "jquery", "config", "utils", "laconic" ],
 
 		var swishversion;
 		var cplintversion;
+		var trillversion;
 
 		if ( elem.hasClass("v-compact") )
 		{
@@ -97,11 +99,15 @@ define([ "jquery", "config", "utils", "laconic" ],
 					data.swish.version);
 		  cplintversion = $.el.a({title: "View recent changes"},
 					data.cplint.gitversion.version);
+					
+		  trillversion = $.el.a({title: "View recent changes"},
+					data.trill.gitversion.version);
 		}
 		else
 	 	{
 		  swishversion = $.el.span(data.swish.version);
 		  cplintversion = $.el.span(data.cplint.gitversion.version);
+		  trillversion = $.el.span(data.trill.gitversion.version);
 		}
 		elem.find(".v-cplint").
 		    append($.el.span($.el.a({href:"https://github.com/friguzzi/cplint"}, "cplint")," version "+
@@ -113,6 +119,16 @@ define([ "jquery", "config", "utils", "laconic" ],
 					     "cplint on SWISH"),
 				      " version ",
 				      swishversion));
+				      		  
+		elem.find(".v-trill").
+		    append($.el.span($.el.a({href:"https://github.com/rzese/trill"}, "trill")," version "+
+				      data.trill.version+"-",trillversion," "));
+
+		elem.find(".v-swish")
+		.append($.el.span($.el.a({class:"v-product",
+					      href:"http://trill-sw.eu"},
+					     "TRILL on SWISH"),
+					     				      
 		elem.find(".v-prolog")
 		    .append($.el.span("Running on ",
 				      $.el.a({class:"v-product",
@@ -131,6 +147,9 @@ define([ "jquery", "config", "utils", "laconic" ],
 		  $(cplintversion).on("click", function(ev) {
 		    if ( elem.hasClass("v-compact") ) {
 		      elem[pluginName]('versionDetails',{pack:'cplint'});
+		  $(trillversion).on("click", function(ev) {
+		    if ( elem.hasClass("v-compact") ) {
+		      elem[pluginName]('versionDetails',{pack:'trill'});
 		      ev.preventDefault();
 		      return false;
 		    }

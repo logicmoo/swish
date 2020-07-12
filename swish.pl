@@ -31,6 +31,9 @@
     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
+
+    Changes by:    Riccardo Zese
+    E-mail:        riccardo.zese@unife.it
 */
 
 :- module(swish_app,
@@ -81,6 +84,15 @@ setup_versions :-
 	pack_property(cplint,directory(CplintDir)),
 	register_git_module(cplint,[directory(CplintDir),
 	home_url('https://github.com/friguzzi/cplint')]),
+	
+	register_git_module(swish,
+			    [ directory(Dir),
+			      home_url('https://github.com/friguzzi/trill-on-swish')
+			    ]),
+	pack_property(trill,directory(TrillDir)),
+	register_git_module(trill,[directory(TrillDir),
+	home_url('https://github.com/rzese/trill')]),
+	
 	check_prolog_version(070717).
 
 :- initialization setup_versions.
@@ -136,16 +148,18 @@ load_config.
 %	All solutions of this predicate are  available in the JavaScript
 %	object config.swish.config. Config must be an  atom that is also
 %	a valid JavaScript identifier. Value  must   be  a value that is
-%	valid for json_write_dict/2.  Defined config parameters:
+%	valid for json_write_dict/2. Most configurations  are also saved
+%	in the application preferences. These   are  marked [P]. Defined
+%	config parameters:
 %
 %	  - show_beware
-%	  If `true`, show the *Beware* modal dialog on startup
+%	  [P] If `true`, show the *Beware* modal dialog on startup
 %	  - tabled_results
-%	  If `true`, check the _table results_ checkbox by default.
+%	  [P] If `true`, check the _table results_ checkbox by default.
 %	  - application
 %	  Name of the Pengine application.
 %	  - csv_formats
-%	  CSV output formats offered. For example, ClioPatria
+%	  [P] CSV output formats offered. For example, ClioPatria
 %	  defines this as [rdf,prolog]. The first element is default.
 %	  - community_examples
 %	  Allow marking saved programs as example.  If marked, the
@@ -242,6 +256,9 @@ swish_config:config(default_query,	'').
 :- use_module(swish:library(pengines_io)).
 :- use_module(swish:library(solution_sequences)).
 :- use_module(swish:library(aggregate)).
+:- if((\+current_predicate((table)/1),exists_source(library(tabling)))).
+:- use_module(swish:library(tabling)).
+:- endif.
 
 pengines:prepare_module(Module, swish, _Options) :-
 	pengines_io:pengine_bind_io_to_html(Module).
@@ -285,6 +302,38 @@ pengines:prepare_module(Module, swish, _Options) :-
 :- use_module(library(lemur)).
 :- use_module(library(auc)).
 :- use_module(library(matrix)).
+
+
+:- if(exists_source(library(trill))).
+ :- use_module(library(trill)).
+:- endif.
+
+                 /*******************************
+                 *         ADD COLOURING        *
+                 *******************************/
+
+:- multifile prolog_colour:term_colours/2.
+
+prolog_colour:term_colours((:- trill),
+	neck(directive)-[trill_directive]):-!.
+
+prolog_colour:term_colours((:- trillp),
+	neck(directive)-[trill_directive]):-!.
+
+prolog_colour:term_colours((:- tornado),
+	neck(directive)-[trill_directive]):-!.
+
+prolog_colour:term_colours(owl_rdf(_), olwrdf_predicate-[classify]):-!.
+
+:- multifile prolog_colour:style/2.
+
+prolog_colour:style(trill_directive,                  [colour(firebrick),bold(true)]).
+prolog_colour:style(olwrdf_predicate,                  [colour(firebrick),bold(true)]).
+
+:- multifile swish_highlight:style/3.
+
+swish_highlight:style(trill_directive,  trill_directive, [text, base(atom)]).
+swish_highlight:style(olwrdf_predicate, olwrdf_predicate, [text, base(symbol)]).
 
 
 :- use_module(swish(lib/render/gvterm),   []).

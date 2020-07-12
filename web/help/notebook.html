@@ -1,8 +1,13 @@
 <!DOCTYPE HTML>
+<!-- 
+    Changes by:    Riccardo Zese
+    E-mail:        riccardo.zese@unife.it
+    Copyright:	   2014-2018, University of Ferrara
+-->
 
 <html>
   <head>
-  <title>About notebooks</title>
+  <title>About TRILL on SWISH notebooks</title>
   </head>
 <body>
 <style>
@@ -16,7 +21,7 @@ a.nb-no-cell.program { margin: 0px; }
 <p>
 A notebook is a list of <i>cells</i>. Notebooks are different from a
 program with examples because they can <em>tell a story</em>, mixing
-properly formatted text with programs and queries. The story is
+properly formatted text with knowledge bases and queries. The story is
 <em>interactive</em>. The reader can edit program fragments and/or
 queries and see the result. This makes notebooks particularly
 interesting for writing <em>tutorials</em> as well as writing
@@ -30,6 +35,10 @@ A Prolog notebook supports three types of cells:
     <li><b>LPAD</b> cells contain a LPAD program.
     <li><b>Query</b> cells contain a Prolog query, operating
     on the nearest program above it.
+    <li><b>HTML</b> cells allow you to write custom style web pages
+    as well as interative web applications.  See the
+    <a class="file" href="/example/htmlcell.swinb">HTML cell</a> demo.
+    <li><b>Program</b> cells contain a (part of a) knowledge base.
   </ul>
 
 <h3>Creating a notebook</h3>

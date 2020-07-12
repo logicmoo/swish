@@ -680,7 +680,7 @@ define([ "cm/lib/codemirror",
 	iframe.contentWindow.print();
       }
 
-      $.ajax({ url: "/css/print.css",
+      $.ajax({ url: "/css/print.css", // vs config.http.locations.swish+"js/codemirror/theme/prolog.css"
 	       dataType: "text",
 	       success: function(data) {
 		 printWithIframe($.el.div($.el.style(data),

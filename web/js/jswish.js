@@ -31,6 +31,10 @@
     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
+
+    Changes by:    Riccardo Zese
+    E-mail:        riccardo.zese@unife.it
+    Copyright:	   2014-2016, University of Ferrara
 */
 
 /**
@@ -352,9 +356,9 @@ preferences.setInform("preserve-state", ".unloadable");
       if ( typeof(options) == "string" )
 	options = {file:options};
 
-      /*var existing = this.find(".storage").storage('match', options);
+      var existing = this.find(".storage").storage('match', options);
       if ( existing && existing.storage('expose', "Already open") )
-	return this;				/* FIXME: go to line */
+	      return this;				/* FIXME: go to line */
 
       var url = config.http.locations.web_storage + options.file;
       $.ajax({ url: url,
@@ -791,6 +795,8 @@ preferences.setInform("preserve-state", ".unloadable");
   function swishLogo() {
     $(".swish-logo")
       .append($.el.b($.el.span({style:"color:maroon"}, "cplint on "),
+      .append($.el.b($.el.span({style:"color:darkblue"}, "TRILL "),
+                     $.el.span({style:"color:maroon"}, "on "),
       		     $.el.span({style:"color:darkblue"}, "SWI"),
 		     $.el.span({style:"color:maroon"}, "SH")))
       .css("margin-left", "30px")

@@ -58,8 +58,8 @@
 :- multifile
     swish_config:chat_count_about/2.	% +DocID, -Count
 
-:- listen(http(pre_server_start),
-          open_chatstore).
+:- broadcast:listen(http(pre_server_start),
+          chat_store:open_chatstore).
 
 :- dynamic  storage_dir/1.
 :- volatile storage_dir/1.

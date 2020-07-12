@@ -1,4 +1,9 @@
 <!DOCTYPE HTML>
+<!--
+    Changes by:    Riccardo Zese
+    E-mail:        riccardo.zese@unife.it
+    Copyright:	   2014-2016, University of Ferrara
+-->
 
 <html>
   <head>
@@ -9,12 +14,15 @@
   <ul>
     <li><a href="#motivation">Motivation</a></li>
     <li><a href="#browsers">Supported browsers</a></li>
-    <li><a href="#swishapp">Adding SWISH to your application</a></li>
+    <li><a href="#swishapp">Adding TRILL on SWISH to your application</a></li>
     <li><a href="#technology">Technology</a></li>
     <li><a href="#source_code">Source code</a></li>
   </ul>
 
 <h2 id="motivation">Motivation</h2>
+<p>
+<span style="color:darkblue">TRILL</span><span style="color:maroon"> on </span><span style="color:darkblue">SWI</span><span style="color:maroon">SH</span> allows the user to write probabilistic Description Logic theories and compute the probability of queries with just a web browser. Moreover, it features all the functionalities of <span style="color:darkblue">SWI</span><span style="color:maroon">SH</span>
+</p>
 <p>
 <span style="color:darkblue">SWI</span><span
 style="color:maroon">SH</span> is inspired by web-based tools such as <a
@@ -61,9 +69,9 @@ provided the user is logged in with <em>administrative</em> rights.
 style="color:maroon">SH</span> works fine recent versions of in Safari,
 Firefox, Chrome and Internet Explorer (tested IE 11).
 
-<h2 id="swishapp">Adding SWISH to your application</h2>
+<h2 id="swishapp">Adding TRILL on SWISH to your application</h2>
 <p>
-<span style="color:darkblue">SWI</span><span
+<span style="color:darkblue">TRILL</span><span style="color:maroon"> on </span><span style="color:darkblue">SWI</span><span
 style="color:maroon">SH</span> can be added easily to any SWI-Prolog web
 application. For example, it is available as an extension pack for <a
 target="_blank" href="http://cliopatria.swi-prolog.org/">ClioPatria</a>,
@@ -72,7 +80,7 @@ command below, providing an alternative for SPARQL for exploring the
 database (requires SWI-Prolog 7.1.32 or later).
 
 <pre style="font-size:80%">
-?- cpack_install(swish).</pre>
+?- cpack_install(trill_on_swish).</pre>
 <h2 id="technology">Technology</h2>
 
 <p>
@@ -100,9 +108,15 @@ available</a>
 
 <h2 id="source_code">Source code</h2>
 <p>
+The source code for <span style="color:darkblue">TRILL</span><span style="color:maroon"> on </span><span style="color:darkblue">SWI</span><span
+style="color:maroon">SH</span> is available on <a target="_blank"
+href="https://github.com/friguzzi/trill_on_swish">GitHub</a>.
+</p>
+<p>
 The source code for <span style="color:darkblue">SWI</span><span
 style="color:maroon">SH</span> is available on <a target="_blank"
 href="https://github.com/SWI-Prolog/swish">GitHub</a>.
+</p>
 </body>
 </html>
 

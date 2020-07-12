@@ -31,6 +31,9 @@
     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
+
+    Changes by:    Riccardo Zese
+    E-mail:        riccardo.zese@unife.it
 */
 
 :- module(swish_page,
@@ -350,15 +353,24 @@ swish_page(Options) -->
 swish_navbar(Options) -->
 	swish_resources,
 	html(div([id('navbarhelp'),style('height:40px;margin: 10px 5px;text-align:center')], %;line-height: 40px')],
-        [span([style('color:maroon')],['cplint on ']),
+        [span([style('color:darkblue')],['TRILL']),
+	     span([style('color:maroon')],[' on ']),
+	     span([style('color:maroon')],['cplint on ']),
         span([style('color:darkblue')],['SWI']),
         span([style('color:maroon')],['SH']),
         ' is a web application for probabilistic logic programming',
         ' with a Javascript-enabled browser.',
+		' which embeds the tableau reasoners TRILL, TRILL',
+		span([style('vertical-align:super;font-size:smaller')],['P']),
+		' and TORNADO.',
         &(nbsp), &(nbsp),
         a([id('about')],['About']),
         &(nbsp), &(nbsp),
+        a([href('/help/about.html'),target('_blank')],['About']),
+        &(nbsp), &(nbsp),
         a([href('http://friguzzi.github.io/cplint/'),target('_blank')],['Help']),
+	a([href('/help/help-trill.html'),target('_blank')],['Help']),
+	&(nbsp), &(nbsp),
 	&(nbsp), &(nbsp),
 	a([href('http://arnaudfadja.github.io/phil/'),target('_blank')],['PHIL-Help']),
         &(nbsp), &(nbsp),
@@ -378,7 +390,7 @@ a([href('http://ml.unife.it/plp-book/'),target('_blank')],["book"])
        ]))
         ,
 
-	html(nav([ class([navbar, 'navbar-default']),
+		html(nav([ class([navbar, 'navbar-default']),
 		   role(navigation)
 		 ],
 		 [ div(class('navbar-header'),
@@ -432,7 +444,13 @@ updates(_Options) -->
 swish_title(Options) -->
 	swish_config:title(Options), !.
 swish_title(_Options) -->
-	html([ title('cplint on SWISH -- Probabilistic Logic Programming'),
+	html([ title('TRILL on cplint on SWISH -- Probabilistic Logic Programming'),
+	      link([ rel('shortcut icon'),
+		      href('/icons/rb_favicon.ico')
+		    ]),
+		  link([ rel('apple-touch-icon'),
+		      href('/icons/trill-touch-icon.png')
+		    ]),
 	      link([ rel('shortcut icon'),
 		     href('/icons/favicon.ico')
 		   ]),
@@ -773,6 +791,7 @@ swish_resources -->
 swish_js  --> html_post(head, \include_swish_js).
 swish_css --> html_post(head, \include_swish_css).
 
+% // Trill's ga(''create'', ''UA-16202613-11'', ''auto''); 
 include_swish_js -->
 	html(script([],[
       '(function(i,s,o,g,r,a,m){i[''GoogleAnalyticsObject'']=r;i[r]=i[r]||function(){

@@ -69,7 +69,19 @@ versions(_Request) :-
 			  json{ version:CplintVersion,
 			     gitversion:CplintGitVersion
 			    }
-                        }).
+                        }),
+    module_version_data(trill,TrillGitVersion),
+    pack_property(trill,version(TrillVersion)),
+    reply_json_dict(json{ prolog:
+                          json{ brand:  "SWI-Prolog",
+                                version: SWIVersion
+                              },
+                          swish:SWISHVersion,
+			  trill:
+			  json{ version:TrillVersion,
+			     gitversion:TrillGitVersion
+			    }
+                        }).                        
 
 module_version_data(Module, Dict) :-
     findall(Name-Value, module_version_data(Module, Name, Value), Pairs),

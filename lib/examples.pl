@@ -31,6 +31,9 @@
     LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
+
+    Changes by:    Riccardo Zese
+    E-mail:        riccardo.zese@unife.it
 */
 
 :- module(swish_examples, []).
@@ -71,6 +74,7 @@ overview notebooks.
 
 % make example(File) find the example data
 user:file_search_path(example, swish(examples)).
+user:file_search_path(example, swish(examples/trill)).
 user:file_search_path(example, swish(examples/inference)).
 user:file_search_path(example, swish(examples/learning)).
 user:file_search_path(example, swish(examples/lemur)).
@@ -78,6 +82,7 @@ user:file_search_path(example, swish(examples/phil)).
 user:file_search_path(example, swish(examples/aleph)).
 
 user:file_search_path(e, swish(examples)).
+user:file_search_path(e, swish(examples/trill)).
 user:file_search_path(e, swish(examples/inference)).
 user:file_search_path(e, swish(examples/learning)).
 user:file_search_path(e, swish(examples/lemur)).

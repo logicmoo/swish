@@ -5,9 +5,9 @@
   { "url":"http://ArnaudFadja.github.io/phil/","title":"Help on PHIL"},
   { "url":"http://mcs.unife.it/~friguzzi/plptutorial/", "title":"Tutorial" },
   { "url":"http://www.swi-prolog.org/pack/list?p=cplint", "title":"Pack page on cplint"},
-
+   
   { "url":"http://friguzzi.github.io/aleph/doc/manual.html", "title":"Help on Aleph"},
-
+  { "file":"help-trill.html", "title":"Help on TRILL" },
   { "file":"runner.html",     "title":"Runner" },
   { "file":"debug.html",      "title":"Debugging" },
   { "file":"notebook.html",   "title":"Notebook" },

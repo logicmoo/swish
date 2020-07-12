@@ -34,7 +34,8 @@
 */
 
 :- module(swish_config_gitty_files, []).
-:- use_module(library(swish/storage)).
+%:- use_module(library(swish/storage)).
+:- use_module('../lib/storage').
 
 /** <module> Permanently load files from the SWISH gitty store
 

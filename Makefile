@@ -7,7 +7,8 @@ SWIPL=swipl
 
 # Packs to download and configure.  Run `git submodule` to see the
 # available packs.
-PACKS=profile rserve_client smtp pcache
+PACKS=chat80  hdt  pcache  profile  rserve_client  smtp  wordnet
+
 
 all:
 	@echo "Targets"
@@ -20,6 +21,9 @@ all:
 	@echo "    packs     -- Download and configure packs"
 	@echo
 
+
+bower::
+	yarn
 yarn::
 	yarn
 	@$(MAKE) src

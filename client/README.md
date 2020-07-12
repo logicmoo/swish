@@ -27,6 +27,12 @@ For example:
 	       [ src_text(':- include(sin_table).'),
 		 application(swish)
 	       ]).
+
+?- pengine_rpc('http://trill.ml.unife.it',
+	       sin_table(X,Y),
+	       [ src_text(':- include(sin_table).'),
+		 application(swish)
+	       ]).
 X = 0,
 Y = 0.0 ;
 X = 1,

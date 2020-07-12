@@ -1,7 +1,16 @@
+/* 
+
+    Changes by:    Riccardo Zese
+    E-mail:        riccardo.zese@unife.it
+    Copyright:	   2014-2016, University of Ferrara
+*/
+
 div.prolog-runners {
   width: 100%; height: 100%;
-  background-image: url("../icons/logo_op.png");
-  background-size: 90%;
+  /*background-image: url("../icons/logo_op.png");
+  background-size: 90%;*/  
+  background-image: url("../icons/red_bird_op.svg");
+  background-size: 80%;
   background-repeat: no-repeat;
   background-position: 35% 50%;
   overflow: auto;
@@ -148,7 +157,7 @@ div.runner-title > button:hover {
 
 span.runner-state.idle,
 span.runner-state.wait-next,
-span.runner-state.wait-input { background-image: url("../icons/logo.png");    }
+span.runner-state.wait-input { background-image: url("../icons/red_bird.svg");    }
 span.runner-state.wait-debug { background-image: url("../icons/debug.png");   }
 span.runner-state.running    { background-image: url("../icons/running.gif"); }
 span.runner-state.true,
