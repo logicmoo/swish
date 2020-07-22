@@ -502,7 +502,7 @@ codemirror_tokens(Request) :-
 	    Reason,
 	    check_unlocked(Reason)).
 
-codemirror_tokens_(Request) :-
+codemirror_tokens_(Request) :- 
 	http_read_json_dict(Request, Data, []),
 	atom_string(UUID, Data.get(uuid)),
 	debug(cm(tokens), 'Asking for tokens: ~p', [Data]),

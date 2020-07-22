@@ -45,7 +45,7 @@
     user:file_search_path/2,
     http:location/3.
 
-user:file_search_path(data,           data).
+user:file_search_path(data,           'data').
 user:file_search_path(config_enabled_swish, 'config-enabled-swish').
 user:file_search_path(config_enabled_swish, swish('config-enabled-swish')).
 user:file_search_path(config,         config_enabled_swish(.)).

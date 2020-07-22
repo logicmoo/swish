@@ -124,8 +124,8 @@ setup_versions :-
 %	a single config-enabled directory, either  found locally or from
 %	the swish directory.
 
-load_config :-
-	absolute_file_name(config_enabled(.), Path,
+load_config(From) :-
+	absolute_file_name(From, Path,
 			   [ file_type(directory),
 			     access(read),
 			     file_errors(fail)
@@ -133,7 +133,9 @@ load_config :-
 	atom_concat(Path, '/*.pl', Pattern),
 	expand_file_name(Pattern, Files),
 	maplist(user:ensure_loaded, Files).
-load_config.
+load_config(_).
+
+load_config:- load_config('config-enabled').
 
 :- initialization(load_config, now).
 
@@ -365,27 +367,34 @@ pengines:prepare_module(Module, swish, Options2) :-
 :- use_module(swish(lib/render/html),	  []).
 :-endif.
 :- if(is_logicmoo).
+
+:- if(exists_source(library(logicmoo_common))).
+% :- use_module(library(logicmoo_common)).
+:- endif.
+
 :- use_module(swish:library(semweb/rdf_db)).
 :- use_module(swish:library(semweb/rdfs)).
 % :- use_module(swish:library(semweb/rdf_optimise)).
 :- use_module(swish:library(semweb/rdf_litindex)).
 :- use_module(swish:lib/r_swish).
 :- use_module(library(r/r_sandbox)).
-:- endif.
+
 :- if(exists_source(library(semweb/rdf11))).
  :- use_module(library(semweb/rdf11), []).
 :- endif.
+
 :- if(exists_source(library(must_trace))).
 %:- use_module(library(must_trace)).
 :- endif.
 :- if(exists_source(library(pfc_lib))).
 % :- use_module(library(pfc_lib)).
 :- endif.
-:- if(exists_source(library(logicmoo_user))).
-% :- use_module(library(logicmoo_user)).
+:- if(exists_source(library(logicmoo_swish))).
+% :- use_module(library(logicmoo_swish)).
 :- endif.
+:- endif.
+
 sandbox:safe_primitive(nf_r:{_}).
-:- use_module(library(logicmoo_swish)).
 
 :- if(exists_source(library(trill))).
  :- use_module(library(trill)).

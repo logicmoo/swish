@@ -1075,6 +1075,57 @@
 				<F N="pack/wordnet/pack.pl"/>
 			</Folder>
 		</Folder>
+		<Folder Name="../../packs_sys">
+			<Folder Name="pfc">
+				<Folder Name="prolog">
+					<Folder Name="dialect">
+						<Folder Name="pfc_ext">
+							<F N="../../packs_sys/pfc/prolog/dialect/pfc_ext/pfc_attrs.pl"/>
+						</Folder>
+						<F N="../../packs_sys/pfc/prolog/dialect/pfc.pl"/>
+					</Folder>
+					<Folder Name="pfc2.0">
+						<F N="../../packs_sys/pfc/prolog/pfc2.0/mpred_at_box.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfc2.0/mpred_core.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfc2.0/mpred_database.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfc2.0/mpred_expansion.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfc2.0/mpred_gvars.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfc2.0/mpred_header.pi"/>
+						<F N="../../packs_sys/pfc/prolog/pfc2.0/mpred_header.pro"/>
+						<F N="../../packs_sys/pfc/prolog/pfc2.0/mpred_justify.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfc2.0/mpred_listing.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfc2.0/mpred_loader.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfc2.0/mpred_prolog_file.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfc2.0/mpred_terms.pl"/>
+					</Folder>
+					<Folder Name="pfc3.0">
+						<F N="../../packs_sys/pfc/prolog/pfc3.0/pfc_expansion.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfc3.0/pfc_file_loader.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfc3.0/pfc_rt.pl"/>
+					</Folder>
+					<Folder Name="pfclib">
+						<F N="../../packs_sys/pfc/prolog/pfclib/system_autoexec.pfc.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfclib/system_autoexec_3_0.pfc.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfclib/system_base.pfc.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfclib/system_mdefault.pfc.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfclib/system_module_inheritance.pfc.pl"/>
+						<F N="../../packs_sys/pfc/prolog/pfclib/system_singleValued.pfc.pl"/>
+					</Folder>
+					<F N="../../packs_sys/pfc/prolog/pfc.pl"/>
+					<F N="../../packs_sys/pfc/prolog/pfc_2_3.pl"/>
+					<F N="../../packs_sys/pfc/prolog/pfc_3_0.pl"/>
+					<F N="../../packs_sys/pfc/prolog/pfc_dcg.pl"/>
+					<F N="../../packs_sys/pfc/prolog/pfc_header_3_0.pl"/>
+					<F N="../../packs_sys/pfc/prolog/pfc_lib.pl"/>
+					<F N="../../packs_sys/pfc/prolog/pfc_lib_2_0.pl"/>
+					<F N="../../packs_sys/pfc/prolog/pfc_lib_3_0.pl"/>
+					<F N="../../packs_sys/pfc/prolog/pfc_syntax.pl"/>
+					<F N="../../packs_sys/pfc/prolog/pfc_test.pl"/>
+					<F N="../../packs_sys/pfc/prolog/pfc_toplevel.pl"/>
+					<F N="../../packs_sys/pfc/prolog/prolog_syntax.pl"/>
+				</Folder>
+			</Folder>
+		</Folder>
 		<Folder Name="profiles">
 			<F N="profiles/00-Empty.cpl"/>
 			<F N="profiles/00-Empty.lpad"/>

@@ -105,6 +105,8 @@ from_http(G):-
 	user:file_search_path/2.		% Alias, Path
 
 :- prolog_load_context(directory,Dir),asserta(user:file_search_path(swish, Dir)).
+
+
 user:file_search_path(project, '.').
 
 :- dynamic http:location/3.
@@ -122,6 +124,8 @@ rsmsg(X):- wdmsg(X).
 %prolog:prolog_load_file(library(swish/X),How):- trace, prolog:load_files([swish(lib/X)],How),!.
 %prolog:prolog_load_file(swish(lib/swish/X),How):- prolog:load_files([swish(lib/X)],How),!.
 */
+
+:- if(false).
 
 swish_config:config(show_beware,        false).
 swish_config:config(community_examples, true).
@@ -247,7 +251,7 @@ host_port(Host:Port, Host, Port) :- !.
 host_port(Port,Host, Port):- gethostname(Host),!.
 host_port(Port,_, Port):-!.
 
-
+:- endif. % false
 
 pet_test:- pengine_rpc("https://logicmoo.org:3020",
                        sin_table(X,Y),
@@ -328,9 +332,12 @@ some_debug:-
 %:- use_module(library(pengines)).
 
 
+:- setting(listing:tab_distance, nonneg, 0,
+           'Distance between tab-stops.  0 uses only spaces').
 
-%pengines_iri_hook(X,Y,Z):- res_iri_hook(X,Y,Z).
-%:- register_iri_scheme(pengines, pengines_iri_hook, []).
+
+pengines_iri_hook(X,Y,Z):- '$rc':res_iri_hook(X,Y,Z).
+:- register_iri_scheme(pengine, pengines_iri_hook, []).
 
 swish_and_clio:is_module.
 
@@ -407,6 +414,8 @@ start_swish_and_clio_real:- asserta(did_start_swish_and_clio),
      (set_prolog_flag(argv,WasArgV),set_prolog_flag(os_argv,WasOSArgV))),
    nop(remote_swish),
    broadcast:broadcast(http(post_server_start)).
+
+:- use_module(swish(lib/plugin/login)).
 
 :- runtime_boot(start_swish_and_clio).
 

@@ -54,6 +54,8 @@ Requires the pack `libssh` to be installed.
 :- listen(http(pre_server_start),
           start_sshd).
 
+start_sshd :-  
+    thread_property(TID,status(running)),TID=='sshd@3250',!.
 start_sshd :-
     ssh_server([ port(3250),
                  bind_address(*),

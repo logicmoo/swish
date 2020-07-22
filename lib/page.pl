@@ -53,10 +53,19 @@
 	  ]).
 :- use_module(library(http/http_open)).
 :- use_module(library(http/http_dispatch)).
+:-if(\+ prolog_load_context(reloading,true)).
 :- use_module(library(http/http_parameters)).
 :- use_module(library(http/http_header)).
+:- else.
+:- use_module(library(http/http_parameters),except([is_meta/1])).
+:- use_module(library(http/http_header),except([connection/2])).
+:-endif.
 :- use_module(library(http/html_write)).
+:-if(\+ prolog_load_context(reloading,true)).
 :- use_module(library(http/js_write)).
+:- else.
+:- use_module(library(http/js_write),except([ws/2])).
+:-endif.
 :- use_module(library(http/json)).
 :- use_module(library(http/http_json)).
 :- use_module(library(http/http_path)).
@@ -71,7 +80,11 @@
 :- use_module(library(error)).
 :- use_module(library(http/http_client)).
 
+:-if(\+ prolog_load_context(reloading,true)).
 :- use_module(config).
+:- else.
+:- use_module(config,except([authenticate/2])).
+:-endif.
 :- use_module(help).
 :- use_module(search).
 :- use_module(chat).
@@ -404,16 +417,16 @@ a([href('http://ml.unife.it/plp-book/'),target('_blank')],["book"])
 			 ul([class([nav, 'navbar-nav', 'navbar-right'])],
 			    [ li(\notifications(Options)),
 			      li(\search_box(Options)),
-			      \li_login_button(Options),
+			      \local_li_login_button(Options),
 			      li(\broadcast_bell(Options)),
 			      li(\updates(Options))
 			    ])
 		       ])
 		 ])).
 
-li_login_button(Options) -->
-	swish_config:li_login_button(Options).
-li_login_button(_Options) -->
+local_li_login_button(Options,S,E):-
+	catch(swish_config:li_login_button(Options,S,E),_,fail).
+local_li_login_button(_Options) -->
 	[].
 
 collapsed_button -->
