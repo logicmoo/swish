@@ -7,7 +7,7 @@ F. Riguzzi and T. Swift. The PITA system: Tabling and answer subsumption for rea
 
 :- if(current_predicate(use_rendering/1)).
 :- use_rendering(graphviz).
-:- use_rendering(table).
+:- use_rendering(table,[header(['Multivalued variable index','Rule index','Grounding substitution'])]).
 :- endif.
 
 :- pita.
