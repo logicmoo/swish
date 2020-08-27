@@ -6,7 +6,8 @@ F. Riguzzi and T. Swift. The PITA system: Tabling and answer subsumption for rea
 :- use_module(library(pita)).
 
 :- if(current_predicate(use_rendering/1)).
-:- use_rendering(c3).
+:- use_rendering(graphviz).
+:- use_rendering(table).
 :- endif.
 
 :- pita.
@@ -33,6 +34,7 @@ hay_fever(bob).
 /** <examples>
 
 ?- prob(sneezing(bob),Prob).
+?- bdd_dot_string(sneezing(bob),BDD,Var).
 
 */
 
