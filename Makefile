@@ -7,7 +7,7 @@ SWIPL=swipl
 
 # Packs to download and configure.  Run `git submodule` to see the
 # available packs.
-PACKS=chat80  hdt  pcache  profile  rserve_client  smtp  wordnet sshlib
+PACKS=chat80  hdt  pcache  profile  rserve_client  smtp  wordnet libssh
 
 
 all:

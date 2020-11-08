@@ -76,7 +76,7 @@ function getCachedConfig() {
 }
 
 function setCachedConfig(config) {
-  if ( typeof(Storage) !== "undefined" && window.swish.config_hash ) {
+  if ( typeof(window.swish) !== "undefined" && typeof(Storage) !== "undefined" && window.swish.config_hash ) {
     localStorage.setItem(KEY, JSON.stringify(
       { hash: window.swish.config_hash,
         config: config

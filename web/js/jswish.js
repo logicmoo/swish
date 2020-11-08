@@ -510,7 +510,7 @@ define(["jquery",
             elem.swish('setSource', reply);
           },
           error: function(jqXHR) {
-            modal.ajaxError(jqXHR);
+            // modal.ajaxError(jqXHR);
           }
         });
 
@@ -575,7 +575,7 @@ define(["jquery",
             elem.swish('setSource', msg);
           },
           error: function(jqXHR) {
-            modal.ajaxError(jqXHR);
+            // modal.ajaxError(jqXHR);
           }
         });
       },
@@ -706,7 +706,7 @@ define(["jquery",
             }
           },
           error: function(jqXHR1) {
-            modal.ajaxError(jqXHR1);
+            // modal.ajaxError(jqXHR1);
           }
         });
         return this;
@@ -749,7 +749,7 @@ define(["jquery",
             }
           },
           error: function(jqXHR) {
-            modal.ajaxError(jqXHR);
+            // modal.ajaxError(jqXHR);
           }
         });
         return this;
@@ -798,7 +798,7 @@ define(["jquery",
             }
           },
           error: function(jqXHR) {
-            modal.ajaxError(jqXHR);
+            // modal.ajaxError(jqXHR);
           }
         });
         return this;

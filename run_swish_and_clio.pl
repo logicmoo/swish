@@ -41,10 +41,13 @@
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_path)).
 :- use_module(library(www_browser)).
+% set_prolog_flag(access_level,system), cls, forall(rtrace(file_search_path(X,Y)),writeln(file_search_path(X,Y))).
+%:- set_prolog_flag(access_level,system).
+%:- rtrace.
 :- if(exists_source(library(uid))).
 :- use_module(library(uid)).
 :- endif.
-
+%:- break.
 :- user:use_module(library(semweb/rdf_library)).
 :- system:use_module(library(semweb/rdf_library)).
 :- system:use_module(library(settings)).
@@ -59,6 +62,7 @@
 :- if( \+ exists_source(library(sldnfdraw))).
 :- attach_packs('/opt/logicmoo_workspace/packs_lib').
 :- endif.
+
 
 :- if( \+ exists_source(library(lps_syntax)); \+ exists_source(pack(plweb/pack_info))).
 :- attach_packs('/opt/logicmoo_workspace/packs_web').
@@ -341,7 +345,7 @@ pengines_iri_hook(X,Y,Z):- '$rc':res_iri_hook(X,Y,Z).
 
 swish_and_clio:is_module.
 
-add_relative_search_path(Alias, Abs) :-
+add_relative_search_path(Alias, Abs) :- fail,
 	is_absolute_file_name(Abs), !,
 	prolog_load_context(file, Here),
 	relative_file_name(Abs, Here, Rel),
@@ -349,11 +353,14 @@ add_relative_search_path(Alias, Abs) :-
 add_relative_search_path(Alias, Rel) :-
 	assertz(user:file_search_path(Alias, Rel)).
 
-user:file_search_path(cliopatria, '/opt/logicmoo_workspace/packs_web/ClioPatria').
-user:file_search_path(swish,      '/opt/logicmoo_workspace/packs_web/swish').
-user:file_search_path(lps_corner, '/opt/logicmoo_workspace/packs_web/lps_corner').
+%user:file_search_path(cliopatria, '/opt/logicmoo_workspace/packs_web/ClioPatria').
+%user:file_search_path(swish,      '/opt/logicmoo_workspace/packs_web/swish').
+%user:file_search_path(lps_corner, '/opt/logicmoo_workspace/packs_web/lps_corner').
 
-:- add_relative_search_path(cliopatria, '/opt/logicmoo_workspace/packs_web/ClioPatria').
+:- lmconfig:logicmoo_webui_dir(Dir),
+   % trace,
+   absolute_file_name('../packs_web/ClioPatria/',Run,[relative_to(Dir),file_type(directory),file_errors(fail)]),
+   add_relative_search_path(cliopatria, Run).
 
 /*
 :- multifile(swish_authenticate:user_property/2).

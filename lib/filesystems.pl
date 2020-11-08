@@ -100,7 +100,7 @@ user:file_search_path(filesystem, '/').
 user:file_search_path(filesystem_files, '/').
 
 
-:- use_module('../../lps_corner/prolog/dialect/lps').
+%:- use_module('../../lps_corner/prolog/dialect/lps').
 %:- system:module_transparent(prolog_dialect:expects_dialect/1). 
 
 :- multifile
