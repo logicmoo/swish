@@ -6,7 +6,8 @@ F. Riguzzi and T. Swift. The PITA system: Tabling and answer subsumption for rea
 :- use_module(library(pita)).
 
 :- if(current_predicate(use_rendering/1)).
-:- use_rendering(c3).
+:- use_rendering(graphviz).
+:- use_rendering(table,[header(['Multivalued variable index','Rule index','Grounding substitution'])]).
 :- endif.
 
 :- pita.
@@ -41,6 +42,6 @@ hay_fever(bob).
 ?- prob(moderate_sneezing(bob),Prob),bar(Prob,C). % what is the probability that bob has 
 % moderate sneezing?
 % expected result 0.7999999999999998
-
+?- bdd_dot_string(strong_sneezing(bob),BDD,Var).
 
 */
