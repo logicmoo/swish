@@ -90,12 +90,13 @@ two sources:
 % make filesystem(File) find the filesystem data
 user:file_search_path(project_files, pack(pfc/prolog)).
 user:file_search_path(project_files, pack(pfc/t)).
-%user:file_search_path(project_files, swish(examples)).
+user:file_search_path(project_files, swish(examples)).
 %user:file_search_path(project_files, swish(examples/inference)).
 %user:file_search_path(project_files, swish(examples/learning)).
 %user:file_search_path(project_files, swish(examples/lemur)).
 
 user:file_search_path('swish/filesystem', '/').
+% user:file_search_path('/swish/filesystem', '/').
 user:file_search_path(filesystem, '/').
 user:file_search_path(filesystem_files, '/').
 
@@ -107,17 +108,21 @@ user:file_search_path(filesystem_files, '/').
     http:status_page/3,             % +Status, +Context, -HTML
     http:post_data_hook/3.          % +Data, +Out, +HdrExtra
 
-http:status_page(Term, Context, HTML):- wdmsg(http:status_page(Term, Context, HTML)),fail.
+http:status_page(Term, Context, HTML):- pprint_ecp(red,http:status_page(Term, Context, HTML)),fail.
 
 % http:status_page(not_found(URL), [], RET):- '/example/inference/inference_examples_R.swinb'
    
 % handler(swish(help), swish_help:serve_files_in_directory(swish_help), true, [id(help)]).
 
-:- asserta((http_dispatch:handler(root(example), swish_filesystems:serve_file_or_directory(example), true, [id(example_serv_root)]))).
-:- asserta((http_dispatch:handler(swish(example), swish_filesystems:serve_file_or_directory(example), true, [id(example_serv_swish)]))).
+%:- ((http_handler(handler(root(filesystem), swish_filesystems:serve_file_or_directory('/'), true, [id(example_serv_root_slash)]))).
+:- ((http_handler(swish(filesystem), swish_filesystems:serve_file_or_directory('/'), [id(example_serv_swish_slash)]))).
+:- ((http_handler(root('opt'), swish_filesystems:serve_file_or_directory('/'), [id(example_serv_swish_slash_opt)]))).
+%:- asserta((http_dispatch:handler(root(example), swish_filesystems:serve_file_or_directory(example), true, [id(example_serv_root)]))).
+%:- ((http_handler(swish(example), swish_filesystems:serve_file_or_directory(example), true, [id(example_serv_swish)]))).
 
 :- use_module(library(http/http_dirindex)).
 
+non_asset(Alias):- node_modules \== Alias, js \== Alias, doc \== Alias. 
 
 /*serve_file_or_directory(Alias, Request):- 
    memberchk(path_info(PathInfo), Request),
@@ -129,11 +134,65 @@ serve_file_or_directory(_Alias, Request):-
    absolute_file_name(PathInfo, Path, [access(read), file_errors(fail)]),
    http_reply_file(Path,[unsafe(true), static_gzip(true)],Request),!.
 */
+catch_reply(T,E,C):- catch(T,E,(E=http_reply(_, _)->throw(E);C)).
+
+serve_file_or_directory(Alias, Request):- non_asset(Alias),  
+   Alias == '/', 
+   memberchk(path_info(PathInfo), Request),
+         absolute_file_name(PathInfo,Path,[access(read), file_errors(fail)]),
+         exists_file(Path),
+         catch_reply(http_dispatch_http_reply_file(Path, [unsafe(false), static_gzip(true)], Request),_,fail),!.
+
+% serve_file_or_directory(Alias, Request):- non_asset(Alias), whine_serve_file_or_directory(Alias, Request),fail.
 serve_file_or_directory(Alias, Request):- 
+   catch_reply(serve_file_or_directory_thrown(Alias, Request),
+     E,(whine_serve_file_or_directory(Alias, Request),throw(E))),!.
+
+serve_file_or_directory(Alias, Request):- whine_serve_file_or_directory(Alias, Request),fail.
+
+whine_serve_file_or_directory(Alias, Request):- ignore(( fail, non_asset(Alias), 
+  with_output_to(user_error,pprint_ecp(yellow,failed(serve_file_or_directory(Alias, Request)))))).
+  
+serve_file_or_directory_thrown(Alias, Request):- 
    memberchk(path_info(PathInfo), Request),
    %wldmsg_1(CM,[alias=Alias|Request]),
-   catch(http_server_files:serve_files_in_directory(Alias, Request),E,
-     catch(http_dirindex:http_reply_dirindex(root_fs(PathInfo),[],[path('/')])->true;throw(E),_,throw(E))).
+   catch_reply(http_server_files:serve_files_in_directory(Alias, Request),E,
+     catch_reply(http_dirindex:http_reply_dirindex(root_fs(PathInfo),[],[path('/')])->true;throw(E),_,throw(E))).
+
+http_dispatch_http_reply_file(File, Options, Request):- 
+  http_dispatch:((
+     absolute_file_name(File, Path, [access(read)]),
+    (   option(cache(true), Options, true)
+    ->  (   memberchk(if_modified_since(Since), Request),
+            time_file(Path, Time),
+            catch(http_timestamp(Time, Since), _, fail)
+        ->  throw(http_reply(not_modified))
+        ;   true
+        ),
+        (   memberchk(range(Range), Request)
+        ->  Reply=file(Type, Path, Range)
+        ;   option(static_gzip(true), Options),
+            accepts_encoding(Request, gzip),
+            file_name_extension(Path, gz, PathGZ),
+            access_file(PathGZ, read),
+            time_file(PathGZ, TimeGZ),
+            time_file(Path, Time),
+            TimeGZ>=Time
+        ->  Reply=gzip_file(Type, PathGZ)
+        ;   Reply=file(Type, Path)
+        )
+    ;   Reply=tmp_file(Type, Path)
+    ),
+    (   option(mime_type(MediaType), Options)
+    ->  file_content_type(Path, MediaType, Type)
+    ;   file_content_type(Path, Type)
+    ->  true
+    ;   Type=text/plain
+    ),
+    option(headers(Headers), Options, []),
+    throw(http_reply(Reply, Headers)))).
+
+
 
 %both_http_handlers(Loc):-
 %   http_absolute_location(swish(Loc), HREF, []),http_absolute_location(root(Loc), HREF, []),!,
@@ -145,6 +204,7 @@ both_http_handlers(Loc):-
 
 :- both_http_handlers(node_modules).
 :- both_http_handlers(icons).
+%:- both_http_handlers(filesystem).
 :- both_http_handlers(js).
 :- both_http_handlers(css).
 :- both_http_handlers(plugin).
@@ -165,7 +225,7 @@ user:file_search_path(root_fs,'/').
 
 swish_config:config(N,V):-filesystem_files_conf(N,V).
 
-filesystem_files_conf(filesystem_files, _{html:"", json:[]}) :- !.
+filesystem_files_conf(filesystem_files, _{html:'', json:[]}) :- !.
 filesystem_files_conf(filesystem_files, _{html:X, json:FileFilesystems}) :-
         reset_fs_names,
 	with_output_to(string(X),filesystem_files(FileFilesystems)),!,
@@ -174,9 +234,10 @@ filesystem_files_conf(filesystem_files, _{html:X, json:FileFilesystems}) :-
 
 % make SWISH serve /filesystem/File as filesystem(File).
 % swish_config:source_alias(filesystem, [access(read), search('*.{pl,swinb}')]).
-%swish_config:source_alias(filesystem, [access(read), search('*.{pl,swinb,}')]).
+swish_config:source_alias(filesystem, [access(read), search('*.{pl,swinb,}')]).
 swish_config:source_alias(filesystem, [access(both)]).
-swish_config:source_alias('swish/filesystem', [access(both)]).
+
+swish_config:source_alias('swish/filesystem', X):- swish_config:source_alias('filesystem',X).
 
 
 :- http_handler(swish(list_filesystems),
@@ -430,21 +491,34 @@ gfst_rest(List, List, []).
 % mirror_packs.
 	
 
-:- multifile(cp_menu:menu_items/3).
-:- multifile(cp_menu:menu_item/2).
-:- dynamic(cp_menu:menu_items/3).
-:- dynamic(cp_menu:menu_item/2).
+:- multifile(cliopatria:menu_items/3).
+:- multifile(cliopatria:menu_item/2).
+:- dynamic(cliopatria:menu_items/3).
+:- dynamic(cliopatria:menu_item/2).
 
-/*
+
 :- if(exists_source(components(menu))).
 :- system:use_module(components(menu)).	% ClioPatria Menu
-:- cp_menu:export(cp_menu:menu_items/3).
-:- cp_menu:export(cp_menu:menu_item/2).
-:- import(cp_menu:menu_items/3).
-:- import(cp_menu:menu_item/2).
+:- cliopatria:export(cliopatria:menu_items/3).
+:- cliopatria:export(cliopatria:menu_item/2).
+:- import(cliopatria:menu_items/3).
+:- import(cliopatria:menu_item/2).
 :- endif.
-*/
-% test12345:- html_write:do_expand(\menu_items([item(100, yasgui_editor, 'YASGUI SPARQL Editor'), item(200, query_form, 'Simple Form'), item(300, swish, 'SWISH Prolog shell'), item(302, "/tutorial/tutorial.swinb", 'Tutorial Tutorials'), item(302, '/swish/example/Rdataframe.swinb', 'Examples/Rdataframe.swinb'), item(302, '/swish/example/Rdownload.swinb', 'Examples/Rdownload.swinb'), item(302, '/swish/example/Rserve.swinb', 'Examples/Rserve.swinb'), item(302, '/swish/example/aleph/abduce.pl', 'Aleph/abduce'), item(302, '/swish/example/aleph/aleph_examples.swinb', 'Aleph learning example programs'), item(302, '/swish/example/aleph/aleph_examples.swinb', 'Aleph/aleph examples.swinb'), item(302, '/swish/example/aleph/animals.pl', 'Simple illustration of interactive construction of tree-based models'), item(302, '/swish/example/aleph/constraints.pl', 'Aleph/constraints'), item(302, '/swish/example/aleph/features.pl', 'Aleph/features'), item(302, '/swish/example/aleph/gcws.pl', 'Simple illustration of the technique of generalised'), item(302, '/swish/example/aleph/good.pl', 'Simple illustration of the use of recording good clauses found'), item(302, '/swish/example/aleph/modes.pl', 'Simple illustration of the automatic extraction of modes'), item(302, '/swish/example/aleph/posonly.pl', 'Simple illustration of positive-only learning within Aleph'), item(302, '/swish/example/aleph/recursion.pl', 'Simple illustration of the learning of recursive predicates'), item(302, '/swish/example/aleph/refine.pl', 'Simple illustration of the use of user-defined refinement operators'), item(302, '/swish/example/aleph/train.pl', 'Simple illustration of the use of Aleph on'), item(302, '/swish/example/aleph/weather.pl', 'Aleph/weather'), item(302, '/swish/example/aleph/wedge.pl', 'Simple illustration of constructing tree-based models within Aleph'), item(302, '/swish/example/animals.pl', 'Simple illustration of interactive construction of tree-based models'), item(302, '/swish/example/basic_graph_examples.swinb', 'Examples/basic graph examples.swinb'), item(302, '/swish/example/c3_examples.swinb', 'Examples/c3 examples.swinb'), item(302, '/swish/example/clpfd_queens.pl', 'Examples/clpfd queens'), item(302, '/swish/example/clpfd_sudoku.pl', 'Examples/clpfd sudoku'), item(302, '/swish/example/constraints.pfc', 'Examples/constraints.pfc'), item(302, '/swish/example/database.pl', 'Doing database manipulation'), item(302, '/swish/example/dict.swinb', 'Dict tutorial'), item(302, '/swish/example/dict.swinb', 'Examples/dict.swinb'), item(302, '/swish/example/eliza.pl', 'Examples/eliza'), item(302, '/swish/example/enumerating_examples.swinb', 'Examples/enumerating examples.swinb'), item(302, '/swish/example/examples.swinb', 'Examples/examples.swinb'), item(302, '/swish/example/examples.swinb', 'Prolog Example programs'), item(302, '/swish/example/examples_swish.swinb', 'Examples/examples swish.swinb'), item(302, '/swish/example/expert_system.pl', 'A meta-interpreter implementing'), item(302, '/swish/example/grammar.pl', 'Render parse trees using a tree, but ignore lists Relies on native SVG'), item(302, '/swish/example/houses_puzzle.pl', 'Examples/houses puzzle'), item(302, '/swish/example/htmlcell.swinb', 'Examples/htmlcell.swinb'), item(302, '/swish/example/inference/admission.pl', 'Inference/admission'), item(302, '/swish/example/inference/alarm.pl', 'Inference/alarm'), item(302, '/swish/example/inference/alarm_R.pl', 'Inference/alarm R'), item(302, '/swish/example/inference/arithm.pl', 'Inference/arithm'), item(302, '/swish/example/inference/arithm_R.pl', 'Inference/arithm R'), item(302, '/swish/example/inference/bloodtype.pl', 'Inference/bloodtype'), item(302, '/swish/example/inference/bloodtype_R.pl', 'Inference/bloodtype R'), item(302, '/swish/example/inference/coin.pl', 'Inference/coin'), item(302, '/swish/example/inference/coin.swinb', 'Inference/coin.swinb'), item(302, '/swish/example/inference/coin2.pl', 'Inference/coin2'), item(302, '/swish/example/inference/coin2_R.pl', 'Inference/coin2 R'), item(302, '/swish/example/inference/coin_R.pl', 'Inference/coin R'), item(302, '/swish/example/inference/coinmc.pl', 'Inference/coinmc'), item(302, '/swish/example/inference/coinmc_R.pl', 'Inference/coinmc R'), item(302, '/swish/example/inference/coinmsw.pl', 'Inference/coinmsw'), item(302, '/swish/example/inference/coinmsw_R.pl', 'Inference/coinmsw R'), item(302, '/swish/example/inference/cont.swinb', 'Inference/cont.swinb')]),user,_O,[]).
+
+test12345:- html_write:do_expand(
+  cliopatria:( \(menu_items([item(100, yasgui_editor, 'YASGUI SPARQL Editor'), item(200, query_form, 'Simple Form'), 
+     item(300, swish, 'SWISH Prolog shell'), item(302, "/tutorial/tutorial.swinb", 'Tutorial Tutorials'), 
+     %item(302, '/swish/example/Rdataframe.swinb', 'Examples/Rdataframe.swinb'), 
+     %item(302, '/swish/example/Rdownload.swinb', 'Examples/Rdownload.swinb'), 
+     %item(302, '/swish/example/Rserve.swinb', 'Examples/Rserve.swinb'), 
+     %item(302, '/swish/example/aleph/abduce.pl', 'Aleph/abduce'), 
+     %item(302, '/swish/example/aleph/aleph_examples.swinb', 'Aleph learning example programs'), 
+     %item(302, '/swish/example/aleph/aleph_examples.swinb', 'Aleph/aleph examples.swinb'), 
+     % item(302, '/swish/example/aleph/animals.pl', 'Simple illustration of interactive construction of tree-based models'), item(302, '/swish/example/aleph/constraints.pl', 'Aleph/constraints'), item(302, '/swish/example/aleph/features.pl', 'Aleph/features'), item(302, '/swish/example/aleph/gcws.pl', 'Simple illustration of the technique of generalised'), item(302, '/swish/example/aleph/good.pl', 'Simple illustration of the use of recording good clauses found'), item(302, '/swish/example/aleph/modes.pl', 'Simple illustration of the automatic extraction of modes'), item(302, '/swish/example/aleph/posonly.pl', 'Simple illustration of positive-only learning within Aleph'), item(302, '/swish/example/aleph/recursion.pl', 'Simple illustration of the learning of recursive predicates'), item(302, '/swish/example/aleph/refine.pl', 'Simple illustration of the use of user-defined refinement operators'), item(302, '/swish/example/aleph/train.pl', 'Simple illustration of the use of Aleph on'), item(302, '/swish/example/aleph/weather.pl', 'Aleph/weather'), item(302, '/swish/example/aleph/wedge.pl', 'Simple illustration of constructing tree-based models within Aleph'), item(302, '/swish/example/animals.pl', 'Simple illustration of interactive construction of tree-based models'), item(302, '/swish/example/basic_graph_examples.swinb', 'Examples/basic graph examples.swinb'), item(302, '/swish/example/c3_examples.swinb', 'Examples/c3 examples.swinb'), item(302, '/swish/example/clpfd_queens.pl', 'Examples/clpfd queens'), item(302, '/swish/example/clpfd_sudoku.pl', 'Examples/clpfd sudoku'), item(302, '/swish/example/constraints.pfc', 'Examples/constraints.pfc'), item(302, '/swish/example/database.pl', 'Doing database manipulation'), item(302, '/swish/example/dict.swinb', 'Dict tutorial'), item(302, '/swish/example/dict.swinb', 'Examples/dict.swinb'), item(302, '/swish/example/eliza.pl', 'Examples/eliza'), item(302, '/swish/example/enumerating_examples.swinb', 'Examples/enumerating examples.swinb'), item(302, '/swish/example/examples.swinb', 'Examples/examples.swinb'), item(302, '/swish/example/examples.swinb', 'Prolog Example programs'), item(302, '/swish/example/examples_swish.swinb', 'Examples/examples swish.swinb'), item(302, '/swish/example/expert_system.pl', 'A meta-interpreter implementing'), item(302, '/swish/example/grammar.pl', 'Render parse trees using a tree, but ignore lists Relies on native SVG'), item(302, '/swish/example/houses_puzzle.pl', 'Examples/houses puzzle'), item(302, '/swish/example/htmlcell.swinb', 'Examples/htmlcell.swinb'), item(302, '/swish/example/inference/admission.pl', 'Inference/admission'), item(302, '/swish/example/inference/alarm.pl', 'Inference/alarm'), item(302, '/swish/example/inference/alarm_R.pl', 'Inference/alarm R'), item(302, '/swish/example/inference/arithm.pl', 'Inference/arithm'), item(302, '/swish/example/inference/arithm_R.pl', 'Inference/arithm R'), item(302, '/swish/example/inference/bloodtype.pl', 'Inference/bloodtype'), item(302, '/swish/example/inference/bloodtype_R.pl', 'Inference/bloodtype R'), item(302, '/swish/example/inference/coin.pl', 'Inference/coin'), item(302, '/swish/example/inference/coin.swinb', 'Inference/coin.swinb'), item(302, '/swish/example/inference/coin2.pl', 'Inference/coin2'), item(302, '/swish/example/inference/coin2_R.pl', 'Inference/coin2 R'), item(302, '/swish/example/inference/coin_R.pl', 'Inference/coin R'), item(302, '/swish/example/inference/coinmc.pl', 'Inference/coinmc'), item(302, '/swish/example/inference/coinmc_R.pl', 'Inference/coinmc R'), item(302, '/swish/example/inference/coinmsw.pl', 'Inference/coinmsw'), item(302, '/swish/example/inference/coinmsw_R.pl', 'Inference/coinmsw R'), 
+     % item(302, '/swish/example/inference/cont.swinb', 'Inference/cont.swinb')
+     item(300, swish, 'SWISH Prolog shell')
+     ]))),
+  user,O,[]),writeln(O).
 
 end_of_file.
 

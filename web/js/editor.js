@@ -1,4 +1,5 @@
-/*  Part of SWISH
+/*
+  Part of SWISH
 
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@cs.vu.nl
@@ -84,10 +85,18 @@ define(["cm/lib/codemirror",
     "cm/keymap/emacs",
   ],
   function(CodeMirror, config, preferences, form, templateHint,
-    modal, tabbed, prolog) {
+    modal, tabbed, prolog) {	
 
     (function($) {
       var pluginName = 'prologEditor';
+
+	  var templateHintgetHints = templateHint;
+
+		if(templateHint) {
+		   templateHintgetHints = templateHint.getHints;
+		} else {
+			// debugger;
+		}
 
       var modeDefaults = {
         prolog: {
@@ -106,7 +115,7 @@ define(["cm/lib/codemirror",
             "Alt-/": "autocomplete",
           },
           hintOptions: {
-            hint: templateHint.getHints,
+            hint: templateHintgetHints,
             completeSingle: false
           }
         },

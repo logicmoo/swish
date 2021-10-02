@@ -1,4 +1,21 @@
-/*  Part of SWISH
+
+:- module(swish_ide,
+	  [ start_swish_and_clio/0,
+      start_swish_and_clio_real/0
+      %remote_swish/0,
+	    %remote_swish/1			% ?Port
+	  ]).
+
+/** <module> Utility LOGICMOO UTILS
+This module starts Swish and Cliopatria. 
+
+The purpose is to run Swish and Clio Together for LOGICMOO Web UI.   
+
+- @author Douglas R. Miles
+- @license LGPL
+
+
+ Part of SWISH
 
     Author:        Jan Wielemaker
     E-mail:        J.Wielemaker@vu.nl
@@ -31,12 +48,6 @@
     ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
     POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-:- module(swish_ide,
-	  [ remote_swish/0,
-	    remote_swish/1			% ?Port
-	  ]).
-*/
 :- use_module(library(http/thread_httpd)).
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_path)).
@@ -64,7 +75,15 @@
 :- endif.
 
 
-:- if( \+ exists_source(library(lps_syntax)); \+ exists_source(pack(plweb/pack_info))).
+:- if( \+ exists_source(pack(plweb/pack_info))).
+:- attach_packs('/opt/logicmoo_workspace/packs_web').
+:- endif.
+
+:- if( \+ exists_source(library(lps_syntax))).
+:- attach_packs('/opt/logicmoo_workspace/packs_sys').
+:- endif.
+
+:- if( \+ exists_source(library(lps_syntax))).
 :- attach_packs('/opt/logicmoo_workspace/packs_web').
 :- endif.
 
@@ -83,6 +102,7 @@ from_http(G):-
 
 :- meta_predicate(from_http(0)).
 
+:- use_module(library(logicmoo_webui)).
 
 
 
@@ -110,6 +130,9 @@ from_http(G):-
 
 :- prolog_load_context(directory,Dir),asserta(user:file_search_path(swish, Dir)).
 
+:- multifile(prolog:doc_directory/1).
+:- dynamic(prolog:doc_directory/1).
+prolog:doc_directory(_Dir).
 
 user:file_search_path(project, '.').
 
@@ -228,7 +251,7 @@ swish_config:authenticate(Request, User) :- \+ http_session:http_in_session(_),
 %	Start the SWISH server and open the main page in your browser.
 
 remote_swish :-
-	remote_swish('logicmoo.org':3020).
+	remote_swish('0.0.0.0':3020).
 
 remote_swish(Port) :-
 	http_server_property(Port, _), !,
@@ -238,10 +261,10 @@ remote_swish(_:Port) :-
 	http_server_property(Port, _), !,
 	open_browser(Port).
 remote_swish(Port) :-
-	http_server(http_dispatch,
+	catch(http_server(http_dispatch,
 		    [ port(Port),
 		      workers(16)
-		    ]),
+		    ]),_,fail),
 	open_browser(Port).
 
 open_browser(Address) :-
@@ -256,6 +279,8 @@ host_port(Port,Host, Port):- gethostname(Host),!.
 host_port(Port,_, Port):-!.
 
 :- endif. % false
+
+
 
 pet_test:- pengine_rpc("https://logicmoo.org:3020",
                        sin_table(X,Y),
@@ -326,12 +351,12 @@ some_debug:-
   debug(cm(change)),
   !.
 
-
-:- multifile(cp_menu:menu_item/2).
-:- dynamic(cp_menu:menu_item/2).      
-:- asserta(cp_menu:menu_item(90=swish/swish, 'Swish Home')).
-:- asserta(cp_menu:menu_item(300=query/swish, 'SWISH Prolog shell')).
-
+:- multifile(cliopatria:menu_item/2).
+:- dynamic(cliopatria:menu_item/2).      
+:- asserta(cliopatria:menu_item(90=swish/swish, 'Swish Home')).
+:- asserta(cliopatria:menu_item(300=query/swish, 'SWISH Prolog shell')).
+/*
+*/
 
 %:- use_module(library(pengines)).
 
@@ -359,7 +384,7 @@ add_relative_search_path(Alias, Rel) :-
 
 :- lmconfig:logicmoo_webui_dir(Dir),
    % trace,
-   absolute_file_name('../packs_web/ClioPatria/',Run,[relative_to(Dir),file_type(directory),file_errors(fail)]),
+   absolute_file_name('../../ClioPatria/',Run,[relative_to(Dir),file_type(directory),file_errors(fail)]),
    add_relative_search_path(cliopatria, Run).
 
 /*
@@ -411,6 +436,7 @@ rt123:- rtrace(swish_highlight:codemirror_tokens([protocol(http),method(post),re
 :- dynamic(did_start_swish_and_clio/0).
 start_swish_and_clio:- did_start_swish_and_clio,!.
 start_swish_and_clio:- !.
+%start_swish_and_clio:- start_swish_and_clio_real.
 start_swish_and_clio_real:- asserta(did_start_swish_and_clio),
  % :- cd('/opt/logicmoo_workspace/packs_web/ClioPatria').
    current_prolog_flag(argv,WasArgV),
@@ -423,6 +449,7 @@ start_swish_and_clio_real:- asserta(did_start_swish_and_clio),
    broadcast:broadcast(http(post_server_start)).
 
 :- use_module(swish(lib/plugin/login)).
+
 
 :- runtime_boot(start_swish_and_clio).
 

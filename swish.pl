@@ -77,7 +77,7 @@
 		 /*******************************
 		 *	      VERSION		*
 		 *******************************/
-
+setup_versions :- is_logicmoo,!.
 setup_versions :-
 	prolog_load_context(directory, Dir),
 	register_git_module(swish,
@@ -206,20 +206,19 @@ load_config:- load_config('config-enabled').
 %	communities.
 
 % Allow other code to overrule the defaults from this file.
-term_expansion(swish_config:config(Config, _Value), []) :-
-	clause(swish_config:config(Config, _), _).
+term_expansion(swish_config:config(Config, _Value), []) :- 
+	clause(swish_config:config(ConfigWas, _), _),
+        ConfigWas == Config, !.
 
 swish_config:config(show_beware,        false).
 swish_config:config(tabled_results,     false).
 swish_config:config(application,        swish).
 
-is_logicmoo :- gethostname(gitlab).
+%is_logicmoo :- gethostname(gitlab),!.
+is_logicmoo :- !.
 
-:- if(is_logicmoo).
-swish_config:config(csv_formats,    [rdf, prolog]).
-:- else.
-swish_config:config(csv_formats,        [prolog]).
-:- endif.
+
+swish_config:config(csv_formats,   PLRDF ) :- is_logicmoo -> PLRDF = [rdf, prolog] ; PLRDF = [prolog].
 
 
 % Allows users to extend the Examples menu by ticking the Example
@@ -227,9 +226,11 @@ swish_config:config(csv_formats,        [prolog]).
 swish_config:config(community_examples, true).
 
 % Include elFinder server explorer
-swish_config:config(filesystem_browser,   true).
+swish_config:config(filesystem_browser,   true) :- is_logicmoo.
 % Use ace-editor to edit unknown file types (like .kif files)
+
 swish_config:config(edit_any,   true).
+
 set_swish_path :-
 	absolute_file_name(swish('swish.pl'), _,
 			   [file_errors(fail), access(read)]), !.
@@ -241,7 +242,7 @@ set_swish_path :-
 
 :- set_swish_path.
 
-http:location(swish, root(.), [priority(-100)]).
+http:location(swish, root(.), [priority(-1)]).
 
 :- if(exists_source(rdfql(sparql_csv_result))).
 :- use_module(rdfql(sparql_csv_result)).
@@ -259,11 +260,8 @@ swish_config:config(notebook,		_{ eval_script: true,
 swish_config:config(fullscreen,		_{ hide_navbar: true
 					 }).
 swish_config:config(chat,		true).
-:- if(is_logicmoo).
-swish_config:config(chat_spam_protection, false).
-:- else.
-swish_config:config(chat_spam_protection, true).
-:- endif.
+
+swish_config:config(chat_spam_protection, TF) :- is_logicmoo -> TF = false ; true.
 
 swish_config:config(default_query,	'').
 
@@ -362,37 +360,36 @@ pengines:prepare_module(Module, swish, Options2) :-
 
 :- use_module(library(cplint_r)).
 :- multifile sandbox:safe_primitive/1.
-:- if(exists_source(swish(lib/render/html))).
-% Dmiles - fav render (only works if unsandboxed)
-:- use_module(swish(lib/render/html),	  []).
-:-endif.
+
+
 :- if(is_logicmoo).
-
-:- if(exists_source(library(logicmoo_common))).
-% :- use_module(library(logicmoo_common)).
+   :- if(exists_source(swish(lib/render/html))).
+   % Dmiles - fav render (only works if unsandboxed)
+   :- use_module(swish(lib/render/html),	  []).
+   :-endif.
+   :- if(exists_source(library(logicmoo_common))).
+   % :- use_module(library(logicmoo_common)).
+   :- endif.
+   :- use_module(swish:library(semweb/rdf_db)).
+   :- use_module(swish:library(semweb/rdfs)).
+   % :- use_module(swish:library(semweb/rdf_optimise)).
+   :- use_module(swish:library(semweb/rdf_litindex)).
+   :- use_module(swish:lib/r_swish).
+   :- use_module(library(r/r_sandbox)).
+   :- if(exists_source(library(semweb/rdf11))).
+    :- use_module(library(semweb/rdf11), []).
+   :- endif.
+   :- if(exists_source(library(must_trace))).
+   %:- use_module(library(must_trace)).
+   :- endif.
+   :- if(exists_source(library(pfc_lib))).
+   % :- use_module(library(pfc_lib)).
+   :- endif.
+   :- if(exists_source(library(logicmoo_swish))).
+   % :- use_module(library(logicmoo_swish)).
+   :- endif.
 :- endif.
 
-:- use_module(swish:library(semweb/rdf_db)).
-:- use_module(swish:library(semweb/rdfs)).
-% :- use_module(swish:library(semweb/rdf_optimise)).
-:- use_module(swish:library(semweb/rdf_litindex)).
-:- use_module(swish:lib/r_swish).
-:- use_module(library(r/r_sandbox)).
-
-:- if(exists_source(library(semweb/rdf11))).
- :- use_module(library(semweb/rdf11), []).
-:- endif.
-
-:- if(exists_source(library(must_trace))).
-%:- use_module(library(must_trace)).
-:- endif.
-:- if(exists_source(library(pfc_lib))).
-% :- use_module(library(pfc_lib)).
-:- endif.
-:- if(exists_source(library(logicmoo_swish))).
-% :- use_module(library(logicmoo_swish)).
-:- endif.
-:- endif.
 
 sandbox:safe_primitive(nf_r:{_}).
 
@@ -429,3 +426,8 @@ swish_highlight:style(olwrdf_predicate, olwrdf_predicate, [text, base(symbol)]).
 
 
 :- use_module(swish(lib/render/gvterm),   []).
+
+:- if( current_prolog_flag(xpce, true) ).
+:- gui_tracer:noguitracer.
+:- endif.
+

@@ -16,6 +16,7 @@
   function showTooltip(e, content) {
     var tt = document.createElement("div");
     tt.className = "CodeMirror-hover-tooltip";
+	//debugger;
     if (typeof content == "string") {
       content = document.createTextNode(content);
     }
@@ -28,6 +29,7 @@
       tt.style.top = Math.max(0, e.clientY - tt.offsetHeight - 5) + "px";
       tt.style.left = (e.clientX + 5) + "px";
     }
+
     CodeMirror.on(document, "mousemove", position);
     position(e);
     if (tt.style.opacity != null)
@@ -50,7 +52,17 @@
   }
 
   function showTooltipFor(e, content, node, state, cm) {
+    //debugger;
     var tooltip = showTooltip(e, content);
+	var ot = content.outerText ;
+	if(ot.startsWith("File:")) {
+		var href = ot.substring(6);
+		node["href"] = href;
+
+	   // var attrs = node.attributes;
+	   // attrs.setNamedItem("href",href);		
+		debugger;
+	}
     function hide() {
       CodeMirror.off(node, "mouseout", hide);
       CodeMirror.off(node, "click", hide);
@@ -104,9 +116,13 @@
       options = {};
     if (!options.getTextHover)
       options.getTextHover = cm.getHelper(CodeMirror.Pos(0, 0), "textHover");
-    if (!options.getTextHover)
-      throw new Error(
-          "Required option 'getTextHover' missing (text-hover addon)");
+    if (!options.getTextHover) {
+		//try again 
+		options.getTextHover = cm.getHelper(CodeMirror.Pos(0, 0), "textHover");
+		// debugger;
+		throw new Error(
+			"Required option 'getTextHover' missing (text-hover addon)");
+	}
     return options;
   }
 

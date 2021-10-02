@@ -97,6 +97,11 @@ set_data_path :-
                          file_errors(fail)
                        ]), !.
 set_data_path :-
+    absolute_file_name(data(.), _,
+                       [ access(write),
+                         file_errors(fail)
+                       ]), !.
+set_data_path :-
     absolute_file_name(data(.), Dir,
                        [ solutions(all)
                        ]),
